@@ -1,0 +1,169 @@
+/**
+ * Empty State Styles - Editorial Typography Display
+ * 
+ * Implements centered empty state with geometric icon, editorial heading,
+ * and descriptive text following Editorial Geometry principles.
+ * 
+ * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 21.1
+ * Task 7.3: Empty state component with editorial typography
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.empty-state {
+  // Centering - Requirement 9.4
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 400px;
+  padding: var(--spacing-xxl);
+  
+  &__content {
+    text-align: center;
+    max-width: 600px;
+    
+    // Elevated surface for pop effect - Requirement 21.1
+    @include surface-layer('container-lowest');
+    padding: var(--spacing-xxxl);
+    border-radius: var(--border-radius-lg);
+    
+    // Editorial shadow for depth
+    @include editorial-shadow('editorial');
+  }
+  
+  // Icon Container - Requirement 9.1, 9.5, 9.6
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--spacing-xl);
+    
+    // Icon container background - Requirement 9.5
+    background-color: var(--color-surface-container);
+    
+    // Border radius - Requirement 9.6
+    border-radius: var(--border-radius-lg);
+    
+    .icon-display {
+      font-size: 32px;
+      line-height: 1;
+    }
+  }
+  
+  // Heading - Requirement 9.2, 9.7, 21.1
+  &__heading {
+    // Manrope ExtraBold font (30px) - Requirement 9.2
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-extra-bold);
+    line-height: var(--line-height-spacious);
+    
+    // Tight letter-spacing (-2%) - Requirement 9.7, 21.1
+    letter-spacing: -0.6px; // -2% of 30px
+    
+    // Color - Requirement 9.7
+    color: var(--color-primary-blue-900);
+    
+    margin: 0 0 var(--spacing-lg) 0;
+  }
+  
+  // Description - Requirement 9.3
+  &__description {
+    @include typography('body-lg');
+    color: var(--color-editorial-on-surface);
+    margin: 0 0 var(--spacing-lg) 0;
+    line-height: 1.6;
+  }
+  
+  // Additional Info
+  &__info {
+    @include typography('body-md');
+    color: var(--color-editorial-on-surface-variant);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Responsive adjustments for smaller viewports
+@include responsive('tablet') {
+  .empty-state {
+    padding: var(--spacing-xl);
+    min-height: 300px;
+    
+    &__content {
+      padding: var(--spacing-xl);
+    }
+    
+    &__icon {
+      width: 60px;
+      height: 60px;
+      
+      .icon-display {
+        font-size: 24px;
+      }
+    }
+    
+    &__heading {
+      font-size: var(--font-size-xl); // 20px for smaller screens
+      letter-spacing: -0.4px; // -2% of 20px
+    }
+  }
+}
+
+@include responsive('mobile') {
+  .empty-state {
+    padding: var(--spacing-lg);
+    min-height: 250px;
+    
+    &__content {
+      padding: var(--spacing-lg);
+    }
+    
+    &__icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--spacing-md);
+      
+      .icon-display {
+        font-size: 20px;
+      }
+    }
+    
+    &__heading {
+      font-size: var(--font-size-lg); // 18px for mobile
+      letter-spacing: -0.36px; // -2% of 18px
+      margin-bottom: var(--spacing-md);
+    }
+    
+    &__description {
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    &__info {
+      font-size: var(--font-size-xs);
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .empty-state__content {
+    border: 2px solid var(--color-editorial-outline);
+  }
+  
+  .empty-state__icon {
+    border: 1px solid var(--color-editorial-outline);
+  }
+}
+
+// Print styles
+@media print {
+  .empty-state {
+    display: none;
+  }
+}

@@ -3,6 +3,8 @@
   
   Implements brand name, search bar, secondary navigation, and user controls
   with glassmorphism effects and Editorial Geometry styling.
+  
+  Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
 -->
 
 <div class="top-nav" role="banner">
@@ -14,67 +16,42 @@
   
   <!-- Search Bar Section -->
   <div class="top-nav__search">
-    <div class="search-container">
-      <div class="search-icon">🔍</div>
-      <input 
-        type="text" 
-        class="search-input"
-        placeholder="Search infrastructure..."
-        (input)="onSearchInput($event.target?.value || '')"
-        aria-label="Search infrastructure items">
-    </div>
+    <app-search-bar
+      placeholder="Search infrastructure..."
+      [value]="searchQuery$ | async"
+      (searchChange)="onSearchInput($event)"
+      (searchSubmit)="onSearchSubmit($event)">
+    </app-search-bar>
   </div>
   
   <!-- Secondary Navigation Links -->
   <nav class="top-nav__secondary-nav" aria-label="Secondary navigation">
     <ul class="nav-list" role="list">
-      <li class="nav-item" role="listitem">
-        <a href="/dashboard" class="nav-link" aria-current="page">Dashboard</a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/inventory" class="nav-link">Inventory</a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/reports" class="nav-link">Reports</a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/settings" class="nav-link">Settings</a>
+      <li 
+        *ngFor="let item of topNavItems$ | async" 
+        class="nav-item" 
+        role="listitem">
+        <a 
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: false}"
+          class="nav-link"
+          [class.active]="item.active"
+          [attr.aria-current]="item.active ? 'page' : null"
+          (click)="onSecondaryNavClick(item)">
+          {{ item.label }}
+        </a>
       </li>
     </ul>
   </nav>
   
   <!-- User Controls Section -->
   <div class="top-nav__user-controls">
-    
-    <!-- Notification Icon -->
-    <button 
-      class="user-control-btn"
-      type="button"
-      aria-label="View notifications"
-      (click)="onUserControlClick('notification')">
-      <span class="control-icon">🔔</span>
-    </button>
-    
-    <!-- Settings Icon -->
-    <button 
-      class="user-control-btn"
-      type="button"
-      aria-label="Open settings"
-      (click)="onUserControlClick('settings')">
-      <span class="control-icon">⚙️</span>
-    </button>
-    
-    <!-- User Avatar -->
-    <button 
-      class="user-avatar-btn"
-      type="button"
-      aria-label="Open user menu"
-      (click)="onUserControlClick('profile')">
-      <div class="user-avatar">
-        <span class="avatar-placeholder">👤</span>
-      </div>
-    </button>
-    
+    <app-user-controls
+      [userInfo]="userInfo"
+      [notificationCount]="notificationCount"
+      (controlClick)="onUserControlClick($event)">
+    </app-user-controls>
   </div>
   
 </div>

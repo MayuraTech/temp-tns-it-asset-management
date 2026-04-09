@@ -1,0 +1,169 @@
+/**
+ * Search Bar Styles - Ghost Border Search Input
+ * 
+ * Implements search input with ghost border styling, editorial typography,
+ * and geometric hover effects following Editorial Geometry principles.
+ * 
+ * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 25.5, 25.6
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.search-bar {
+  width: 100%;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+  
+  // Search Icon - Requirement 5.2
+  .search-icon {
+    position: absolute;
+    left: 13.75px; // Positioned 13.75px from left edge
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10.5px; // Icon width
+    height: 10.5px;
+    color: var(--color-neutral-gray-400);
+    pointer-events: none;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+  
+  // Search Input - Requirements 5.1, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8
+  .search-input {
+    width: 100%;
+    
+    // Padding - Requirement 5.5
+    // 6px top, 7px bottom, 40px left (for icon), 16px right
+    padding: 6px 16px 7px 40px;
+    
+    // Background - Requirement 5.3
+    background-color: rgba(241, 245, 249, 0.5); // Slate 100 at 50% opacity
+    
+    // Border Radius - Requirement 5.4
+    border-radius: var(--border-radius-lg); // 12px
+    
+    // Ghost border styling - Requirement 25.5
+    border: none;
+    outline: none;
+    
+    // Typography - Requirement 5.8
+    @include typography('body-md'); // Inter Regular 14px
+    color: var(--color-editorial-on-surface);
+    
+    // Placeholder styling - Requirement 5.7
+    &::placeholder {
+      color: var(--color-neutral-gray-400); // Gray 400
+      opacity: 1;
+    }
+    
+    // Smooth transitions for focus effects
+    transition: all 0.3s ease;
+    
+    // Hover state with geometric effect
+    &:hover {
+      background-color: rgba(241, 245, 249, 0.7);
+      
+      & + .search-icon {
+        color: var(--color-primary-blue-800);
+      }
+    }
+    
+    // Focus state with 4px soft glow - Requirement 25.6
+    &:focus {
+      background-color: var(--color-surface-container-lowest); // White
+      
+      // 4px soft glow effect with blue-tinted shadow
+      box-shadow: 
+        0 0 0 2px rgba(20, 59, 125, 0.1), // Inner glow
+        0 4px 8px rgba(20, 59, 125, 0.1); // Soft shadow
+      
+      // Icon color change on focus
+      & ~ .search-icon {
+        color: var(--color-primary-blue-800);
+      }
+    }
+    
+    // Active state (while typing)
+    &:not(:placeholder-shown) {
+      background-color: var(--color-surface-container-lowest);
+    }
+    
+    // Remove default search input styling
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      display: none;
+    }
+    
+    // Accessibility focus indicator
+    @include focus-indicator();
+  }
+}
+
+// Responsive adjustments
+@include responsive('tablet') {
+  .search-container {
+    .search-input {
+      font-size: 13px; // Slightly smaller on tablets
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .search-container {
+    .search-input {
+      background-color: var(--color-surface-container-lowest);
+      border: 2px solid var(--color-editorial-outline);
+      
+      &:focus {
+        border-color: var(--color-primary-blue-800);
+        box-shadow: 0 0 0 3px rgba(20, 59, 125, 0.2);
+      }
+    }
+    
+    .search-icon {
+      color: var(--color-editorial-on-surface);
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .search-container {
+    .search-input,
+    .search-icon {
+      transition: none;
+    }
+  }
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  .search-container {
+    .search-input {
+      background-color: rgba(30, 30, 40, 0.5);
+      color: rgba(255, 255, 255, 0.9);
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+      
+      &:focus {
+        background-color: rgba(30, 30, 40, 0.8);
+        box-shadow: 
+          0 0 0 2px rgba(59, 93, 160, 0.3),
+          0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+    
+    .search-icon {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}

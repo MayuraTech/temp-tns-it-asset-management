@@ -3,22 +3,32 @@
   
   Implements brand header, primary navigation, action button, and secondary navigation
   with geometric triangle accents and tonal layering.
+  
+  Requirements: 2.1, 2.2, 2.6, 2.7, 16.2, 21.6, 24.2
 -->
 
-<div class="sidebar" role="navigation" aria-label="Primary navigation">
+<aside class="sidebar" role="navigation" aria-label="Primary navigation">
   
   <!-- Brand Header with Geometric Triangle Background -->
   <div class="sidebar__brand-header">
     <!-- Geometric Triangle Accent Background -->
-    <div class="brand-triangle-accent">
-      <!-- Triangle SVG will be added here -->
-    </div>
+    <app-geometric-triangle
+      size="small"
+      position="top-right"
+      [color]="'#143b7d'"
+      [opacity]="0.1">
+    </app-geometric-triangle>
     
     <!-- Logo and Application Name -->
     <div class="brand-content">
       <div class="brand-logo">
-        <!-- Logo icon placeholder -->
-        <div class="logo-placeholder"></div>
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="8" fill="#315396"/>
+            <path d="M20 10L28 18H12L20 10Z" fill="white" opacity="0.9"/>
+            <rect x="14" y="20" width="12" height="10" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
       </div>
       <div class="brand-text">
         <h1 class="brand-name">AssetIntel</h1>
@@ -30,34 +40,24 @@
   <!-- Primary Navigation Menu -->
   <nav class="sidebar__primary-nav" aria-label="Main navigation">
     <ul class="nav-list" role="list">
-      <li class="nav-item" role="listitem">
-        <a href="/assets" class="nav-link" aria-current="page">
-          <span class="nav-icon">📦</span>
-          <span class="nav-text">Assets</span>
-        </a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/software" class="nav-link">
-          <span class="nav-icon">💿</span>
-          <span class="nav-text">Software</span>
-        </a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/licenses" class="nav-link">
-          <span class="nav-icon">📄</span>
-          <span class="nav-text">Licenses</span>
-        </a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/network" class="nav-link">
-          <span class="nav-icon">🌐</span>
-          <span class="nav-text">Network</span>
-        </a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/users" class="nav-link">
-          <span class="nav-icon">👥</span>
-          <span class="nav-text">Users</span>
+      <li 
+        *ngFor="let item of primaryNavItems" 
+        class="nav-item" 
+        role="listitem">
+        <a 
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: false}"
+          class="nav-link"
+          [attr.aria-current]="isActiveRoute(item.route) ? 'page' : null"
+          (click)="onNavigationClick(item)">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <!-- Icon placeholder - will be replaced with actual icons -->
+              <rect width="20" height="20" rx="2" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </span>
+          <span class="nav-text">{{ item.label }}</span>
         </a>
       </li>
     </ul>
@@ -65,27 +65,38 @@
   
   <!-- Primary Action Button -->
   <div class="sidebar__action-button">
-    <button class="action-btn" type="button" aria-label="Add new asset">
-      Add New Asset
-    </button>
+    <app-primary-action-button
+      label="Add New Asset"
+      icon="add"
+      [fullWidth]="true"
+      (buttonClick)="onActionButtonClick()">
+    </app-primary-action-button>
   </div>
   
   <!-- Secondary Navigation -->
   <nav class="sidebar__secondary-nav" aria-label="Secondary navigation">
     <ul class="nav-list secondary" role="list">
-      <li class="nav-item" role="listitem">
-        <a href="/audit-logs" class="nav-link">
-          <span class="nav-icon">📋</span>
-          <span class="nav-text">Audit Logs</span>
-        </a>
-      </li>
-      <li class="nav-item" role="listitem">
-        <a href="/archived" class="nav-link">
-          <span class="nav-icon">📁</span>
-          <span class="nav-text">Archived</span>
+      <li 
+        *ngFor="let item of secondaryNavItems" 
+        class="nav-item" 
+        role="listitem">
+        <a 
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: false}"
+          class="nav-link"
+          [attr.aria-current]="isActiveRoute(item.route) ? 'page' : null"
+          (click)="onNavigationClick(item)">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <!-- Icon placeholder - will be replaced with actual icons -->
+              <rect width="20" height="20" rx="2" fill="currentColor" opacity="0.3"/>
+            </svg>
+          </span>
+          <span class="nav-text">{{ item.label }}</span>
         </a>
       </li>
     </ul>
   </nav>
   
-</div>
+</aside>

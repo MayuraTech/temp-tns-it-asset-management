@@ -41,7 +41,7 @@ export class AppShellComponent implements OnInit, OnDestroy {
   ) {
     // Initialize current route observable
     this.currentRoute$ = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       map((event: NavigationEnd) => event.urlAfterRedirects),
       takeUntil(this.destroy$)
     );

@@ -14,18 +14,12 @@
   
   <!-- Sidebar Navigation - Fixed Left Panel -->
   <aside class="app-shell__sidebar" role="navigation" aria-label="Primary navigation">
-    <app-sidebar 
-      [currentRoute$]="currentRoute$"
-      class="sidebar-container">
-    </app-sidebar>
+    <app-sidebar class="sidebar-container"></app-sidebar>
   </aside>
   
   <!-- Top Navigation Bar - Glassmorphism Header -->
   <header class="app-shell__top-nav" role="banner">
-    <app-top-navigation 
-      [currentRoute$]="currentRoute$"
-      class="top-nav-container">
-    </app-top-navigation>
+    <app-top-navigation class="top-nav-container"></app-top-navigation>
   </header>
   
   <!-- Main Content Area - Dynamic Content Projection -->

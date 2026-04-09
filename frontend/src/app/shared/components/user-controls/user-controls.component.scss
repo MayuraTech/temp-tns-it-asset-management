@@ -1,0 +1,321 @@
+/**
+ * User Controls Styles - User Controls with Geometric Hover Effects
+ * 
+ * Implements notification, settings, and user avatar components with
+ * geometric hover effects and editorial transitions following
+ * Editorial Geometry principles.
+ * 
+ * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 21.7
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg); // Requirement 7.5
+}
+
+// Common button styles for notification and settings
+.user-control-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: visible;
+  
+  // Control Icon - Requirements 7.1, 7.2
+  .control-icon {
+    width: 20px; // 16-20px size range
+    height: 20px;
+    color: var(--color-neutral-slate-600);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+  }
+  
+  // Geometric Triangle Accent - Requirement 21.7
+  .geometric-accent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 40px;
+    height: 40px;
+    color: var(--color-primary-blue-800);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  // Hover state with geometric effect and glassmorphism
+  &:hover {
+    background-color: rgba(238, 237, 244, 0.7); // Glassmorphism hover
+    backdrop-filter: blur(8px);
+    
+    .control-icon {
+      color: var(--color-primary-blue-800);
+      transform: scale(1.1); // Subtle scale effect
+    }
+    
+    // Show geometric triangle accent on hover
+    .geometric-accent {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    }
+  }
+  
+  // Active/pressed state
+  &:active {
+    transform: scale(0.95);
+    
+    .control-icon {
+      transform: scale(1);
+    }
+  }
+  
+  // Focus state - Requirements 7.6, 7.7
+  @include focus-indicator();
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-blue-800);
+    outline-offset: 2px;
+  }
+}
+
+// Notification Button Specific Styles
+.notification-btn {
+  // Notification Badge
+  .notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--color-accent-red-800) 0%, var(--color-accent-secondary) 100%);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    line-height: 18px;
+    text-align: center;
+    z-index: 3;
+    box-shadow: 0 2px 4px rgba(169, 55, 29, 0.3);
+  }
+}
+
+// User Avatar Button - Requirements 7.3, 7.4, 7.8
+.user-avatar-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  padding: 0;
+  overflow: visible;
+  
+  .user-avatar {
+    width: 32px; // Requirement 7.3
+    height: 32px;
+    border-radius: var(--border-radius-lg); // 12px - Requirement 7.3
+    border: 1px solid var(--color-neutral-slate-100); // Requirement 7.4
+    background-color: var(--color-surface-container-lowest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+    
+    // Avatar Image
+    .avatar-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    // Avatar Initials (fallback)
+    .avatar-initials {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-blue-800);
+      text-transform: uppercase;
+    }
+  }
+  
+  // Geometric Triangle Accent - Requirement 21.7
+  .geometric-accent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 40px;
+    height: 40px;
+    color: var(--color-primary-blue-800);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  // Hover state with blue-tinted shadow and geometric effect
+  &:hover {
+    .user-avatar {
+      border-color: var(--color-primary-blue-800);
+      // Blue-tinted shadow
+      box-shadow: 0 4px 12px rgba(20, 59, 125, 0.15);
+      transform: scale(1.05);
+    }
+    
+    // Show geometric triangle accent on hover
+    .geometric-accent {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+    }
+  }
+  
+  // Active/pressed state
+  &:active {
+    .user-avatar {
+      transform: scale(0.98);
+    }
+  }
+  
+  // Focus state - Requirement 7.8
+  @include focus-indicator();
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-blue-800);
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+}
+
+// Screen reader only text
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Responsive adjustments
+@include responsive('tablet') {
+  .user-controls {
+    gap: var(--spacing-md);
+  }
+  
+  .user-control-btn {
+    width: 36px;
+    height: 36px;
+    
+    .control-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .user-avatar-btn .user-avatar {
+    width: 28px;
+    height: 28px;
+    
+    .avatar-initials {
+      font-size: 11px;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .user-control-btn {
+    border: 2px solid var(--color-editorial-outline);
+    
+    &:hover {
+      border-color: var(--color-primary-blue-800);
+      background-color: var(--color-surface-container-low);
+    }
+    
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+  
+  .notification-btn .notification-badge {
+    border: 2px solid var(--color-white);
+  }
+  
+  .user-avatar-btn {
+    .user-avatar {
+      border-width: 2px;
+    }
+    
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .user-control-btn,
+  .user-control-btn .control-icon,
+  .user-control-btn .geometric-accent,
+  .user-avatar-btn,
+  .user-avatar-btn .user-avatar,
+  .user-avatar-btn .geometric-accent {
+    transition: none;
+  }
+  
+  .user-control-btn:hover .geometric-accent,
+  .user-avatar-btn:hover .geometric-accent {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  .user-control-btn {
+    .control-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    &:hover {
+      background-color: rgba(59, 93, 160, 0.2);
+      
+      .control-icon {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+  
+  .user-avatar-btn .user-avatar {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(30, 30, 40, 0.5);
+    
+    .avatar-initials {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}

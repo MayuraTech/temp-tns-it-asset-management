@@ -125,8 +125,12 @@
 }
 
 /* Ghost Border Utility Classes - No-Line Rule Implementation */
+/* Requirements: 25.1, 25.2, 25.3, 25.4, 25.5, 25.6 */
+/* Sub-task 5.2: Ghost border system with focus state transitions */
+
 .ghost-border {
   border: 1px solid rgba(196, 198, 210, var(--editorial-ghost-border-opacity));
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ghost-border-bottom {
@@ -140,6 +144,55 @@
   outline: none;
 }
 
+/* Input Field Ghost Borders - Requirement 25.5 */
+.input-ghost-border {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-editorial-outline-variant);
+  transition: all 0.3s ease;
+  padding: 8px 0;
+}
+
+.input-ghost-border:focus {
+  border-bottom-color: var(--color-primary-blue-800);
+  box-shadow: 0 4px 8px rgba(20, 59, 125, 0.1); /* 4px soft glow - Requirement 25.6 */
+  outline: none;
+}
+
+.input-ghost-border::placeholder {
+  color: var(--color-editorial-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* Tonal Transition Borders - Requirement 25.3 */
+.tonal-border {
+  border: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-surface-container-low) 0%,
+    var(--color-surface-container) 100%
+  );
+  padding: 1px;
+}
+
+.tonal-border-content {
+  background: var(--color-surface-base);
+  width: 100%;
+  height: 100%;
+}
+
+/* Accessibility-Required Container Edges - Requirement 25.4 */
+.accessible-ghost-border {
+  border: 1px solid var(--color-editorial-outline-variant);
+  opacity: var(--editorial-ghost-border-opacity);
+  transition: opacity 0.3s ease;
+}
+
+.accessible-ghost-border:hover,
+.accessible-ghost-border:focus-within {
+  opacity: 0.3;
+}
+
 /* Editorial Shadow Utility Classes */
 .editorial-shadow {
   box-shadow: var(--shadow-editorial);
@@ -150,6 +203,9 @@
 }
 
 /* Surface Hierarchy Utility Classes */
+/* Requirements: 23.1, 23.2, 23.3, 23.4, 23.5, 23.7 */
+/* Sub-task 5.4: Tonal layering and surface hierarchy */
+
 .surface-base {
   background-color: var(--color-surface-base);
 }
@@ -164,6 +220,7 @@
 
 .surface-container-lowest {
   background-color: var(--color-surface-container-lowest);
+  box-shadow: var(--shadow-editorial); /* Elevated card effect - Requirement 23.3 */
 }
 
 .surface-container-high {
@@ -172,6 +229,51 @@
 
 .surface-container-highest {
   background-color: var(--color-surface-container-highest);
+}
+
+/* Surface Tint Overlay - Requirement 23.7 */
+.surface-tint-overlay {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-surface-tint);
+    opacity: var(--editorial-surface-tint-opacity); /* 5% opacity */
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Natural Lift Effects - Requirement 23.5 */
+.surface-lift-1 {
+  @extend .surface-container-low;
+  box-shadow: 0 2px 4px rgba(20, 59, 125, 0.04);
+}
+
+.surface-lift-2 {
+  @extend .surface-container;
+  box-shadow: 0 4px 8px rgba(20, 59, 125, 0.06);
+}
+
+.surface-lift-3 {
+  @extend .surface-container-lowest;
+  box-shadow: 0 8px 16px rgba(20, 59, 125, 0.08);
+}
+
+/* Tonal Boundary Utility - Requirement 23.4 */
+.tonal-boundary {
+  border: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-surface-base) 0%,
+    var(--color-surface-container) 100%
+  );
+  padding: 2px 0;
 }
 
 /* Typography Utility Classes */
