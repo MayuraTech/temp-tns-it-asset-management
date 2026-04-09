@@ -1,0 +1,359 @@
+/**
+ * Editorial Geometry CSS Custom Properties
+ * 
+ * CSS custom properties for the Editorial Geometry design system.
+ * These tokens implement the "Corporate Curator" philosophy with
+ * tonal layering, geometric accents, and glassmorphism effects.
+ */
+
+:root {
+  /* Primary Colors - Editorial Geometry Palette */
+  --color-primary-blue-900: #1e3a8a;
+  --color-primary-blue-800: #143b7d;
+  --color-primary-blue-700: #315396;
+  
+  /* Editorial Accent Colors */
+  --color-accent-red-800: #991b1b;
+  --color-accent-secondary: #a9371d;
+  --color-accent-tertiary: #80002b;
+  
+  /* Neutral Colors */
+  --color-neutral-slate-50: #f8fafc;
+  --color-neutral-slate-100: #f1f5f9;
+  --color-neutral-slate-500: #64748b;
+  --color-neutral-slate-600: #475569;
+  --color-neutral-gray-400: #6b7280;
+  
+  /* Surface Hierarchy - Tonal Layering */
+  --color-surface-base: #faf9ff;
+  --color-surface-container: #eeedf4;
+  --color-surface-container-low: #f4f3f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #e8e7ee;
+  --color-surface-container-highest: #e3e2e8;
+  --color-surface-tint: #3b5da0;
+  
+  /* Editorial Colors - Never Pure Black */
+  --color-editorial-on-surface: #1a1b20;
+  --color-editorial-on-surface-variant: #434750;
+  --color-editorial-outline: #747782;
+  --color-editorial-outline-variant: #c4c6d2;
+  
+  /* Semantic Colors */
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  
+  /* Editorial Spacing System */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+  --spacing-xxxl: 40px;
+  --spacing-editorial: 80px;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Typography - Authority Meets Elegance */
+  --font-family-heading: 'Manrope', sans-serif;
+  --font-family-body: 'Inter', sans-serif;
+  
+  /* Font Sizes - Editorial Typography Scale */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 30px;
+  --font-size-display-lg: 48px;
+  
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
+  
+  /* Line Heights */
+  --line-height-tight: 16px;
+  --line-height-normal: 20px;
+  --line-height-relaxed: 22.5px;
+  --line-height-loose: 24px;
+  --line-height-extra-loose: 28px;
+  --line-height-spacious: 36px;
+  
+  /* Letter Spacing - Editorial */
+  --letter-spacing-tight: -0.75px;
+  --letter-spacing-normal: -0.5px;
+  --letter-spacing-wide: 0.3px;
+  --letter-spacing-editorial: -2%;
+  
+  /* Shadows - Blue-tinted Ambient Effects */
+  --shadow-subtle: 0px 1px 2px 0px rgba(30, 58, 138, 0.05);
+  --shadow-button: 0px 10px 15px -3px rgba(20, 59, 125, 0.2), 0px 4px 6px -4px rgba(20, 59, 125, 0.2);
+  --shadow-editorial: 0 20px 40px rgba(20, 59, 125, 0.06);
+  --shadow-focus-glow: 0 4px 8px rgba(20, 59, 125, 0.1);
+  
+  /* Layout Dimensions */
+  --layout-sidebar-width: 256px;
+  --layout-top-nav-height: 64px;
+  --layout-content-padding: 32px;
+  
+  /* Editorial Geometry Specific Values */
+  --editorial-triangle-breathing-room: 80px;
+  --editorial-glass-opacity: 70%;
+  --editorial-ghost-border-opacity: 15%;
+  --editorial-surface-tint-opacity: 5%;
+  --editorial-backdrop-blur: 12px;
+}
+
+/* Glassmorphism Utility Classes */
+.glassmorphism {
+  background: rgba(250, 249, 255, var(--editorial-glass-opacity));
+  backdrop-filter: blur(var(--editorial-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--editorial-backdrop-blur));
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(12px)) {
+  .glassmorphism {
+    background: rgba(250, 249, 255, 0.95);
+  }
+}
+
+/* Ghost Border Utility Classes - No-Line Rule Implementation */
+/* Requirements: 25.1, 25.2, 25.3, 25.4, 25.5, 25.6 */
+/* Sub-task 5.2: Ghost border system with focus state transitions */
+
+.ghost-border {
+  border: 1px solid rgba(196, 198, 210, var(--editorial-ghost-border-opacity));
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ghost-border-bottom {
+  border-bottom: 2px solid var(--color-editorial-outline-variant);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ghost-border-bottom:focus {
+  border-bottom-color: var(--color-primary-blue-800);
+  box-shadow: var(--shadow-focus-glow);
+  outline: none;
+}
+
+/* Input Field Ghost Borders - Requirement 25.5 */
+.input-ghost-border {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-editorial-outline-variant);
+  transition: all 0.3s ease;
+  padding: 8px 0;
+}
+
+.input-ghost-border:focus {
+  border-bottom-color: var(--color-primary-blue-800);
+  box-shadow: 0 4px 8px rgba(20, 59, 125, 0.1); /* 4px soft glow - Requirement 25.6 */
+  outline: none;
+}
+
+.input-ghost-border::placeholder {
+  color: var(--color-editorial-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* Tonal Transition Borders - Requirement 25.3 */
+.tonal-border {
+  border: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-surface-container-low) 0%,
+    var(--color-surface-container) 100%
+  );
+  padding: 1px;
+}
+
+.tonal-border-content {
+  background: var(--color-surface-base);
+  width: 100%;
+  height: 100%;
+}
+
+/* Accessibility-Required Container Edges - Requirement 25.4 */
+.accessible-ghost-border {
+  border: 1px solid var(--color-editorial-outline-variant);
+  opacity: var(--editorial-ghost-border-opacity);
+  transition: opacity 0.3s ease;
+}
+
+.accessible-ghost-border:hover,
+.accessible-ghost-border:focus-within {
+  opacity: 0.3;
+}
+
+/* Editorial Shadow Utility Classes */
+.editorial-shadow {
+  box-shadow: var(--shadow-editorial);
+}
+
+.button-shadow {
+  box-shadow: var(--shadow-button);
+}
+
+/* Surface Hierarchy Utility Classes */
+/* Requirements: 23.1, 23.2, 23.3, 23.4, 23.5, 23.7 */
+/* Sub-task 5.4: Tonal layering and surface hierarchy */
+
+.surface-base {
+  background-color: var(--color-surface-base);
+}
+
+.surface-container {
+  background-color: var(--color-surface-container);
+}
+
+.surface-container-low {
+  background-color: var(--color-surface-container-low);
+}
+
+.surface-container-lowest {
+  background-color: var(--color-surface-container-lowest);
+  box-shadow: var(--shadow-editorial); /* Elevated card effect - Requirement 23.3 */
+}
+
+.surface-container-high {
+  background-color: var(--color-surface-container-high);
+}
+
+.surface-container-highest {
+  background-color: var(--color-surface-container-highest);
+}
+
+/* Surface Tint Overlay - Requirement 23.7 */
+.surface-tint-overlay {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-surface-tint);
+    opacity: var(--editorial-surface-tint-opacity); /* 5% opacity */
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Natural Lift Effects - Requirement 23.5 */
+.surface-lift-1 {
+  @extend .surface-container-low;
+  box-shadow: 0 2px 4px rgba(20, 59, 125, 0.04);
+}
+
+.surface-lift-2 {
+  @extend .surface-container;
+  box-shadow: 0 4px 8px rgba(20, 59, 125, 0.06);
+}
+
+.surface-lift-3 {
+  @extend .surface-container-lowest;
+  box-shadow: 0 8px 16px rgba(20, 59, 125, 0.08);
+}
+
+/* Tonal Boundary Utility - Requirement 23.4 */
+.tonal-boundary {
+  border: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-surface-base) 0%,
+    var(--color-surface-container) 100%
+  );
+  padding: 2px 0;
+}
+
+/* Typography Utility Classes */
+.typography-heading {
+  font-family: var(--font-family-heading);
+}
+
+.typography-body {
+  font-family: var(--font-family-body);
+}
+
+.typography-display-lg {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-display-lg);
+  font-weight: var(--font-weight-extra-bold);
+  line-height: var(--line-height-spacious);
+  letter-spacing: var(--letter-spacing-editorial);
+}
+
+.typography-headline-lg {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-extra-bold);
+  line-height: var(--line-height-spacious);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.typography-headline-md {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-extra-loose);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+.typography-body-lg {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-loose);
+}
+
+.typography-body-md {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+}
+
+.typography-label-sm {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/* Geometric Triangle Accent Utility Classes */
+.triangle-accent {
+  fill: var(--color-primary-blue-800);
+  opacity: 0.1;
+  position: absolute;
+  z-index: -1;
+}
+
+.triangle-breathing-room {
+  margin: var(--editorial-triangle-breathing-room);
+}
+
+/* Focus Indicator Utility Classes */
+.focus-indicator:focus {
+  outline: 2px solid var(--color-primary-blue-800);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .focus-indicator:focus {
+    outline-width: 3px;
+  }
+}

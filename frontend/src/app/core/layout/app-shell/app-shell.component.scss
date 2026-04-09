@@ -1,0 +1,192 @@
+/**
+ * AppShell Styles - Editorial Geometry Layout Container
+ * 
+ * Implements CSS Grid layout following Editorial Geometry design principles
+ * with fixed sidebar, glassmorphism top navigation, and tonal layered content area.
+ * 
+ * Design Philosophy: "Corporate Curator" - treating digital space like premium editorial
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.app-shell {
+  // CSS Grid Layout Structure
+  display: grid;
+  grid-template-columns: var(--layout-sidebar-width) 1fr;
+  grid-template-rows: var(--layout-top-nav-height) 1fr;
+  grid-template-areas: 
+    "sidebar top-nav"
+    "sidebar main-content";
+  
+  // Full viewport coverage
+  min-height: 100vh;
+  width: 100vw;
+  
+  // Editorial Geometry base styling
+  background-color: var(--color-surface-base);
+  font-family: var(--font-family-body);
+  
+  // Prevent layout shift during load
+  overflow-x: hidden;
+  
+  // CSS Grid fallback for older browsers
+  @supports not (display: grid) {
+    display: flex;
+    flex-direction: column;
+    
+    .app-shell__sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--layout-sidebar-width);
+      height: 100vh;
+      z-index: 1000;
+    }
+    
+    .app-shell__top-nav {
+      margin-left: var(--layout-sidebar-width);
+      height: var(--layout-top-nav-height);
+    }
+    
+    .app-shell__main-content {
+      margin-left: var(--layout-sidebar-width);
+      flex: 1;
+    }
+  }
+}
+
+// Sidebar Area - Fixed Left Navigation
+.app-shell__sidebar {
+  grid-area: sidebar;
+  
+  // Fixed positioning within grid
+  position: relative;
+  z-index: 100;
+  
+  // Ensure sidebar spans full height
+  height: 100vh;
+  
+  // Editorial Geometry surface hierarchy
+  background-color: var(--color-surface-container-low);
+  
+  // Subtle shadow for depth
+  box-shadow: var(--shadow-subtle);
+  
+  .sidebar-container {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+// Top Navigation Area - Glassmorphism Header
+.app-shell__top-nav {
+  grid-area: top-nav;
+  
+  // Fixed positioning for glassmorphism effect
+  position: relative;
+  z-index: 90;
+  
+  // Glassmorphism styling
+  background-color: rgba(250, 249, 255, var(--editorial-glass-opacity));
+  backdrop-filter: blur(var(--editorial-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--editorial-backdrop-blur));
+  
+  // Graceful degradation for unsupported browsers
+  @supports not (backdrop-filter: blur(12px)) {
+    background-color: rgba(250, 249, 255, 0.95);
+  }
+  
+  // Editorial shadow
+  box-shadow: var(--shadow-subtle);
+  
+  .top-nav-container {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+// Main Content Area - Tonal Layered Content
+.app-shell__main-content {
+  grid-area: main-content;
+  
+  // Flexible content area
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  // Editorial Geometry background
+  background-color: var(--color-surface-base);
+  
+  // Smooth scrolling behavior
+  scroll-behavior: smooth;
+  
+  // Content padding
+  padding: var(--spacing-xxl);
+  
+  .main-content-container {
+    width: 100%;
+    min-height: calc(100vh - var(--layout-top-nav-height) - (var(--spacing-xxl) * 2));
+  }
+}
+
+// Responsive Behavior - Minimum 1024px viewport support
+@media (max-width: 1024px) {
+  .app-shell {
+    // Maintain layout structure at minimum width
+    grid-template-columns: var(--layout-sidebar-width) 1fr;
+    
+    // Ensure no horizontal scrolling
+    overflow-x: hidden;
+  }
+  
+  .app-shell__main-content {
+    // Adjust padding for smaller screens while maintaining Editorial Geometry
+    padding: var(--spacing-xl);
+    
+    .main-content-container {
+      min-height: calc(100vh - var(--layout-top-nav-height) - (var(--spacing-xl) * 2));
+    }
+  }
+}
+
+// Focus Management for Accessibility
+.app-shell {
+  // Skip link for keyboard navigation
+  &::before {
+    content: "Skip to main content";
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-primary-blue-800);
+    color: var(--color-white);
+    padding: 8px;
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    z-index: 1000;
+    
+    &:focus {
+      top: 6px;
+    }
+  }
+}
+
+// High Contrast Mode Support
+@media (prefers-contrast: high) {
+  .app-shell__sidebar {
+    border-right: 2px solid var(--color-editorial-outline);
+  }
+  
+  .app-shell__top-nav {
+    border-bottom: 2px solid var(--color-editorial-outline);
+    background-color: var(--color-surface-container-lowest);
+    backdrop-filter: none;
+  }
+}
+
+// Reduced Motion Support
+@media (prefers-reduced-motion: reduce) {
+  .app-shell__main-content {
+    scroll-behavior: auto;
+  }
+}

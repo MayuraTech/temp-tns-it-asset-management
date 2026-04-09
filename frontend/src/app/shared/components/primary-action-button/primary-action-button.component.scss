@@ -1,0 +1,284 @@
+/**
+ * Primary Action Button Styles - Primary Action Button with Glassmorphism
+ * 
+ * Implements "Add New Asset" button with Editorial Geometry styling,
+ * blue-tinted shadow effects, and glassmorphism for elevated states.
+ * 
+ * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 22.5
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.primary-action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  
+  // Background - Requirement 10.1
+  background: linear-gradient(135deg, var(--color-primary-blue-800) 0%, var(--color-primary-blue-700) 100%);
+  
+  // Text color - Requirement 10.2
+  color: var(--color-white);
+  
+  // Border radius - Requirement 10.5
+  border-radius: var(--border-radius-md); // 8px
+  border: none;
+  
+  // Padding - Requirement 10.4
+  padding: var(--spacing-md) var(--spacing-xl); // 12px vertical
+  
+  // Multi-layer shadow - Requirement 10.6
+  box-shadow: 
+    0px 10px 15px -3px rgba(20, 59, 125, 0.2),
+    0px 4px 6px -4px rgba(20, 59, 125, 0.2);
+  
+  // Typography - Requirement 10.3
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs); // 12px
+  line-height: var(--line-height-tight); // 16px
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  // Button content
+  .btn-spinner,
+  .btn-icon,
+  .btn-text {
+    position: relative;
+    z-index: 2;
+  }
+  
+  // Loading spinner
+  .btn-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .spinner-icon {
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  // Button icon
+  .btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  // Geometric Triangle Accent
+  .geometric-accent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    width: 100px;
+    height: 100px;
+    color: var(--color-white);
+    opacity: 0;
+    transition: all 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  // Hover state with glassmorphism - Requirement 22.5
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-primary-blue-700) 0%, var(--color-primary-blue-900) 100%);
+    
+    // Enhanced blue-tinted shadow
+    box-shadow: 
+      0px 15px 20px -3px rgba(20, 59, 125, 0.3),
+      0px 6px 8px -4px rgba(20, 59, 125, 0.3);
+    
+    transform: translateY(-2px);
+    
+    // Show geometric triangle accent on hover
+    .geometric-accent {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    }
+  }
+  
+  // Active/pressed state with geometric feedback - Requirement 10.8
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    
+    box-shadow: 
+      0px 5px 10px -3px rgba(20, 59, 125, 0.2),
+      0px 2px 4px -4px rgba(20, 59, 125, 0.2);
+    
+    .geometric-accent {
+      transform: translate(-50%, -50%) scale(0.8) rotate(360deg);
+    }
+  }
+  
+  // Focus state for accessibility
+  @include focus-indicator();
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+    box-shadow: 
+      0 0 0 4px rgba(20, 59, 125, 0.3),
+      0px 10px 15px -3px rgba(20, 59, 125, 0.2),
+      0px 4px 6px -4px rgba(20, 59, 125, 0.2);
+  }
+  
+  // Disabled state
+  &:disabled {
+    background: var(--color-neutral-slate-100);
+    color: var(--color-neutral-slate-500);
+    cursor: not-allowed;
+    box-shadow: none;
+    
+    .geometric-accent {
+      display: none;
+    }
+  }
+  
+  // Loading state
+  &.primary-action-btn--loading {
+    cursor: wait;
+    
+    .btn-text {
+      opacity: 0.7;
+    }
+  }
+}
+
+// Size variants
+.primary-action-btn--small {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: 11px;
+  
+  .btn-icon .icon,
+  .btn-spinner .spinner-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.primary-action-btn--medium {
+  // Default size (already defined above)
+}
+
+.primary-action-btn--large {
+  padding: var(--spacing-lg) var(--spacing-xxl);
+  font-size: 14px;
+  
+  .btn-icon .icon,
+  .btn-spinner .spinner-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Full width variant - Requirement 10.7
+.primary-action-btn--full-width {
+  width: 100%;
+}
+
+// Spinner animation
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive adjustments
+@include responsive('tablet') {
+  .primary-action-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 11px;
+  }
+  
+  .primary-action-btn--large {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 12px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .primary-action-btn {
+    border: 2px solid var(--color-white);
+    
+    &:hover:not(:disabled) {
+      border-color: var(--color-white);
+      background: var(--color-primary-blue-900);
+    }
+    
+    &:focus-visible {
+      outline-width: 3px;
+    }
+    
+    &:disabled {
+      border-color: var(--color-neutral-slate-500);
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .primary-action-btn,
+  .primary-action-btn .geometric-accent,
+  .primary-action-btn .btn-spinner .spinner-icon {
+    transition: none;
+    animation: none;
+  }
+  
+  .primary-action-btn:hover:not(:disabled) {
+    transform: none;
+    
+    .geometric-accent {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+  
+  .primary-action-btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  .primary-action-btn {
+    background: linear-gradient(135deg, var(--color-primary-blue-700) 0%, var(--color-primary-blue-800) 100%);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--color-primary-blue-600) 0%, var(--color-primary-blue-700) 100%);
+    }
+    
+    &:disabled {
+      background: rgba(100, 100, 120, 0.3);
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .primary-action-btn {
+    background: var(--color-primary-blue-800);
+    box-shadow: none;
+    
+    .geometric-accent {
+      display: none;
+    }
+  }
+}

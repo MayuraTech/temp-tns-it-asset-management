@@ -2,23 +2,27 @@
 
 ## Introduction
 
-This document defines the requirements for implementing the IT Asset Management Dashboard Layout based on the Figma design. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the AssetIntel application.
+This document defines the requirements for implementing the IT Asset Management Dashboard Layout based on the **Editorial Geometry** design system and Google Stitch Layout Shell screen. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the AssetIntel application.
 
-The implementation will establish the visual identity, navigation structure, and responsive layout patterns that will be used consistently across the entire application.
+The implementation follows the **"Corporate Curator"** philosophy, treating digital space like a premium printed journal. It establishes the visual identity through intentional asymmetry, geometric triangle accents, tonal layering, and glassmorphism effects while maintaining navigation structure and responsive layout patterns that will be used consistently across the entire application.
 
 ## Glossary
 
-- **Application_Shell**: The outermost container component that provides the fixed layout structure including sidebar, top navigation, and content area
-- **Sidebar**: The fixed left navigation panel (256px width) containing primary navigation menu and brand identity
-- **Top_Navigation_Bar**: The horizontal navigation bar (64px height) spanning the top of the content area with search, secondary navigation, and user controls
-- **Main_Content_Area**: The flexible content region where feature-specific modules are rendered
-- **Navigation_Item**: An interactive element in the sidebar or top navigation that routes to different application sections
-- **Active_State**: Visual indication showing which navigation item corresponds to the current route
-- **Brand_Header**: The logo and application name section at the top of the sidebar
-- **Search_Bar**: The input field in the top navigation for searching infrastructure items
-- **User_Controls**: The collection of icons and avatar in the top navigation (notifications, settings, profile)
-- **Empty_State**: A placeholder component displayed when no content is available in the main area
-- **Responsive_Behavior**: The ability of the layout to adapt to different screen sizes while maintaining usability
+- **Application_Shell**: The outermost container component that provides the fixed layout structure including sidebar, top navigation, and content area following Editorial Geometry principles
+- **Sidebar**: The fixed left navigation panel (256px width) containing primary navigation menu, brand identity, and geometric triangle accents
+- **Top_Navigation_Bar**: The horizontal navigation bar (64px height) with glassmorphism effects spanning the top of the content area with search, secondary navigation, and user controls
+- **Main_Content_Area**: The flexible content region where feature-specific modules are rendered with tonal layering and geometric accents
+- **Navigation_Item**: An interactive element in the sidebar or top navigation that routes to different application sections with geometric active state indicators
+- **Active_State**: Visual indication showing which navigation item corresponds to the current route using geometric accents and tonal layering
+- **Brand_Header**: The logo and application name section at the top of the sidebar with geometric triangle background
+- **Search_Bar**: The input field in the top navigation with ghost border styling for searching infrastructure items
+- **User_Controls**: The collection of icons and avatar in the top navigation (notifications, settings, profile) with geometric hover effects
+- **Empty_State**: A placeholder component displayed when no content is available in the main area with editorial typography
+- **Responsive_Behavior**: The ability of the layout to adapt to different screen sizes while maintaining editorial geometry and usability
+- **Geometric_Accents**: Large-scale triangles that break the grid and act as visual anchors following Editorial Geometry principles
+- **Tonal_Layering**: Surface hierarchy using background color shifts instead of harsh lines for depth and boundaries
+- **Glassmorphism**: Backdrop blur effects with transparency for floating navigation and overlay elements
+- **Ghost_Borders**: Subtle border suggestions using outline_variant at 15% opacity instead of solid lines
 
 ## Requirements
 
@@ -311,6 +315,76 @@ The implementation will establish the visual identity, navigation structure, and
 4. THE Application_Shell SHALL render correctly in Edge 90+
 5. THE Application_Shell SHALL use CSS features with appropriate fallbacks for older browser versions
 6. THE Application_Shell SHALL test backdrop blur support and provide fallback styling
+
+### Requirement 21: Editorial Geometry Design System Implementation
+
+**User Story:** As a developer, I want the dashboard to follow Editorial Geometry design principles, so that the interface feels like a premium printed journal rather than a traditional corporate dashboard.
+
+#### Acceptance Criteria
+
+1. THE Application_Shell SHALL implement the "Corporate Curator" philosophy treating digital space like a premium editorial experience
+2. THE Application_Shell SHALL use intentional asymmetry with geometric triangles breaking the grid as visual anchors
+3. THE Application_Shell SHALL create depth through overlapping elements rather than structural lines
+4. THE Application_Shell SHALL maintain at least 80px breathing room around geometric accent elements
+5. THE Application_Shell SHALL use tonal layering for surface hierarchy instead of 1px solid borders
+6. THE Application_Shell SHALL apply geometric triangle accents behind elevated content cards
+7. THE Application_Shell SHALL use asymmetrical layouts with text blocks aligned left and geometric shapes anchoring right
+8. THE Application_Shell SHALL never use pure black (#000000), always using on_surface (#1a1b20) for softer contrast
+
+### Requirement 22: Glassmorphism Effects Implementation
+
+**User Story:** As a user, I want floating navigation elements to have a premium glass-like appearance, so that the interface feels modern and sophisticated.
+
+#### Acceptance Criteria
+
+1. THE Top_Navigation_Bar SHALL use glassmorphism with surface color at 70% opacity
+2. THE Top_Navigation_Bar SHALL apply backdrop-filter blur of 12px for glass effect
+3. THE Application_Shell SHALL allow geometric background patterns to bleed through glass elements
+4. THE Application_Shell SHALL use glassmorphism for floating overlays and modal dialogs
+5. THE Application_Shell SHALL apply blue-tinted ambient shadows (rgba(20, 59, 125, 0.06)) for floating elements
+6. THE Application_Shell SHALL ensure glassmorphism effects degrade gracefully in unsupported browsers
+
+### Requirement 23: Tonal Layering and Surface Hierarchy
+
+**User Story:** As a developer, I want clear visual hierarchy through surface layering, so that content organization is intuitive without harsh borders.
+
+#### Acceptance Criteria
+
+1. THE Application_Shell SHALL use surface (#faf9ff) as the base layer
+2. THE Application_Shell SHALL use surface-container (#eeedf4) for content blocks
+3. THE Application_Shell SHALL use surface-container-lowest (#ffffff) for elevated cards with pop effect
+4. THE Application_Shell SHALL define boundaries through background color shifts, not solid borders
+5. THE Application_Shell SHALL stack surface tiers to create natural lift and hierarchy
+6. THE Application_Shell SHALL use ghost borders (outline_variant at 15% opacity) only when accessibility requires container edges
+7. THE Application_Shell SHALL apply surface-tint (#3b5da0) at 5% opacity over images to unify with brand palette
+
+### Requirement 24: Geometric Triangle Accents
+
+**User Story:** As a user, I want geometric visual elements that create depth and visual interest, so that the interface feels sophisticated and branded.
+
+#### Acceptance Criteria
+
+1. THE Application_Shell SHALL render geometric triangles as depth markers and visual anchors
+2. THE Sidebar SHALL display a geometric triangle accent behind the brand header
+3. THE Main_Content_Area SHALL include geometric triangle shapes in the background with subtle blur effects
+4. THE Application_Shell SHALL position triangles with at least 80px breathing room from core text content
+5. THE Application_Shell SHALL use primary color (#143b7d) for triangle accents
+6. THE Application_Shell SHALL ensure triangles partially overlap with elevated content cards for 3D layering effect
+7. THE Application_Shell SHALL make geometric accents responsive and maintain proportions across viewport sizes
+
+### Requirement 25: Ghost Border and No-Line Rule Implementation
+
+**User Story:** As a developer, I want to eliminate harsh borders while maintaining accessibility, so that the interface maintains a premium editorial feel.
+
+#### Acceptance Criteria
+
+1. THE Application_Shell SHALL prohibit 1px solid borders for sectioning throughout the interface
+2. THE Search_Bar SHALL use ghost border styling with outline_variant color
+3. THE Application_Shell SHALL define all boundaries through background color shifts or tonal transitions
+4. THE Application_Shell SHALL use outline_variant at 15% opacity for accessibility-required container edges
+5. THE Input_Fields SHALL use bottom-weighted ghost borders (2px) that transition to primary color on focus
+6. THE Application_Shell SHALL apply 4px soft glow effect on focused input elements
+7. THE Application_Shell SHALL ensure ghost borders meet WCAG contrast requirements while maintaining editorial aesthetic
 
 ## Non-Functional Requirements
 

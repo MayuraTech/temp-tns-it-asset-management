@@ -1,0 +1,186 @@
+/**
+ * Main Content Styles - Tonal Layered Content Area
+ * 
+ * Implements flexible content area with Editorial Geometry background system,
+ * geometric triangle accents, and empty state display.
+ * 
+ * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 16.4, 23.1, 23.2, 23.3, 24.3
+ * Sub-task 5.1: Geometric triangle accents with breathing room
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.main-content {
+  // Full area coverage - Requirement 8.3, 8.4
+  width: 100%;
+  height: 100%;
+  position: relative;
+  
+  // Editorial Geometry base surface - Requirement 8.1, 23.1
+  @include surface-layer('base');
+  
+  // Content padding - Requirement 8.2
+  padding: var(--layout-content-padding);
+  
+  // Smooth scrolling for overflow content - Requirement 8.5
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+// Geometric Triangle Accents Background - Requirement 24.3
+.geometric-accents {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  
+  // Geometric triangles are rendered via GeometricTriangleComponent
+  // with 80px breathing room enforced in component styles
+  app-geometric-triangle {
+    // Additional positioning adjustments if needed
+    &:nth-child(1) {
+      // Large triangle top-right
+      top: var(--editorial-triangle-breathing-room);
+      right: var(--editorial-triangle-breathing-room);
+    }
+    
+    &:nth-child(2) {
+      // Medium triangle bottom-left
+      bottom: calc(var(--editorial-triangle-breathing-room) * 2);
+      left: calc(var(--editorial-triangle-breathing-room) * 1.5);
+    }
+    
+    &:nth-child(3) {
+      // Small triangle center
+      top: 40%;
+      right: 20%;
+    }
+  }
+}
+
+// Content Area
+.content-area {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100%;
+  
+  .projected-content {
+    width: 100%;
+    
+    &.hidden {
+      display: none;
+    }
+  }
+}
+
+// Empty State Styling - Requirement 9.1-9.7
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--layout-top-nav-height) - (var(--layout-content-padding) * 2));
+  padding: var(--spacing-xxl);
+  
+  &__content {
+    text-align: center;
+    max-width: 600px;
+    
+    // Elevated surface for pop effect - Requirement 23.3
+    @include surface-layer('container-lowest');
+    padding: var(--spacing-xxxl);
+    border-radius: var(--border-radius-lg);
+    
+    // Editorial shadow for depth - Requirement 23.5
+    @include editorial-shadow('editorial');
+  }
+  
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--spacing-xl);
+    
+    // Icon container styling - Requirement 9.5
+    @include surface-layer('container');
+    border-radius: var(--border-radius-lg);
+    
+    .icon-placeholder {
+      font-size: 32px;
+    }
+  }
+  
+  &__heading {
+    // Editorial typography - Requirement 9.2, 9.7
+    @include typography('headline-lg');
+    color: var(--color-primary-blue-900);
+    margin: 0 0 var(--spacing-lg) 0;
+  }
+  
+  &__description {
+    // Body text styling - Requirement 9.3
+    @include typography('body-lg');
+    color: var(--color-editorial-on-surface);
+    margin: 0 0 var(--spacing-lg) 0;
+    line-height: 1.6;
+  }
+  
+  &__info {
+    @include typography('body-md');
+    color: var(--color-editorial-on-surface-variant);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Responsive adjustments - Requirement 24.7
+@include responsive('tablet') {
+  .main-content {
+    padding: var(--spacing-xl);
+  }
+  
+  .empty-state {
+    padding: var(--spacing-xl);
+    
+    &__content {
+      padding: var(--spacing-xl);
+    }
+    
+    &__icon {
+      width: 60px;
+      height: 60px;
+      
+      .icon-placeholder {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// High contrast mode support - Requirement 15.7
+@media (prefers-contrast: high) {
+  .empty-state__content {
+    border: 2px solid var(--color-editorial-outline);
+  }
+}
+
+// Reduced motion support - Requirement 19.6
+@media (prefers-reduced-motion: reduce) {
+  .main-content {
+    scroll-behavior: auto;
+  }
+}
+
+// Print styles
+@media print {
+  .geometric-accents {
+    display: none;
+  }
+}
