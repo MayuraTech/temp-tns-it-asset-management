@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn, ActivatedRouteSnapshot } from '@angular/router';
+import { Router, CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Role } from '../models/auth.model';
 
@@ -14,7 +14,7 @@ import { Role } from '../models/auth.model';
  *   data: { roles: [Role.ADMINISTRATOR] }
  * }
  */
-export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 

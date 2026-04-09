@@ -38,8 +38,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 27px;  // Requirement 9.1: 27x27px
+    height: 27px; // Requirement 9.1: 27x27px
     margin-bottom: var(--spacing-xl);
     
     // Icon container background - Requirement 9.5
@@ -49,7 +49,7 @@
     border-radius: var(--border-radius-lg);
     
     .icon-display {
-      font-size: 32px;
+      font-size: 14px; // Appropriate for 27x27px container
       line-height: 1;
     }
   }
@@ -99,11 +99,11 @@
     }
     
     &__icon {
-      width: 60px;
-      height: 60px;
+      width: 27px;
+      height: 27px;
       
       .icon-display {
-        font-size: 24px;
+        font-size: 14px;
       }
     }
     
@@ -124,12 +124,12 @@
     }
     
     &__icon {
-      width: 48px;
-      height: 48px;
+      width: 27px;
+      height: 27px;
       margin-bottom: var(--spacing-md);
       
       .icon-display {
-        font-size: 20px;
+        font-size: 14px;
       }
     }
     

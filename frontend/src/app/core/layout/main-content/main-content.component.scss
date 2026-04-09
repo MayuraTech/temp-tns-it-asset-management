@@ -13,8 +13,8 @@
 
 .main-content {
   // Full area coverage - Requirement 8.3, 8.4
-  width: 100%;
-  height: 100%;
+  width: calc(100vw - var(--layout-sidebar-width));
+  height: calc(100vh - var(--layout-top-nav-height));
   position: relative;
   
   // Editorial Geometry base surface - Requirement 8.1, 23.1
@@ -104,16 +104,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 27px;
+    height: 27px;
     margin-bottom: var(--spacing-xl);
     
     // Icon container styling - Requirement 9.5
-    @include surface-layer('container');
+    background-color: #eeedf4;
     border-radius: var(--border-radius-lg);
     
     .icon-placeholder {
-      font-size: 32px;
+      font-size: 14px;
     }
   }
   
@@ -154,11 +154,11 @@
     }
     
     &__icon {
-      width: 60px;
-      height: 60px;
+      width: 27px;
+      height: 27px;
       
       .icon-placeholder {
-        font-size: 24px;
+        font-size: 14px;
       }
     }
   }

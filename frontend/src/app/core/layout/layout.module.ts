@@ -19,15 +19,16 @@ import { MainContentComponent } from './main-content/main-content.component';
 
 @NgModule({
   declarations: [
-    AppShellComponent,
-    TopNavigationComponent,
-    MainContentComponent
+    AppShellComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
-    SidebarComponent  // Import standalone component
+    // Standalone components must be imported, not declared
+    SidebarComponent,
+    TopNavigationComponent,
+    MainContentComponent
   ],
   exports: [
     AppShellComponent,

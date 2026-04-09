@@ -10,7 +10,20 @@
 <div class="search-bar">
   <div class="search-container">
     
-    <!-- Search Icon - Requirement 5.2 -->
+    <!-- Search Input - Requirements 5.1, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8 -->
+    <!-- Input placed first so CSS sibling selector (~) can target the icon -->
+    <input 
+      type="search"
+      class="search-input"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="onInputChange($event)"
+      (keypress)="onKeyPress($event)"
+      aria-label="Search infrastructure items"
+      autocomplete="off"
+      spellcheck="false">
+    
+    <!-- Search Icon - Requirement 5.2 (absolutely positioned, visual order unaffected) -->
     <svg 
       class="search-icon" 
       width="10.5" 
@@ -32,18 +45,6 @@
         stroke-linecap="round" 
         stroke-linejoin="round"/>
     </svg>
-    
-    <!-- Search Input - Requirements 5.1, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8 -->
-    <input 
-      type="search"
-      class="search-input"
-      [placeholder]="placeholder"
-      [(ngModel)]="value"
-      (ngModelChange)="onInputChange($event)"
-      (keypress)="onKeyPress($event)"
-      aria-label="Search infrastructure items"
-      autocomplete="off"
-      spellcheck="false">
     
   </div>
 </div>
