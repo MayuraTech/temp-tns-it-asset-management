@@ -4,11 +4,16 @@
       "command": "npx",
       "args": [
         "mcp-remote",
+        "https://stitch.googleapis.com/mcp",
+        "--no-auth",
         "--header",
-        "X-Goog-Api-Key: AQ.Ab8RN6Lg6eP04YfXuAPc1X5Nkd8Bmus1p5OMG-zUmmp0RIEoNg",
-        "https://stitch.googleapis.com/mcp"
+        "X-Goog-Api-Key:AQ.Ab8RN6LqQGQYD1g5Ixd3nsv82A7VlBlINFMgmpu8jsBVyptiNA",
+        "-y", "@_davideast/stitch-mcp@latest", "proxy"
       ],
-      "disabled": false
+      "disabled": false,
+      "autoApprove": [
+        "get_project"
+      ]
     }
   }
 }

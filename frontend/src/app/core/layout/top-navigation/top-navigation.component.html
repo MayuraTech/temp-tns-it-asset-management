@@ -1,0 +1,57 @@
+<!--
+  Top Navigation Template - Glassmorphism Navigation Bar
+  
+  Implements brand name, search bar, secondary navigation, and user controls
+  with glassmorphism effects and Editorial Geometry styling.
+  
+  Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
+-->
+
+<div class="top-nav" role="banner">
+  
+  <!-- Brand Name Section -->
+  <div class="top-nav__brand">
+    <h1 class="brand-name">AssetIntel</h1>
+  </div>
+  
+  <!-- Search Bar Section -->
+  <div class="top-nav__search">
+    <app-search-bar
+      placeholder="Search infrastructure..."
+      [value]="searchQuery$ | async"
+      (searchChange)="onSearchInput($event)"
+      (searchSubmit)="onSearchSubmit($event)">
+    </app-search-bar>
+  </div>
+  
+  <!-- Secondary Navigation Links -->
+  <nav class="top-nav__secondary-nav" aria-label="Secondary navigation">
+    <ul class="nav-list" role="list">
+      <li 
+        *ngFor="let item of topNavItems$ | async" 
+        class="nav-item" 
+        role="listitem">
+        <a 
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: false}"
+          class="nav-link"
+          [class.active]="item.active"
+          [attr.aria-current]="item.active ? 'page' : null"
+          (click)="onSecondaryNavClick(item)">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  <!-- User Controls Section -->
+  <div class="top-nav__user-controls">
+    <app-user-controls
+      [userInfo]="userInfo"
+      [notificationCount]="notificationCount"
+      (controlClick)="onUserControlClick($event)">
+    </app-user-controls>
+  </div>
+  
+</div>

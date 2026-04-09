@@ -1,6 +1,7 @@
-/* Global Styles for IT Infrastructure Asset Management */
+/* Global Styles for AssetIntel - Editorial Geometry Design System */
 
-// Import custom theme and responsive breakpoints
+// Import Editorial Geometry design tokens and theme
+@import './app/shared/styles/design-tokens.scss';
 @import './theme.scss';
 @import './breakpoints.scss';
 
@@ -11,15 +12,19 @@
   box-sizing: border-box;
 }
 
+// Editorial Geometry Base Styles - Never Pure Black
 html, body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #fafafa;
-  color: rgba(0, 0, 0, 0.87);
+  font-family: var(--font-family-body);
+  background-color: var(--color-surface-base);
+  color: var(--color-editorial-on-surface);
+  line-height: var(--line-height-loose);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
 }
 
 // Utility Classes
@@ -276,4 +281,125 @@ body {
 
 .font-weight-bold {
   font-weight: 700;
+}
+
+// Editorial Geometry Utility Classes
+.editorial-heading {
+  font-family: var(--font-family-heading);
+  color: var(--color-primary-blue-900);
+}
+
+.editorial-accent {
+  color: var(--color-accent-secondary);
+}
+
+.editorial-muted {
+  color: var(--color-editorial-on-surface-variant);
+}
+
+// No-Line Rule - Prohibit 1px solid borders for sectioning
+.no-border {
+  border: none !important;
+}
+
+// Ghost Border Implementation
+.ghost-border-input {
+  border: none;
+  border-bottom: 2px solid var(--color-editorial-outline-variant);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.ghost-border-input:focus {
+  border-bottom-color: var(--color-primary-blue-800);
+  box-shadow: var(--shadow-focus-glow);
+  outline: none;
+}
+
+// Button Styles - Editorial Geometry
+.btn-primary-editorial {
+  background: linear-gradient(135deg, var(--color-primary-blue-800) 0%, var(--color-primary-blue-700) 100%);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  box-shadow: var(--shadow-button);
+  padding: var(--spacing-md) var(--spacing-xl);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-editorial:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-editorial);
+}
+
+.btn-ghost-editorial {
+  background: transparent;
+  color: var(--color-primary-blue-800);
+  border: none;
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost-editorial::after {
+  content: "▲";
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+}
+
+.btn-ghost-editorial:hover::after {
+  transform: translateX(4px);
+}
+
+// Focus Indicators - WCAG Compliant
+.focus-editorial:focus {
+  outline: 2px solid var(--color-primary-blue-800);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+@media (prefers-contrast: high) {
+  .focus-editorial:focus {
+    outline-width: 3px;
+  }
+}
+
+// Smooth Scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Prevent layout shift
+* {
+  box-sizing: border-box;
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .surface-container {
+    border: 1px solid var(--color-editorial-outline);
+  }
+  
+  .ghost-border {
+    border: 1px solid var(--color-editorial-outline) !important;
+  }
 }

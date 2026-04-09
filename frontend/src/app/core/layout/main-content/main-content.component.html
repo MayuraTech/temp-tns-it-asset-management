@@ -1,0 +1,82 @@
+<!--
+  Main Content Template - Tonal Layered Content Area
+  
+  Implements flexible content area with geometric accents, empty state,
+  and content projection following Editorial Geometry principles.
+  
+  Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 16.4, 23.1, 23.2, 23.3, 24.3
+  Sub-task 5.1: Geometric triangle accents with 80px breathing room
+-->
+
+<div class="main-content" role="main">
+  
+  <!-- Geometric Triangle Accents Background - Requirement 24.3 -->
+  <div class="geometric-accents" aria-hidden="true">
+    <!-- Triangle accent shapes with breathing room - Requirement 24.4 -->
+    <app-geometric-triangle
+      size="large"
+      position="top-right"
+      [color]="'#143b7d'"
+      [opacity]="0.08"
+      [blur]="true"
+      [responsive]="true">
+    </app-geometric-triangle>
+    
+    <app-geometric-triangle
+      size="medium"
+      position="bottom-left"
+      [color]="'#143b7d'"
+      [opacity]="0.06"
+      [blur]="true"
+      [responsive]="true">
+    </app-geometric-triangle>
+    
+    <app-geometric-triangle
+      size="small"
+      position="center"
+      [color]="'#143b7d'"
+      [opacity]="0.04"
+      [blur]="true"
+      [responsive]="true">
+    </app-geometric-triangle>
+  </div>
+  
+  <!-- Content Projection Area -->
+  <div class="content-area">
+    
+    <!-- Empty State Display -->
+    <div class="empty-state" *ngIf="isEmpty$ | async">
+      <div class="empty-state__content">
+        
+        <!-- Icon Container -->
+        <div class="empty-state__icon">
+          <span class="icon-placeholder">🎨</span>
+        </div>
+        
+        <!-- Heading -->
+        <h2 class="empty-state__heading">Workspace Canvas</h2>
+        
+        <!-- Description -->
+        <p class="empty-state__description">
+          This is your dynamic content area where feature modules will be displayed. 
+          The Editorial Geometry design system creates depth through tonal layering 
+          and geometric accents rather than harsh structural lines.
+        </p>
+        
+        <!-- Additional Info -->
+        <p class="empty-state__info">
+          Navigate using the sidebar to load different application sections, 
+          or use the search bar to find specific infrastructure items.
+        </p>
+        
+      </div>
+    </div>
+    
+    <!-- Router Outlet Content Projection -->
+    <div class="projected-content" [class.hidden]="isEmpty$ | async">
+      <ng-content></ng-content>
+    </div>
+    
+  </div>
+  
+</div>

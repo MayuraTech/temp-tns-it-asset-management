@@ -1,0 +1,33 @@
+<!--
+  AppShell Template - Editorial Geometry Layout Container
+  
+  Implements CSS Grid layout with fixed sidebar (256px), top navigation (64px),
+  and flexible main content area following Editorial Geometry principles.
+  
+  Layout Structure:
+  - Grid Template: 256px sidebar | flexible content
+  - Grid Rows: 64px top nav | flexible main content
+  - Semantic HTML with ARIA landmarks for accessibility
+-->
+
+<div class="app-shell" role="application" aria-label="AssetIntel Application">
+  
+  <!-- Sidebar Navigation - Fixed Left Panel -->
+  <aside class="app-shell__sidebar" role="navigation" aria-label="Primary navigation">
+    <app-sidebar class="sidebar-container"></app-sidebar>
+  </aside>
+  
+  <!-- Top Navigation Bar - Glassmorphism Header -->
+  <header class="app-shell__top-nav" role="banner">
+    <app-top-navigation class="top-nav-container"></app-top-navigation>
+  </header>
+  
+  <!-- Main Content Area - Dynamic Content Projection -->
+  <main class="app-shell__main-content" role="main">
+    <app-main-content class="main-content-container">
+      <!-- Router Outlet for Feature Module Content Projection -->
+      <router-outlet></router-outlet>
+    </app-main-content>
+  </main>
+  
+</div>

@@ -1,0 +1,31 @@
+<!--
+  Empty State Template - Editorial Typography Display
+  
+  Displays centered empty state with geometric icon, editorial heading,
+  and descriptive text following Editorial Geometry principles.
+  
+  Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 21.1
+  Task 7.3: Empty state component with editorial typography
+-->
+
+<div class="empty-state" role="status" aria-live="polite">
+  <div class="empty-state__content">
+    
+    <!-- Icon Container - Requirement 9.1, 9.5, 9.6 -->
+    <div class="empty-state__icon" aria-hidden="true">
+      <span class="icon-display">{{ icon }}</span>
+    </div>
+    
+    <!-- Heading - Requirement 9.2, 9.7, 21.1 -->
+    <h2 class="empty-state__heading">{{ heading }}</h2>
+    
+    <!-- Description - Requirement 9.3 -->
+    <p class="empty-state__description">{{ description }}</p>
+    
+    <!-- Additional Info - Requirement 9.4 -->
+    <p class="empty-state__info" *ngIf="showAdditionalInfo">
+      {{ additionalInfo }}
+    </p>
+    
+  </div>
+</div>
