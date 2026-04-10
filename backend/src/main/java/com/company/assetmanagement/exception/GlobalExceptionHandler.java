@@ -1,15 +1,20 @@
 package com.company.assetmanagement.exception;
 
 import com.company.assetmanagement.dto.ErrorResponse;
+import com.company.assetmanagement.service.AuthenticationEventService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,89 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    
+    @Autowired
+    private AuthenticationEventService authenticationEventService;
+    
+    /**
+     * Handle AuthenticationFailedException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailed(
+            AuthenticationFailedException ex, HttpServletRequest request) {
+        
+        // Log authentication failure (without sensitive data)
+        String ipAddress = authenticationEventService.getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
+        authenticationEventService.logLoginFailure(ex.getUsername(), ex.getErrorType(), ipAddress, userAgent);
+        
+        logger.warn("Authentication failed for user: {}, type: {}, IP: {}", 
+            ex.getUsername(), ex.getErrorType(), ipAddress);
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("errorType", ex.getErrorType());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_FAILED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle AccountLockedException - returns 423 Locked.
+     */
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountLocked(
+            AccountLockedException ex, HttpServletRequest request) {
+        
+        // Log account lockout attempt
+        String ipAddress = authenticationEventService.getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
+        authenticationEventService.logLoginFailure(ex.getUsername(), "ACCOUNT_LOCKED", ipAddress, userAgent);
+        
+        logger.warn("Account locked login attempt for user: {}, IP: {}", ex.getUsername(), ipAddress);
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("lockUntil", ex.getLockUntil().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ACCOUNT_LOCKED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.LOCKED).body(errorResponse);
+    }
+    
+    /**
+     * Handle Spring Security AuthenticationException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
+            AuthenticationException ex, HttpServletRequest request) {
+        
+        // Log authentication error
+        String ipAddress = authenticationEventService.getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
+        
+        String errorType = ex instanceof BadCredentialsException ? "INVALID_CREDENTIALS" : "AUTHENTICATION_ERROR";
+        authenticationEventService.logLoginFailure("unknown", errorType, ipAddress, userAgent);
+        
+        logger.warn("Authentication exception: {}, IP: {}", ex.getMessage(), ipAddress);
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_ERROR")
+            .message("Authentication failed. Please check your credentials.")
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
     
     /**
      * Handle ValidationException - returns 400 Bad Request with comprehensive error details.

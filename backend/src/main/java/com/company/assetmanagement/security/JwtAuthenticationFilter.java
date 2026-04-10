@@ -7,6 +7,7 @@ import com.company.assetmanagement.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import com.company.assetmanagement.service.AuthenticationEventService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     @Autowired
     private UserRepository userRepository;
+    private AuthenticationEventService authenticationEventService;
     
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -122,6 +124,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("User not found during JWT authentication: {}", ex.getMessage());
             // User doesn't exist - token may be for deleted user
         } catch (Exception ex) {
+            // Log general authentication error
+            String ipAddress = authenticationEventService.getClientIpAddress(request);
+            authenticationEventService.logInvalidTokenAttempt("Authentication error: " + ex.getMessage(), ipAddress);
             logger.error("Could not set user authentication in security context", ex);
             // Unexpected error - log for investigation
         }

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { Role } from './core/models/auth.model';
+import { loginGuard } from './core/guards/login.guard';
 
 /**
  * Application Routes - Editorial Geometry Dashboard
@@ -25,6 +26,13 @@ export const routes: Routes = [
   {
     path: 'unauthorized',
     loadComponent: () => import('./features/auth/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
+    loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent),
+    canActivate: [loginGuard]
+  },
+  {
+    path: 'password-reset',
+    loadComponent: () => import('./features/login/password-reset/password-reset.component').then(m => m.PasswordResetComponent),
+    canActivate: [loginGuard]
   },
   {
     path: 'dashboard',

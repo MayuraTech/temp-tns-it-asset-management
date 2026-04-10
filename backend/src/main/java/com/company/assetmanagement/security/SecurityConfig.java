@@ -60,6 +60,8 @@ public class SecurityConfig {
                 
                 // Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        // Allow OPTIONS requests for CORS preflight
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints
                         .requestMatchers(
                                 "/api/v1/auth/**",
@@ -83,7 +85,8 @@ public class SecurityConfig {
                                         "img-src 'self' data:; " +
                                         "font-src 'self' data:"))
                         // XSS Protection
-                        .xssProtection(xss -> xss.headerValue(HeaderValue.ENABLED_MODE_BLOCK))
+                        .xssProtection(xss -> xss
+                                .headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                         // Frame Options
                         .frameOptions(frame -> frame.deny())
                         // HTTP Strict Transport Security (HSTS)
