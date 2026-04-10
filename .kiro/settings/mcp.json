@@ -7,12 +7,22 @@
         "https://stitch.googleapis.com/mcp",
         "--no-auth",
         "--header",
-        "X-Goog-Api-Key:AQ.Ab8RN6LqQGQYD1g5Ixd3nsv82A7VlBlINFMgmpu8jsBVyptiNA",
-        "-y", "@_davideast/stitch-mcp@latest", "proxy"
+        "X-Goog-Api-Key:AQ.Ab8RN6JYn-0IwaHiVP9IOK4GiHkq4yDzg9lN2ns9Uhlhq9d8-w",
+        "-y",
+        "@_davideast/stitch-mcp@latest",
+        "proxy"
       ],
       "disabled": false,
       "autoApprove": [
-        "get_project"
+        "get_project",
+        "list_projects",
+        "list_screens",
+        "get_screen"
+      ]
+    }, "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
       ]
     }
   }

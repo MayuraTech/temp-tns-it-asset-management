@@ -44,7 +44,7 @@ export class DateFormatPipe implements PipeTransform {
       full: 'EEEE, MMMM d, y'
     };
 
-    const dateFormat = formatMap[format] || formatMap.medium;
+    const dateFormat = formatMap[format] || formatMap['medium'];
     return this.datePipe.transform(date, dateFormat) || '';
   }
 }

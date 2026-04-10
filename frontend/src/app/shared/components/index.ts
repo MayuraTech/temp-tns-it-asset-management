@@ -16,3 +16,4 @@ export * from './confirmation-dialog/confirmation-dialog.component';
 export * from './search-bar/search-bar.component';
 export * from './user-controls/user-controls.component';
 export * from './primary-action-button/primary-action-button.component';
+export * from './credential-input/credential-input.component';
