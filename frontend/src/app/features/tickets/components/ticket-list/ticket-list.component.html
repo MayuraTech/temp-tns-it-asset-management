@@ -1,0 +1,163 @@
+<div class="ticket-list-container">
+  <!-- Header -->
+  <header class="page-header">
+    <h1>My Requests</h1>
+    <p class="subtitle">Track and manage your asset allocation requests</p>
+  </header>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'all'"
+      (click)="onFilterChange('all')">
+      All
+    </button>
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'pending'"
+      (click)="onFilterChange('pending')">
+      Pending
+    </button>
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'approved'"
+      (click)="onFilterChange('approved')">
+      Approved
+    </button>
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'completed'"
+      (click)="onFilterChange('completed')">
+      Completed
+    </button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-value">{{ inProgressCount }}</div>
+      <div class="card-label">IN PROGRESS</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-value">{{ approvedCount }}</div>
+      <div class="card-label">APPROVED</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-value">{{ highPriorityCount }}</div>
+      <div class="card-label">HIGH PRIORITY</div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-state">
+    Loading tickets...
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-state">
+    {{ error }}
+  </div>
+
+  <!-- Tickets Table -->
+  <div *ngIf="!(loading$ | async) && !(error$ | async)" class="tickets-table">
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions" *ngIf="selectedTicketIds.size > 0">
+      <span class="selected-count">{{ selectedTicketIds.size }} ticket(s) selected</span>
+      <div class="bulk-buttons">
+        <button 
+          class="btn-bulk-approve" 
+          (click)="bulkApprove()"
+          [disabled]="bulkOperationInProgress$ | async">
+          Bulk Approve
+        </button>
+        <button 
+          class="btn-bulk-reject" 
+          (click)="bulkReject()"
+          [disabled]="bulkOperationInProgress$ | async">
+          Bulk Reject
+        </button>
+        <button class="btn-deselect" (click)="deselectAllTickets()">
+          Deselect All
+        </button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <input 
+              type="checkbox" 
+              (change)="$event.target.checked ? selectAllTickets() : deselectAllTickets()"
+              title="Select all">
+          </th>
+          <th>Ticket ID</th>
+          <th>Asset Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of tickets$ | async">
+          <td>
+            <input 
+              type="checkbox" 
+              [checked]="isTicketSelected(ticket.id)"
+              (change)="toggleTicketSelection(ticket.id)">
+          </td>
+          <td>{{ ticket.ticketNumber }}</td>
+          <td>
+            <span class="asset-name">{{ ticket.assetName }}</span>
+          </td>
+          <td>{{ ticket.type }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(ticket.status)">
+              {{ ticket.status }}
+            </span>
+          </td>
+          <td>
+            <span class="priority-indicator" [ngClass]="getPriorityClass(ticket.priority)">
+              ●
+            </span>
+            {{ ticket.priority }}
+          </td>
+          <td>{{ ticket.createdAt | date:'short' }}</td>
+          <td>
+            <button class="btn-view-details" (click)="viewTicketDetails(ticket)">
+              VIEW DETAILS
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="(tickets$ | async)?.length === 0" class="empty-state">
+      <p>No tickets found</p>
+    </div>
+  </div>
+
+  <!-- Can't find what you need section -->
+  <div class="help-section">
+    <h3>Can't find what you need?</h3>
+    <button class="btn-emergency" (click)="createEmergencyTicket()">
+      Create Emergency Ticket
+    </button>
+  </div>
+
+  <!-- Support Information -->
+  <div class="support-panels">
+    <div class="support-panel">
+      <h4>Dedicated Support</h4>
+      <p>24/7 assistance for urgent requests</p>
+    </div>
+    <div class="support-panel">
+      <h4>SLA Guarantee</h4>
+      <p>Response within 4 business hours</p>
+    </div>
+  </div>
+</div>
