@@ -1,0 +1,73 @@
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.status-ordered {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &.status-received {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+  }
+
+  &.status-active {
+    background-color: #e8f5e9;
+    color: #388e3c;
+  }
+
+  &.status-maintenance {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+
+  &.status-storage {
+    background-color: #fce4ec;
+    color: #c2185b;
+  }
+
+  &.status-retired {
+    background-color: #eceff1;
+    color: #546e7a;
+  }
+
+  &.status-pending {
+    background-color: #fff9c4;
+    color: #f57f17;
+  }
+
+  &.status-approved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.status-rejected {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  &.status-in-progress {
+    background-color: #e1f5fe;
+    color: #0277bd;
+  }
+
+  &.status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+  }
+
+  &.status-cancelled {
+    background-color: #f5f5f5;
+    color: #757575;
+  }
+
+  &.status-default {
+    background-color: #f5f5f5;
+    color: #616161;
+  }
+}

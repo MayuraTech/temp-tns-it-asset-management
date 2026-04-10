@@ -1,0 +1,262 @@
+// Custom Angular Material Theme for IT Asset Management
+@use '@angular/material' as mat;
+
+// Include the common styles for Angular Material
+@include mat.core();
+
+// Define custom color palettes
+$primary-palette: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #2196f3,
+  600: #1e88e5,
+  700: #1976d2,
+  800: #1565c0,
+  900: #0d47a1,
+  A100: #82b1ff,
+  A200: #448aff,
+  A400: #2979ff,
+  A700: #2962ff,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+$accent-palette: (
+  50: #fce4ec,
+  100: #f8bbd0,
+  200: #f48fb1,
+  300: #f06292,
+  400: #ec407a,
+  500: #e91e63,
+  600: #d81b60,
+  700: #c2185b,
+  800: #ad1457,
+  900: #880e4f,
+  A100: #ff80ab,
+  A200: #ff4081,
+  A400: #f50057,
+  A700: #c51162,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+$warn-palette: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  A100: #ff8a80,
+  A200: #ff5252,
+  A400: #ff1744,
+  A700: #d50000,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+// Create the theme object
+$primary: mat.define-palette($primary-palette, 600);
+$accent: mat.define-palette($accent-palette, 500);
+$warn: mat.define-palette($warn-palette, 500);
+
+// Create the light theme
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+// Include theme styles for core and each component
+@include mat.all-component-themes($light-theme);
+
+// Create the dark theme
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+// Dark theme class
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// Custom component styles
+.mat-mdc-card {
+  margin-bottom: 16px;
+}
+
+.mat-mdc-table {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+// Status badge colors
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  
+  &.ordered {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  &.received {
+    background-color: #f3e5f5;
+    color: #6a1b9a;
+  }
+  
+  &.deployed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  &.in-use {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+  }
+  
+  &.maintenance {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
+  
+  &.storage {
+    background-color: #fce4ec;
+    color: #880e4f;
+  }
+  
+  &.retired {
+    background-color: #eceff1;
+    color: #455a64;
+  }
+  
+  // Ticket statuses
+  &.pending {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
+  
+  &.approved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  &.rejected {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  &.in-progress {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  &.completed {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+  }
+  
+  &.cancelled {
+    background-color: #eceff1;
+    color: #455a64;
+  }
+}
+
+// Priority badge colors
+.priority-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  
+  &.low {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  &.medium {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
+  
+  &.high {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  &.urgent {
+    background-color: #ffebee;
+    color: #b71c1c;
+    font-weight: 700;
+  }
+}

@@ -1,0 +1,36 @@
+<mat-toolbar color="primary" class="app-header">
+  <div class="header-container">
+    <div class="header-left">
+      <button mat-icon-button class="menu-button" (click)="toggleSidebar()" *ngIf="isAuthenticated$ | async">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="app-title" routerLink="/">IT Asset Management</span>
+    </div>
+
+    <div class="header-right" *ngIf="isAuthenticated$ | async">
+      <!-- Notifications -->
+      <button mat-icon-button (click)="navigateToNotifications()" [matBadge]="unreadNotifications" 
+              [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">
+        <mat-icon>notifications</mat-icon>
+      </button>
+
+      <!-- User Menu -->
+      <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ (currentUser$ | async)?.username }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="navigateToProfile()">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-toolbar>

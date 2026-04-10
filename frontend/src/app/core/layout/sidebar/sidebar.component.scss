@@ -1,0 +1,331 @@
+/**
+ * Sidebar Styles - Editorial Geometry Navigation Panel
+ * 
+ * Implements fixed left navigation with brand header, geometric triangle accents,
+ * and tonal layering following Editorial Geometry design principles.
+ * 
+ * Requirements: 2.1, 2.2, 2.6, 2.7, 16.2, 21.6, 24.2
+ */
+
+@import '../../../shared/styles/design-tokens';
+@import '../../../shared/styles/mixins';
+
+.sidebar {
+  // Full height container with fixed width
+  height: 100%;
+  width: var(--layout-sidebar-width);
+  
+  // Editorial Geometry surface hierarchy - Requirement 2.6
+  @include surface-layer('container-low');
+  
+  // Vertical layout with proper spacing - Requirement 2.7
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl);
+  
+  // Subtle shadow for depth - Requirement 21.6
+  @include editorial-shadow('subtle');
+  
+  // Prevent content overflow
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// Brand Header Section - Requirement 2.1
+.sidebar__brand-header {
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  
+  // Geometric triangle accent container - Requirement 24.2
+  app-geometric-triangle {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .brand-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  .brand-logo {
+    flex-shrink: 0;
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  
+  .brand-text {
+    flex: 1;
+    min-width: 0; // Allow text truncation if needed
+    
+    .brand-name {
+      @include typography('headline-md');
+      color: var(--color-primary-blue-900);
+      margin: 0;
+      line-height: 1.2;
+    }
+    
+    .brand-subtitle {
+      @include typography('body-md');
+      color: var(--color-neutral-slate-600);
+      margin: 0;
+      margin-top: 2px;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+  }
+}
+
+// Primary Navigation Section - Requirement 2.2
+.sidebar__primary-nav {
+  margin-bottom: var(--spacing-xl);
+  
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    // Secondary navigation styling
+    &.secondary {
+      .nav-item {
+        .nav-link {
+          color: var(--color-neutral-slate-500);
+          
+          &:hover {
+            color: var(--color-neutral-slate-600);
+            background-color: var(--color-surface-container);
+          }
+          
+          // Active state for secondary nav
+          &.active {
+            color: var(--color-neutral-slate-600);
+            background-color: var(--color-surface-container);
+            font-weight: var(--font-weight-medium);
+            border-right: 2px solid var(--color-neutral-slate-500);
+          }
+        }
+      }
+    }
+  }
+  
+  .nav-item {
+    margin-bottom: var(--spacing-sm);
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      text-decoration: none;
+      border-radius: var(--border-radius-md);
+      transition: all 0.3s ease;
+      position: relative;
+      
+      // Default inactive state - Requirement 3.3
+      @include typography('body-md');
+      color: var(--color-neutral-slate-600);
+      font-weight: var(--font-weight-medium);
+      
+      // Hover state
+      &:hover {
+        background-color: var(--color-surface-container);
+        color: var(--color-primary-blue-800);
+        transform: translateX(2px);
+      }
+      
+      // Active state - Requirements 3.1, 3.2
+      &.active,
+      &[aria-current="page"] {
+        background-color: var(--color-surface-container-lowest);
+        color: var(--color-accent-red-800);
+        font-weight: var(--font-weight-bold);
+        border-right: 4px solid var(--color-accent-red-800);
+        padding-right: calc(var(--spacing-lg) - 4px); // Compensate for border
+        
+        @include editorial-shadow('subtle');
+        
+        .nav-icon {
+          color: var(--color-accent-red-800);
+        }
+      }
+      
+      // Focus state for accessibility - Requirement 14.3
+      @include focus-indicator();
+      
+      // Icon styling - Requirements 3.4, 3.6
+      .nav-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: color 0.3s ease;
+        
+        svg {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+      }
+      
+      // Text styling - Requirements 3.7, 3.8
+      .nav-text {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+// Action Button Section - Requirement 10.1-10.8
+.sidebar__action-button {
+  margin-bottom: var(--spacing-xl);
+  
+  .action-btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-md);
+    background: linear-gradient(135deg, var(--color-primary-blue-800) 0%, var(--color-primary-blue-700) 100%);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    
+    // Typography - Requirement 10.2
+    @include typography('label-sm');
+    
+    // Editorial shadow - Requirement 10.6
+    @include editorial-shadow('button');
+    
+    .btn-icon {
+      font-size: 16px;
+      font-weight: var(--font-weight-bold);
+      line-height: 1;
+    }
+    
+    .btn-text {
+      line-height: 1;
+    }
+    
+    // Hover state - Requirement 10.7
+    &:hover {
+      background: linear-gradient(135deg, var(--color-primary-blue-700) 0%, var(--color-primary-blue-700) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0px 12px 18px -3px rgba(20, 59, 125, 0.25), 0px 6px 8px -4px rgba(20, 59, 125, 0.25);
+    }
+    
+    // Focus state - Requirement 14.4
+    @include focus-indicator(var(--color-white));
+    
+    // Active state - Requirement 10.8
+    &:active {
+      transform: translateY(0);
+    }
+    
+    // Disabled state
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+}
+
+// Secondary Navigation Section - Requirement 2.5
+.sidebar__secondary-nav {
+  margin-top: auto;
+  padding-top: var(--spacing-xl);
+  
+  // Ghost border separator - Requirements 25.1, 25.4
+  // Use no-line rule: background color shift instead of solid border
+  @include no-line-separator('horizontal');
+  
+  // Subtle opacity transition
+  opacity: 0.6;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Responsive adjustments - Requirement 13.2
+@include responsive('tablet') {
+  .sidebar {
+    // Maintain fixed width even on smaller screens
+    width: var(--layout-sidebar-width);
+    min-width: var(--layout-sidebar-width);
+  }
+}
+
+// High contrast mode support - Requirement 15.7
+@media (prefers-contrast: high) {
+  .sidebar__primary-nav .nav-item .nav-link {
+    &.active,
+    &[aria-current="page"] {
+      border-right-width: 6px;
+      background-color: var(--color-surface-container-high);
+      padding-right: calc(var(--spacing-lg) - 6px);
+    }
+  }
+  
+  .sidebar__action-button .action-btn {
+    border: 2px solid var(--color-white);
+  }
+  
+  .sidebar__secondary-nav {
+    border-top-width: 2px;
+  }
+}
+
+// Reduced motion support - Requirement 19.6
+@media (prefers-reduced-motion: reduce) {
+  .sidebar__primary-nav .nav-item .nav-link,
+  .sidebar__action-button .action-btn {
+    transition: none;
+  }
+  
+  .sidebar__primary-nav .nav-item .nav-link:hover {
+    transform: none;
+  }
+  
+  .sidebar__action-button .action-btn:hover {
+    transform: none;
+  }
+}
+
+// Print styles
+@media print {
+  .sidebar {
+    display: none;
+  }
+}

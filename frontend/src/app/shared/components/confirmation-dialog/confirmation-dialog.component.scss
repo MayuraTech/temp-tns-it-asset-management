@@ -1,0 +1,41 @@
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 20px 24px;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+
+    &.icon-info {
+      color: #2196f3;
+    }
+
+    &.icon-warning {
+      color: #ff9800;
+    }
+
+    &.icon-danger {
+      color: #f44336;
+    }
+  }
+}
+
+.dialog-content {
+  padding: 0 24px 20px;
+  min-width: 300px;
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+    color: #666;
+  }
+}
+
+.dialog-actions {
+  padding: 12px 24px 20px;
+  gap: 8px;
+}

@@ -1,0 +1,298 @@
+/**
+ * Editorial Geometry SCSS Mixins
+ * 
+ * Reusable mixins for implementing Editorial Geometry design patterns
+ * including glassmorphism, tonal layering, and geometric accents.
+ */
+
+// Glassmorphism Effect Mixin
+@mixin glassmorphism($opacity: var(--editorial-glass-opacity), $blur: var(--editorial-backdrop-blur)) {
+  background: rgba(250, 249, 255, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  
+  // Fallback for unsupported browsers
+  @supports not (backdrop-filter: blur(12px)) {
+    background: rgba(250, 249, 255, 0.95);
+  }
+}
+
+// Editorial Shadow Mixin
+@mixin editorial-shadow($type: 'subtle') {
+  @if $type == 'subtle' {
+    box-shadow: var(--shadow-subtle);
+  } @else if $type == 'button' {
+    box-shadow: var(--shadow-button);
+  } @else if $type == 'editorial' {
+    box-shadow: var(--shadow-editorial);
+  } @else if $type == 'focus' {
+    box-shadow: var(--shadow-focus-glow);
+  }
+}
+
+// Ghost Border Mixin - No-Line Rule Implementation
+// Requirements: 25.1, 25.2, 25.3, 25.4, 25.5, 25.6
+// Sub-task 5.2: Ghost border system with focus state transitions
+@mixin ghost-border($position: 'all', $opacity: var(--editorial-ghost-border-opacity)) {
+  @if $position == 'all' {
+    border: 1px solid rgba(196, 198, 210, $opacity);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    
+    &:hover {
+      opacity: 0.3;
+    }
+  } @else if $position == 'bottom' {
+    border-bottom: 2px solid var(--color-editorial-outline-variant);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    
+    &:focus {
+      border-bottom-color: var(--color-primary-blue-800);
+      box-shadow: var(--shadow-focus-glow); // 4px soft glow - Requirement 25.6
+      outline: none;
+    }
+  } @else if $position == 'input' {
+    // Input field ghost border - Requirement 25.5
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-editorial-outline-variant);
+    transition: all 0.3s ease;
+    padding: 8px 0;
+    
+    &:focus {
+      border-bottom-color: var(--color-primary-blue-800);
+      box-shadow: 0 4px 8px rgba(20, 59, 125, 0.1); // 4px soft glow
+      outline: none;
+    }
+    
+    &::placeholder {
+      color: var(--color-editorial-on-surface-variant);
+      opacity: 0.7;
+    }
+  } @else if $position == 'tonal' {
+    // Tonal transition border - Requirement 25.3
+    border: none;
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-container-low) 0%,
+      var(--color-surface-container) 100%
+    );
+    padding: 1px;
+  }
+}
+
+// No-Line Rule Enforcement - Requirement 25.1
+// Use background color shifts instead of solid borders
+@mixin no-line-separator($direction: 'horizontal') {
+  border: none;
+  
+  @if $direction == 'horizontal' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-base) 0%,
+      var(--color-surface-container-low) 50%,
+      var(--color-surface-base) 100%
+    );
+    height: 2px;
+  } @else if $direction == 'vertical' {
+    background: linear-gradient(
+      to right,
+      var(--color-surface-base) 0%,
+      var(--color-surface-container-low) 50%,
+      var(--color-surface-base) 100%
+    );
+    width: 2px;
+  }
+}
+
+// Background Color Shift for Boundaries - Requirement 25.2
+@mixin boundary-shift($from: 'base', $to: 'container') {
+  border: none;
+  
+  @if $from == 'base' and $to == 'container' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-base) 0%,
+      var(--color-surface-container) 100%
+    );
+  } @else if $from == 'container' and $to == 'container-low' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-container) 0%,
+      var(--color-surface-container-low) 100%
+    );
+  } @else if $from == 'container-low' and $to == 'container-lowest' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-container-low) 0%,
+      var(--color-surface-container-lowest) 100%
+    );
+  }
+}
+
+// Surface Hierarchy Mixin
+// Requirements: 23.1, 23.2, 23.3, 23.4, 23.5, 23.7
+// Sub-task 5.4: Tonal layering and surface hierarchy
+@mixin surface-layer($level: 'base') {
+  @if $level == 'base' {
+    background-color: var(--color-surface-base);
+  } @else if $level == 'container' {
+    background-color: var(--color-surface-container);
+  } @else if $level == 'container-low' {
+    background-color: var(--color-surface-container-low);
+  } @else if $level == 'container-lowest' {
+    // Elevated card effect - Requirement 23.3
+    background-color: var(--color-surface-container-lowest);
+    box-shadow: var(--shadow-editorial);
+  } @else if $level == 'container-high' {
+    background-color: var(--color-surface-container-high);
+  } @else if $level == 'container-highest' {
+    background-color: var(--color-surface-container-highest);
+  }
+}
+
+// Surface Tint Overlay Mixin - Requirement 23.7
+// Apply 5% opacity surface-tint over images for brand unification
+@mixin surface-tint-overlay {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-surface-tint);
+    opacity: var(--editorial-surface-tint-opacity); // 5% opacity
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+// Natural Lift Effect Mixin - Requirement 23.5
+// Create natural lift through surface tier stacking
+@mixin surface-lift($level: 1) {
+  @if $level == 1 {
+    @include surface-layer('container-low');
+    box-shadow: 0 2px 4px rgba(20, 59, 125, 0.04);
+  } @else if $level == 2 {
+    @include surface-layer('container');
+    box-shadow: 0 4px 8px rgba(20, 59, 125, 0.06);
+  } @else if $level == 3 {
+    @include surface-layer('container-lowest');
+    box-shadow: 0 8px 16px rgba(20, 59, 125, 0.08);
+  }
+}
+
+// Tonal Boundary Mixin - Requirement 23.4
+// Define boundaries through background color shifts, not solid borders
+@mixin tonal-boundary($from: 'base', $to: 'container') {
+  border: none;
+  
+  @if $from == 'base' and $to == 'container' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-base) 0%,
+      var(--color-surface-container) 100%
+    );
+  } @else if $from == 'container' and $to == 'container-low' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-container) 0%,
+      var(--color-surface-container-low) 100%
+    );
+  } @else if $from == 'container-low' and $to == 'container-lowest' {
+    background: linear-gradient(
+      to bottom,
+      var(--color-surface-container-low) 0%,
+      var(--color-surface-container-lowest) 100%
+    );
+  }
+  
+  padding: 2px 0;
+}
+
+// Typography Mixin
+@mixin typography($style: 'body-md') {
+  @if $style == 'display-lg' {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-display-lg);
+    font-weight: var(--font-weight-extra-bold);
+    line-height: var(--line-height-spacious);
+    letter-spacing: var(--letter-spacing-editorial);
+  } @else if $style == 'headline-lg' {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-extra-bold);
+    line-height: var(--line-height-spacious);
+    letter-spacing: var(--letter-spacing-tight);
+  } @else if $style == 'headline-md' {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-extra-loose);
+    letter-spacing: var(--letter-spacing-normal);
+  } @else if $style == 'body-lg' {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+  } @else if $style == 'body-md' {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+  } @else if $style == 'label-sm' {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+}
+
+// Focus Indicator Mixin
+@mixin focus-indicator($color: var(--color-primary-blue-800)) {
+  &:focus {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm);
+    
+    @media (prefers-contrast: high) {
+      outline-width: 3px;
+    }
+  }
+}
+
+// Geometric Triangle Accent Mixin
+@mixin triangle-accent($color: var(--color-primary-blue-800), $opacity: 0.1) {
+  fill: $color;
+  opacity: $opacity;
+  position: absolute;
+  z-index: -1;
+}
+
+// Responsive Breakpoint Mixin
+@mixin responsive($breakpoint: 'tablet') {
+  @if $breakpoint == 'mobile' {
+    @media (max-width: 767px) {
+      @content;
+    }
+  } @else if $breakpoint == 'tablet' {
+    @media (max-width: 1024px) {
+      @content;
+    }
+  } @else if $breakpoint == 'desktop' {
+    @media (min-width: 1025px) {
+      @content;
+    }
+  }
+}
+
+// CSS Grid Fallback Mixin
+@mixin grid-fallback {
+  @supports not (display: grid) {
+    @content;
+  }
+}

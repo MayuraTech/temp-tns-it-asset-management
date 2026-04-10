@@ -582,7 +582,16 @@ enum AssetType {
   NETWORK_DEVICE = 'network_device',
   STORAGE_DEVICE = 'storage_device',
   SOFTWARE_LICENSE = 'software_license',
-  PERIPHERAL = 'peripheral'
+  PERIPHERAL = 'peripheral',
+  KEYBOARD = 'keyboard',
+  MOUSE = 'mouse',
+  LAPTOP = 'laptop',
+  MONITOR = 'monitor',
+  HEADSET = 'headset',
+  LAPTOP_CHARGER = 'laptop_charger',
+  HDMI_CABLE = 'hdmi_cable',
+  NETWORK_CABLE = 'network_cable',
+  ACCESS_CARD = 'access_card'
 }
 
 enum LifecycleStatus {
@@ -806,7 +815,7 @@ CREATE TABLE Assets (
   
   CONSTRAINT FK_Assets_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
   CONSTRAINT FK_Assets_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES Users(Id),
-  CONSTRAINT CHK_Assets_AssetType CHECK (AssetType IN ('server', 'workstation', 'network_device', 'storage_device', 'software_license', 'peripheral')),
+  CONSTRAINT CHK_Assets_AssetType CHECK (AssetType IN ('server', 'workstation', 'network_device', 'storage_device', 'software_license', 'peripheral', 'keyboard', 'mouse', 'laptop', 'monitor', 'headset', 'laptop_charger', 'hdmi_cable', 'network_cable', 'access_card')),
   CONSTRAINT CHK_Assets_Status CHECK (Status IN ('ordered', 'received', 'deployed', 'in_use', 'maintenance', 'storage', 'retired')),
   CONSTRAINT CHK_Assets_AcquisitionDate CHECK (AcquisitionDate <= CAST(GETUTCDATE() AS DATE)),
   
@@ -994,7 +1003,7 @@ VALUES (@AdminUserId, 'Administrator', @AdminUserId);
 INSERT INTO Configurations (ConfigKey, ConfigValue, ValueType, Description, UpdatedBy)
 VALUES 
   ('SessionTimeoutMinutes', '30', 'number', 'Session timeout in minutes', @AdminUserId),
-  ('LifespanThresholds', '{"server":60,"workstation":48,"network_device":72,"storage_device":60,"software_license":36,"peripheral":36}', 'json', 'Asset lifespan thresholds in months', @AdminUserId),
+  ('LifespanThresholds', '{"server":60,"workstation":48,"network_device":72,"storage_device":60,"software_license":36,"peripheral":36,"keyboard":24,"mouse":24,"laptop":48,"monitor":60,"headset":24,"laptop_charger":24,"hdmi_cable":36,"network_cable":36,"access_card":60}', 'json', 'Asset lifespan thresholds in months', @AdminUserId),
   ('CustomAssetTypes', '[]', 'json', 'Custom asset types', @AdminUserId),
   ('CustomFields', '[]', 'json', 'Custom field definitions', @AdminUserId);
 GO
@@ -1595,3 +1604,496 @@ tests/
 - Security test coverage: All authentication/authorization paths
 - Performance test coverage: All performance requirements
 
+
+
+## User Interface Design
+
+### Frontend Architecture
+
+The Angular frontend follows a modular architecture with feature-based organization:
+
+```
+src/app/
+├── core/                           # Singleton services and guards
+│   ├── auth/
+│   │   ├── auth.service.ts
+│   │   ├── auth.guard.ts
+│   │   └── jwt.interceptor.ts
+│   ├── services/
+│   │   ├── notification.service.ts
+│   │   └── user.service.ts
+│   └── interceptors/
+│       └── error.interceptor.ts
+├── shared/                         # Shared components and utilities
+│   ├── components/
+│   │   ├── header/
+│   │   ├── sidebar/
+│   │   ├── notification-badge/
+│   │   └── status-badge/
+│   ├── models/
+│   └── pipes/
+├── features/                       # Feature modules
+│   ├── dashboard/
+│   │   ├── dashboard.component.ts
+│   │   └── dashboard.module.ts
+│   ├── assets/
+│   │   ├── asset-list/
+│   │   ├── asset-detail/
+│   │   ├── asset-form/
+│   │   └── assets.module.ts
+│   ├── tickets/
+│   │   ├── ticket-list/
+│   │   ├── ticket-detail/
+│   │   ├── ticket-create/
+│   │   └── tickets.module.ts
+│   ├── users/
+│   │   ├── user-list/
+│   │   ├── user-form/
+│   │   ├── user-profile/
+│   │   └── users.module.ts
+│   └── reports/
+│       └── reports.module.ts
+└── app.component.ts
+```
+
+### User Management Interface
+
+#### User List Screen
+
+**Purpose**: Display all users with ability to create, edit, enable/disable accounts
+
+**Components**:
+- User data table with columns: Username, Email, Roles, Status, Last Login, Actions
+- Search and filter controls (by role, status)
+- "Create User" button (Administrator only)
+- Action buttons per row: Edit, Enable/Disable, View Details
+
+**Responsive Behavior**:
+- Desktop: Full table with all columns
+- Tablet: Hide Last Login column, show essential info
+- Mobile: Card-based layout with expandable details
+
+#### User Form Screen (Create/Edit)
+
+**Purpose**: Create new users or edit existing user information
+
+**Form Fields**:
+- Username (required, unique, disabled when editing)
+- Email (required, unique, email validation)
+- Password (required for create, optional for edit)
+- Confirm Password (required when password provided)
+- Roles (multi-select: Administrator, Asset_Manager, Viewer)
+- Account Status (Active/Disabled toggle)
+
+**Validation**:
+- Real-time validation with error messages
+- Password complexity check (12+ chars, mixed case, numbers, special chars)
+- Unique username and email validation
+- Form submission disabled until all validations pass
+
+**Actions**:
+- Save button
+- Cancel button (returns to user list)
+
+#### User Profile Screen
+
+**Purpose**: Allow users to view and update their own profile
+
+**Sections**:
+- Profile Information (read-only): Username, Roles, Account Status
+- Contact Information (editable): Email
+- Change Password section with fields:
+  - Current Password
+  - New Password
+  - Confirm New Password
+
+**Actions**:
+- Update Profile button
+- Change Password button
+
+### Asset Request Interface
+
+#### Dashboard Screen
+
+**Purpose**: Provide overview of user's activities and quick access to common actions
+
+**Widgets**:
+1. **Summary Cards**:
+   - Pending Requests (count with icon)
+   - Approved Requests (count with icon)
+   - Assigned Assets (count with icon)
+   - Recent Activity (count with icon)
+
+2. **Recent Notifications Panel**:
+   - List of recent ticket status changes
+   - Unread indicator
+   - Mark as read functionality
+   - Link to full notification history
+
+3. **Quick Actions**:
+   - Create Allocation Request button
+   - Create De-allocation Request button
+   - View All My Requests button
+
+4. **Recent Tickets Table**:
+   - Last 5 tickets with status
+   - Quick view of ticket details
+   - Link to full ticket list
+
+**Responsive Behavior**:
+- Desktop: 2x2 grid of summary cards, side-by-side panels
+- Tablet: 2x2 grid, stacked panels
+- Mobile: Single column, cards stack vertically
+
+#### My Requests Screen
+
+**Purpose**: Display all tickets created by the logged-in user
+
+**Components**:
+1. **Filter Bar**:
+   - Status filter (All, Pending, Approved, Rejected, In Progress, Completed, Cancelled)
+   - Type filter (All, Allocation, De-allocation)
+   - Date range filter
+   - Search by ticket number or asset name
+
+2. **Tickets Table/List**:
+   - Columns: Ticket Number, Type, Asset Name, Status, Priority, Created Date, Last Updated
+   - Status badges with color coding:
+     - Pending: Yellow/Warning
+     - Approved: Blue/Info
+     - Rejected: Red/Danger
+     - In Progress: Purple/Primary
+     - Completed: Green/Success
+     - Cancelled: Gray/Secondary
+   - Click row to view details
+
+3. **Pagination**:
+   - Page size selector (10, 20, 50 items)
+   - Page navigation controls
+
+**Responsive Behavior**:
+- Desktop: Full table with all columns
+- Tablet: Hide Created Date, show essential columns
+- Mobile: Card-based layout with status badge, ticket number, asset name, and last updated date
+
+#### Ticket Detail Screen
+
+**Purpose**: Display complete information about a specific ticket
+
+**Sections**:
+1. **Ticket Header**:
+   - Ticket number (large, prominent)
+   - Status badge
+   - Type badge
+   - Priority indicator
+
+2. **Asset Information**:
+   - Asset name
+   - Asset serial number
+   - Asset type
+   - Current status
+
+3. **Request Details**:
+   - Requester name and email
+   - Request reason (for allocation)
+   - De-allocation reason (for de-allocation)
+   - Assignment details (for allocation: user/location)
+   - Priority level
+
+4. **Approval Information** (if applicable):
+   - Approver name
+   - Approval/Rejection date
+   - Approval comments or rejection reason
+
+5. **Timeline**:
+   - Status history with timestamps
+   - Visual timeline showing progression
+
+6. **Actions** (context-dependent):
+   - Cancel button (if status is pending)
+   - Back to My Requests button
+
+**Responsive Behavior**:
+- Desktop: Two-column layout (details left, timeline right)
+- Tablet: Two-column layout with adjusted spacing
+- Mobile: Single column, sections stack vertically
+
+#### Create Request Screen
+
+**Purpose**: Allow users to create allocation or de-allocation requests
+
+**Tab Navigation**:
+- Allocation Request tab
+- De-allocation Request tab
+
+**Allocation Request Form**:
+1. **Asset Selection**:
+   - Search/autocomplete for assets
+   - Display asset details when selected
+   - Show availability status
+
+2. **Assignment Details**:
+   - Assign to User (radio button)
+     - User search/select field
+     - User email field
+   - Assign to Location (radio button)
+     - Location input field
+
+3. **Request Information**:
+   - Request reason (textarea, required)
+   - Priority (dropdown: Low, Medium, High, Urgent)
+
+4. **Actions**:
+   - Submit Request button
+   - Cancel button
+
+**De-allocation Request Form**:
+1. **Asset Selection**:
+   - Search/autocomplete for currently assigned assets
+   - Display current assignment details
+
+2. **Request Information**:
+   - De-allocation reason (textarea, required)
+   - Priority (dropdown: Low, Medium, High, Urgent)
+
+3. **Actions**:
+   - Submit Request button
+   - Cancel button
+
+**Validation**:
+- All required fields must be filled
+- Asset must be selected
+- For allocation: either user or location must be specified
+- Real-time validation feedback
+
+**Success Flow**:
+- Display confirmation modal with ticket number
+- Provide options: View Ticket, Create Another Request, Go to Dashboard
+
+**Responsive Behavior**:
+- Desktop: Full-width form with side-by-side fields where appropriate
+- Tablet: Full-width form, fields stack
+- Mobile: Single column, all fields stack vertically
+
+### Navigation Structure
+
+**Main Navigation** (Sidebar/Top Nav):
+- Dashboard (home icon)
+- My Requests (ticket icon with unread count badge)
+- Assets (for Asset_Manager and Administrator roles)
+- Users (for Administrator role only)
+- Reports (for Administrator and Asset_Manager roles)
+- Profile (user icon)
+- Logout
+
+**Notification Bell** (Top Right):
+- Unread notification count badge
+- Dropdown showing recent notifications
+- Mark all as read option
+- View all notifications link
+
+### Responsive Design Breakpoints
+
+```scss
+// Breakpoints
+$mobile: 320px;
+$tablet: 768px;
+$desktop: 1024px;
+$wide: 1440px;
+
+// Media queries
+@media (max-width: 767px) {
+  // Mobile styles
+  // Single column layouts
+  // Card-based lists
+  // Bottom navigation
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  // Tablet styles
+  // Two-column layouts where appropriate
+  // Condensed tables
+  // Side navigation
+}
+
+@media (min-width: 1024px) {
+  // Desktop styles
+  // Full table layouts
+  // Multi-column grids
+  // Side navigation with labels
+}
+```
+
+### UI Component Library
+
+**Recommended**: Angular Material or PrimeNG for consistent, accessible components
+
+**Key Components**:
+- Data tables with sorting, filtering, pagination
+- Form controls with validation
+- Modal dialogs
+- Toast notifications
+- Status badges
+- Loading spinners
+- Date pickers
+- Autocomplete/typeahead
+- Tabs
+- Cards
+- Buttons with icons
+
+### Accessibility Considerations
+
+1. **WCAG 2.1 AA Compliance**:
+   - Proper heading hierarchy
+   - Alt text for images and icons
+   - Keyboard navigation support
+   - Focus indicators
+   - Color contrast ratios (4.5:1 minimum)
+
+2. **ARIA Labels**:
+   - Screen reader support for all interactive elements
+   - ARIA live regions for dynamic content updates
+   - Proper form labels and error associations
+
+3. **Keyboard Shortcuts**:
+   - Tab navigation through forms
+   - Enter to submit
+   - Escape to cancel/close modals
+   - Arrow keys for table navigation
+
+## Additional Correctness Properties for New Features
+
+### Property 44: User account creation generates unique identifier
+
+*For any* valid user account data with all required fields, creating the user SHALL generate a unique user ID and persist the user with all provided fields.
+
+**Validates: Requirements 13.1**
+
+### Property 45: Username and email uniqueness enforcement
+
+*For any* user account with a username or email that already exists in the system, attempting to create a new user with that username or email SHALL fail with a uniqueness error.
+
+**Validates: Requirements 13.5**
+
+### Property 46: Disabled user accounts prevent login
+
+*For any* user account that is disabled, login attempts SHALL fail and any active sessions SHALL be terminated.
+
+**Validates: Requirements 13.4**
+
+### Property 47: User profile updates are restricted
+
+*For any* user attempting to update their own profile, modifications to roles or account status SHALL fail with an authorization error.
+
+**Validates: Requirements 14.4**
+
+### Property 48: Ticket list filtering returns matching tickets
+
+*For any* ticket search query with filters (status, type, date range), the search SHALL return all and only those tickets matching the filter criteria for the logged-in user.
+
+**Validates: Requirements 15.3, 15.4**
+
+### Property 49: Ticket creation validates required fields
+
+*For any* ticket creation request missing required fields (asset, reason, priority), the validation SHALL fail and return errors identifying all missing fields.
+
+**Validates: Requirements 16.3**
+
+### Property 50: Dashboard statistics are accurate
+
+*For any* logged-in user, the dashboard SHALL display accurate counts for pending requests, approved requests, and assigned assets based on current data.
+
+**Validates: Requirements 18.1**
+
+### Property 51: Notifications are created for ticket status changes
+
+*For any* ticket status change (pending to approved, approved to completed, etc.), a notification SHALL be created for the ticket requester.
+
+**Validates: Requirements 18.2**
+
+### Property 52: User account audit logging
+
+*For any* user account create, update, enable, or disable operation, an audit log entry SHALL be created with timestamp, admin user ID, action type, and changed fields.
+
+**Validates: Requirements 13.7**
+
+## Updated Testing Strategy
+
+### Additional UI Testing
+
+**Component Tests**:
+- User management components (list, form, profile)
+- Ticket management components (list, detail, create)
+- Dashboard components
+- Notification components
+
+**E2E Tests**:
+- User management workflow (create, edit, enable/disable)
+- Ticket creation and tracking workflow
+- Dashboard navigation and quick actions
+- Responsive behavior on different screen sizes
+
+**Accessibility Tests**:
+- Keyboard navigation
+- Screen reader compatibility
+- Color contrast validation
+- ARIA label verification
+
+### Updated Test Organization
+
+```
+tests/
+├── unit/
+│   ├── auth/
+│   ├── asset/
+│   ├── audit/
+│   ├── ticket/
+│   ├── user/                    # New
+│   │   ├── user-management.test.ts
+│   │   └── user-profile.test.ts
+│   └── config/
+├── property/
+│   ├── auth.property.test.ts
+│   ├── asset.property.test.ts
+│   ├── lifecycle.property.test.ts
+│   ├── search.property.test.ts
+│   ├── assignment.property.test.ts
+│   ├── audit.property.test.ts
+│   ├── import-export.property.test.ts
+│   ├── validation.property.test.ts
+│   ├── ticket.property.test.ts
+│   ├── user.property.test.ts    # New
+│   ├── ui.property.test.ts      # New
+│   └── config.property.test.ts
+├── integration/
+│   ├── database.test.ts
+│   ├── search-performance.test.ts
+│   ├── report-performance.test.ts
+│   ├── ticket-workflow.test.ts
+│   ├── user-management.test.ts  # New
+│   └── import-export.test.ts
+├── e2e/
+│   ├── asset-management.e2e.ts
+│   ├── ticket-workflow.e2e.ts
+│   ├── user-management.e2e.ts   # New
+│   ├── dashboard.e2e.ts         # New
+│   └── responsive.e2e.ts        # New
+├── accessibility/               # New
+│   ├── wcag-compliance.test.ts
+│   └── keyboard-navigation.test.ts
+└── fixtures/
+    ├── users.ts
+    ├── assets.ts
+    ├── tickets.ts
+    └── generators.ts
+```
+
+### Coverage Goals (Updated)
+
+- Unit test coverage: > 80%
+- Property test coverage: All 52 properties (updated from 43)
+- Integration test coverage: All external dependencies
+- E2E test coverage: All critical user workflows including new UI features
+- Accessibility test coverage: WCAG 2.1 AA compliance
+- Security test coverage: All authentication/authorization paths
+- Performance test coverage: All performance requirements

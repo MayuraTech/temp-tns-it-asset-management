@@ -1,0 +1,312 @@
+// Responsive Breakpoints for IT Asset Management
+// Following Material Design breakpoints and Requirements 17.1-17.5
+
+// Breakpoint values
+$breakpoint-mobile: 320px;
+$breakpoint-mobile-large: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-tablet-large: 1024px;
+$breakpoint-desktop: 1280px;
+$breakpoint-desktop-large: 1920px;
+
+// Mixins for responsive design
+@mixin mobile {
+  @media (min-width: #{$breakpoint-mobile}) and (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-tablet}) and (max-width: #{$breakpoint-desktop - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-desktop}) {
+    @content;
+  }
+}
+
+@mixin desktop-large {
+  @media (min-width: #{$breakpoint-desktop-large}) {
+    @content;
+  }
+}
+
+// Touch-friendly controls for mobile and tablet
+@mixin touch-friendly {
+  @media (max-width: #{$breakpoint-desktop - 1px}) {
+    @content;
+  }
+}
+
+// Container widths
+.container {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @include tablet {
+    max-width: 960px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  
+  @include desktop {
+    max-width: 1280px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  
+  @include desktop-large {
+    max-width: 1600px;
+  }
+}
+
+// Responsive grid system
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -8px;
+  margin-right: -8px;
+  
+  @include tablet-up {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+}
+
+.col {
+  flex: 1;
+  padding-left: 8px;
+  padding-right: 8px;
+  
+  @include tablet-up {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+// Column sizes for different breakpoints
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    flex: 0 0 calc(#{$i} / 12 * 100%);
+    max-width: calc(#{$i} / 12 * 100%);
+    padding-left: 8px;
+    padding-right: 8px;
+    
+    @include tablet-up {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  }
+  
+  .col-mobile-#{$i} {
+    @include mobile-only {
+      flex: 0 0 calc(#{$i} / 12 * 100%);
+      max-width: calc(#{$i} / 12 * 100%);
+    }
+  }
+  
+  .col-tablet-#{$i} {
+    @include tablet {
+      flex: 0 0 calc(#{$i} / 12 * 100%);
+      max-width: calc(#{$i} / 12 * 100%);
+    }
+  }
+  
+  .col-desktop-#{$i} {
+    @include desktop {
+      flex: 0 0 calc(#{$i} / 12 * 100%);
+      max-width: calc(#{$i} / 12 * 100%);
+    }
+  }
+}
+
+// Responsive utilities
+.hide-mobile {
+  @include mobile-only {
+    display: none !important;
+  }
+}
+
+.hide-tablet {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @include desktop {
+    display: none !important;
+  }
+}
+
+.show-mobile {
+  display: none !important;
+  
+  @include mobile-only {
+    display: block !important;
+  }
+}
+
+.show-tablet {
+  display: none !important;
+  
+  @include tablet {
+    display: block !important;
+  }
+}
+
+.show-desktop {
+  display: none !important;
+  
+  @include desktop {
+    display: block !important;
+  }
+}
+
+// Responsive spacing
+.responsive-padding {
+  padding: 16px;
+  
+  @include tablet-up {
+    padding: 24px;
+  }
+  
+  @include desktop {
+    padding: 32px;
+  }
+}
+
+.responsive-margin {
+  margin: 16px;
+  
+  @include tablet-up {
+    margin: 24px;
+  }
+  
+  @include desktop {
+    margin: 32px;
+  }
+}
+
+// Touch-friendly button sizes
+.touch-friendly-button {
+  @include touch-friendly {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+
+// Responsive table wrapper
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  @include mobile-only {
+    // Card-based layout for mobile
+    .mat-mdc-table {
+      display: block;
+      
+      .mat-mdc-header-row {
+        display: none;
+      }
+      
+      .mat-mdc-row {
+        display: block;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        margin-bottom: 16px;
+        padding: 16px;
+        
+        .mat-mdc-cell {
+          display: block;
+          border: none;
+          padding: 8px 0;
+          
+          &:before {
+            content: attr(data-label);
+            font-weight: 500;
+            display: inline-block;
+            width: 120px;
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive form layout
+.form-responsive {
+  .mat-mdc-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  @include tablet-up {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    
+    .mat-mdc-form-field {
+      flex: 1;
+      min-width: 200px;
+      margin-bottom: 0;
+    }
+    
+    .mat-mdc-form-field.full-width {
+      flex: 1 1 100%;
+    }
+  }
+}
+
+// Responsive dialog
+.responsive-dialog {
+  @include mobile-only {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    
+    .mat-mdc-dialog-container {
+      border-radius: 0;
+    }
+  }
+}
+
+// Responsive navigation
+.responsive-nav {
+  @include mobile-only {
+    .nav-item {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  }
+  
+  @include tablet-up {
+    display: flex;
+    
+    .nav-item {
+      padding: 12px 24px;
+    }
+  }
+}
