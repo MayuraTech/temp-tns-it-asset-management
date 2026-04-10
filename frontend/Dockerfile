@@ -9,7 +9,7 @@ RUN npm ci
 
 # Copy source and build for production
 COPY . .
-RUN npm run build -- --configuration=production
+RUN npm run build:prod
 
 # Stage 2: Serve with nginx
 FROM nginx:1.25-alpine
@@ -18,8 +18,8 @@ WORKDIR /usr/share/nginx/html
 # Remove default nginx content
 RUN rm -rf ./*
 
-# Copy Angular build output (application builder outputs to browser/)
-COPY --from=build /app/dist/career-portal-frontend/browser ./
+# Copy Angular build output (adjust project name if needed)
+COPY --from=build /app/dist/it-asset-management-frontend/browser ./
 
 # Copy nginx template (envsubst replaces ${API_URL} at startup)
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
