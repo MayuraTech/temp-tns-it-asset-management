@@ -270,6 +270,153 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Handle BadCredentialsException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            org.springframework.security.authentication.BadCredentialsException ex, HttpServletRequest request) {
+        
+        logger.warn("Authentication failed: {}", ex.getMessage());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_FAILED")
+            .message("Invalid username or password")
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle AccountLockedException - returns 401 Unauthorized.
+     * Provides detailed information about the account lock including expiration time.
+     */
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountLocked(
+            AccountLockedException ex, HttpServletRequest request) {
+        
+        logger.warn("Account locked: {}", ex.getMessage());
+        
+        Map<String, Object> details = new HashMap<>();
+        if (ex.getLockUntil() != null) {
+            details.put("lockUntil", ex.getLockUntil().toString());
+            details.put("reason", "Multiple failed login attempts");
+            details.put("lockDurationMinutes", 30);
+        }
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ACCOUNT_LOCKED")
+            .message("Account is temporarily locked due to multiple failed login attempts. Please try again after " + 
+                    (ex.getLockUntil() != null ? ex.getLockUntil().toString() : "the lock period expires"))
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle AccountDisabledException - returns 401 Unauthorized.
+     * Provides information about the disabled account status.
+     */
+    @ExceptionHandler(AccountDisabledException.class)
+    public ResponseEntity<ErrorResponse> handleAccountDisabled(
+            AccountDisabledException ex, HttpServletRequest request) {
+        
+        logger.warn("Account disabled: {}", ex.getMessage());
+        
+        Map<String, Object> details = new HashMap<>();
+        if (ex.getUserId() != null) {
+            details.put("userId", ex.getUserId());
+        }
+        details.put("reason", "Account has been administratively disabled");
+        details.put("action", "Contact your system administrator to reactivate your account");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ACCOUNT_DISABLED")
+            .message("Account has been disabled by an administrator. Please contact support for assistance.")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle DuplicateUsernameException - returns 409 Conflict.
+     * Provides information about the duplicate username constraint violation.
+     */
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateUsername(
+            DuplicateUsernameException ex, HttpServletRequest request) {
+        
+        logger.warn("Duplicate username: {}", ex.getUsername());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("username", ex.getUsername());
+        details.put("field", "username");
+        details.put("constraint", "unique");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("DUPLICATE_USERNAME")
+            .message("Username already exists. Please choose a different username.")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    /**
+     * Handle DuplicateEmailException - returns 409 Conflict.
+     * Provides information about the duplicate email constraint violation.
+     */
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(
+            DuplicateEmailException ex, HttpServletRequest request) {
+        
+        logger.warn("Duplicate email: {}", ex.getEmail());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("email", ex.getEmail());
+        details.put("field", "email");
+        details.put("constraint", "unique");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("DUPLICATE_EMAIL")
+            .message("Email address already exists. Please use a different email address.")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    /**
+     * Handle UserNotFoundException - returns 404 Not Found.
+     * Provides information about the user that could not be found.
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(
+            UserNotFoundException ex, HttpServletRequest request) {
+        
+        logger.warn("User not found: {}", ex.getUserId());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("userId", ex.getUserId());
+        details.put("resourceType", "User");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("USER_NOT_FOUND")
+            .message("User not found with the specified ID")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+    
+    /**
      * Handle generic exceptions - returns 500 Internal Server Error.
      */
     @ExceptionHandler(Exception.class)

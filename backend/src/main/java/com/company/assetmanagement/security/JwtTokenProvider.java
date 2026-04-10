@@ -67,6 +67,28 @@ public class JwtTokenProvider {
     }
     
     /**
+     * Generate JWT access token with user ID and roles.
+     *
+     * @param userId the user ID
+     * @param username the username
+     * @param roles the user roles
+     * @return JWT access token
+     */
+    public String generateToken(String userId, String username, String roles) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        
+        return Jwts.builder()
+                .subject(username)
+                .claim("userId", userId)
+                .claim("roles", roles)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
+    }
+    
+    /**
      * Generate refresh token from username.
      *
      * @param username the username
@@ -99,6 +121,38 @@ public class JwtTokenProvider {
                 .getPayload();
         
         return claims.getSubject();
+    }
+    
+    /**
+     * Get user ID from JWT token.
+     *
+     * @param token the JWT token
+     * @return user ID
+     */
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        
+        return claims.get("userId", String.class);
+    }
+    
+    /**
+     * Get roles from JWT token.
+     *
+     * @param token the JWT token
+     * @return comma-separated roles string
+     */
+    public String getRolesFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        
+        return claims.get("roles", String.class);
     }
     
     /**

@@ -41,6 +41,13 @@ export class AuthService {
   }
 
   /**
+   * Get the current authenticated user (alias for currentUserValue)
+   */
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  /**
    * Check if user is authenticated
    */
   get isAuthenticated(): boolean {
