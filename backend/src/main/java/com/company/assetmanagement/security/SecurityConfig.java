@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -81,7 +83,7 @@ public class SecurityConfig {
                                         "img-src 'self' data:; " +
                                         "font-src 'self' data:"))
                         // XSS Protection
-                        .xssProtection(xss -> xss.headerValue("1; mode=block"))
+                        .xssProtection(xss -> xss.headerValue(HeaderValue.ENABLED_MODE_BLOCK))
                         // Frame Options
                         .frameOptions(frame -> frame.deny())
                         // HTTP Strict Transport Security (HSTS)

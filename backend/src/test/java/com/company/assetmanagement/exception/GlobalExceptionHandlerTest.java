@@ -253,4 +253,162 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getBody().getRequestId()).isNotNull();
         assertThat(response.getBody().getRequestId()).isNotEmpty();
     }
+    
+    @Test
+    @DisplayName("Should handle AccountLockedException with 401 Unauthorized")
+    void shouldHandleAccountLockedException() {
+        // Given
+        java.time.LocalDateTime lockUntil = java.time.LocalDateTime.now().plusMinutes(30);
+        AccountLockedException exception = new AccountLockedException(lockUntil);
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleAccountLocked(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("ACCOUNT_LOCKED");
+        assertThat(response.getBody().getMessage()).contains("Account is temporarily locked");
+        assertThat(response.getBody().getMessage()).contains("multiple failed login attempts");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> details = (Map<String, Object>) response.getBody().getDetails();
+        assertThat(details.get("lockUntil")).isEqualTo(lockUntil.toString());
+        assertThat(details.get("reason")).isEqualTo("Multiple failed login attempts");
+        assertThat(details.get("lockDurationMinutes")).isEqualTo(30);
+    }
+    
+    @Test
+    @DisplayName("Should handle AccountDisabledException with 401 Unauthorized")
+    void shouldHandleAccountDisabledException() {
+        // Given
+        AccountDisabledException exception = new AccountDisabledException("user-123");
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleAccountDisabled(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("ACCOUNT_DISABLED");
+        assertThat(response.getBody().getMessage()).contains("Account has been disabled");
+        assertThat(response.getBody().getMessage()).contains("contact support");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> details = (Map<String, Object>) response.getBody().getDetails();
+        assertThat(details.get("userId")).isEqualTo("user-123");
+        assertThat(details.get("reason")).isEqualTo("Account has been administratively disabled");
+        assertThat(details.get("action")).isEqualTo("Contact your system administrator to reactivate your account");
+    }
+    
+    @Test
+    @DisplayName("Should handle AccountDisabledException without userId")
+    void shouldHandleAccountDisabledExceptionWithoutUserId() {
+        // Given
+        AccountDisabledException exception = new AccountDisabledException();
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleAccountDisabled(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("ACCOUNT_DISABLED");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> details = (Map<String, Object>) response.getBody().getDetails();
+        assertThat(details.get("reason")).isNotNull();
+        assertThat(details.get("action")).isNotNull();
+    }
+    
+    @Test
+    @DisplayName("Should handle DuplicateUsernameException with 409 Conflict")
+    void shouldHandleDuplicateUsernameException() {
+        // Given
+        DuplicateUsernameException exception = new DuplicateUsernameException("john_doe");
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleDuplicateUsername(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("DUPLICATE_USERNAME");
+        assertThat(response.getBody().getMessage()).contains("Username already exists");
+        assertThat(response.getBody().getMessage()).contains("choose a different username");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) response.getBody().getDetails();
+        assertThat(details.get("username")).isEqualTo("john_doe");
+        assertThat(details.get("field")).isEqualTo("username");
+        assertThat(details.get("constraint")).isEqualTo("unique");
+    }
+    
+    @Test
+    @DisplayName("Should handle DuplicateEmailException with 409 Conflict")
+    void shouldHandleDuplicateEmailException() {
+        // Given
+        DuplicateEmailException exception = new DuplicateEmailException("john@example.com");
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleDuplicateEmail(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("DUPLICATE_EMAIL");
+        assertThat(response.getBody().getMessage()).contains("Email address already exists");
+        assertThat(response.getBody().getMessage()).contains("use a different email");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) response.getBody().getDetails();
+        assertThat(details.get("email")).isEqualTo("john@example.com");
+        assertThat(details.get("field")).isEqualTo("email");
+        assertThat(details.get("constraint")).isEqualTo("unique");
+    }
+    
+    @Test
+    @DisplayName("Should handle UserNotFoundException with 404 Not Found")
+    void shouldHandleUserNotFoundException() {
+        // Given
+        UserNotFoundException exception = new UserNotFoundException("550e8400-e29b-41d4-a716-446655440000");
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleUserNotFound(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("USER_NOT_FOUND");
+        assertThat(response.getBody().getMessage()).contains("User not found");
+        assertThat(response.getBody().getMessage()).contains("specified ID");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, String> details = (Map<String, String>) response.getBody().getDetails();
+        assertThat(details.get("userId")).isEqualTo("550e8400-e29b-41d4-a716-446655440000");
+        assertThat(details.get("resourceType")).isEqualTo("User");
+    }
+    
+    @Test
+    @DisplayName("Should handle BadCredentialsException with 401 Unauthorized")
+    void shouldHandleBadCredentialsException() {
+        // Given
+        org.springframework.security.authentication.BadCredentialsException exception = 
+            new org.springframework.security.authentication.BadCredentialsException("Invalid credentials");
+        
+        // When
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleBadCredentials(exception, request);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getType()).isEqualTo("AUTHENTICATION_FAILED");
+        assertThat(response.getBody().getMessage()).isEqualTo("Invalid username or password");
+        assertThat(response.getBody().getRequestId()).isEqualTo("test-request-123");
+    }
 }
