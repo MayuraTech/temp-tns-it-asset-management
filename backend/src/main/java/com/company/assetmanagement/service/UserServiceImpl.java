@@ -1,6 +1,7 @@
 package com.company.assetmanagement.service;
 
 import com.company.assetmanagement.dto.AuditEventDTO;
+import com.company.assetmanagement.dto.FieldChangeDTO;
 import com.company.assetmanagement.dto.UserDTO;
 import com.company.assetmanagement.dto.UserRequest;
 import com.company.assetmanagement.dto.UserUpdateRequest;
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(creatorId, Action.CREATE_USER)) {
             logger.warn("User {} attempted to create user without permission", creatorId);
-            throw new InsufficientPermissionsException("You do not have permission to create users");
+            throw new InsufficientPermissionsException(creatorId, Action.CREATE_USER.name());
         }
         
         // 2. Validate request data (Bean Validation already applied via @Valid in controller)
@@ -152,7 +153,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.CREATE_USER)
             .resourceType("USER")
             .resourceId(savedUser.getId().toString())
-            .details(Map.of(
+            .metadata(Map.of(
                 "username", savedUser.getUsername(),
                 "email", savedUser.getEmail(),
                 "roles", request.getRoles().stream()
@@ -213,7 +214,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(updaterId, Action.UPDATE_USER)) {
             logger.warn("User {} attempted to update user without permission", updaterId);
-            throw new InsufficientPermissionsException("You do not have permission to update users");
+            throw new InsufficientPermissionsException(updaterId, Action.UPDATE_USER.name());
         }
         
         // 2. Verify user exists
@@ -262,12 +263,22 @@ public class UserServiceImpl implements UserService {
         
         // 9. Log audit event if any fields changed
         if (!changedFields.isEmpty()) {
+            Map<String, FieldChangeDTO> changes = new HashMap<>();
+            for (Map.Entry<String, String> entry : changedFields.entrySet()) {
+                String[] parts = entry.getValue().split(" -> ");
+                changes.put(entry.getKey(), new FieldChangeDTO(
+                    entry.getKey(),
+                    parts.length > 0 ? parts[0] : null,
+                    parts.length > 1 ? parts[1] : null
+                ));
+            }
+            
             auditService.logEvent(AuditEventDTO.builder()
                 .userId(UUID.fromString(updaterId))
                 .actionType(Action.UPDATE_USER)
                 .resourceType("USER")
                 .resourceId(userId)
-                .details(changedFields)
+                .changes(changes)
                 .build());
             
             logger.info("User {} updated by {}: {}", userId, updaterId, changedFields);
@@ -288,7 +299,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(deleterId, Action.DELETE_USER)) {
             logger.warn("User {} attempted to delete user without permission", deleterId);
-            throw new InsufficientPermissionsException("You do not have permission to delete users");
+            throw new InsufficientPermissionsException(deleterId, Action.DELETE_USER.name());
         }
         
         // 2. Verify user exists
@@ -298,7 +309,7 @@ public class UserServiceImpl implements UserService {
         // 3. Validate not deleting own account
         if (deleterId.equals(userId)) {
             logger.warn("User {} attempted to delete their own account", deleterId);
-            throw new ValidationException("You cannot delete your own account");
+            throw new ValidationException("userId", "You cannot delete your own account");
         }
         
         // 4. Invalidate all active sessions
@@ -313,7 +324,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.DELETE_USER)
             .resourceType("USER")
             .resourceId(userId)
-            .details(Map.of(
+            .metadata(Map.of(
                 "username", user.getUsername(),
                 "email", user.getEmail()
             ))
@@ -333,7 +344,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(adminId, Action.MANAGE_USER_STATUS)) {
             logger.warn("User {} attempted to enable user without permission", adminId);
-            throw new InsufficientPermissionsException("You do not have permission to manage user status");
+            throw new InsufficientPermissionsException(adminId, Action.MANAGE_USER_STATUS.name());
         }
         
         // 2. Verify user exists
@@ -357,7 +368,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.ENABLE_USER)
             .resourceType("USER")
             .resourceId(userId)
-            .details(Map.of("username", user.getUsername()))
+            .metadata(Map.of("username", user.getUsername()))
             .build());
         
         logger.info("User {} enabled by admin {}", userId, adminId);
@@ -374,7 +385,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(adminId, Action.MANAGE_USER_STATUS)) {
             logger.warn("User {} attempted to disable user without permission", adminId);
-            throw new InsufficientPermissionsException("You do not have permission to manage user status");
+            throw new InsufficientPermissionsException(adminId, Action.MANAGE_USER_STATUS.name());
         }
         
         // 2. Verify user exists
@@ -384,7 +395,7 @@ public class UserServiceImpl implements UserService {
         // 3. Validate not disabling own account
         if (adminId.equals(userId)) {
             logger.warn("User {} attempted to disable their own account", adminId);
-            throw new ValidationException("You cannot disable your own account");
+            throw new ValidationException("userId", "You cannot disable your own account");
         }
         
         // 4. Get admin user
@@ -407,7 +418,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.DISABLE_USER)
             .resourceType("USER")
             .resourceId(userId)
-            .details(Map.of("username", user.getUsername()))
+            .metadata(Map.of("username", user.getUsername()))
             .build());
         
         logger.info("User {} disabled by admin {}", userId, adminId);
@@ -425,7 +436,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(adminId, Action.ASSIGN_ROLE)) {
             logger.warn("User {} attempted to assign role without permission", adminId);
-            throw new InsufficientPermissionsException("You do not have permission to assign roles");
+            throw new InsufficientPermissionsException(adminId, Action.ASSIGN_ROLE.name());
         }
         
         // 2. Verify user exists
@@ -439,7 +450,7 @@ public class UserServiceImpl implements UserService {
         // 4. Check user does not already have the role
         if (user.hasRole(role)) {
             logger.warn("Attempt to assign role {} to user {} who already has it", role, userId);
-            throw new ValidationException("User already has role: " + role.getValue());
+            throw new ValidationException("role", "User already has role: " + role.getValue());
         }
         
         // 5. Create and persist UserRole
@@ -456,7 +467,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.ASSIGN_ROLE)
             .resourceType("USER")
             .resourceId(userId)
-            .details(Map.of(
+            .metadata(Map.of(
                 "username", user.getUsername(),
                 "role", role.getValue()
             ))
@@ -477,7 +488,7 @@ public class UserServiceImpl implements UserService {
         // 1. Authorization check
         if (!authorizationService.hasPermission(adminId, Action.REVOKE_ROLE)) {
             logger.warn("User {} attempted to revoke role without permission", adminId);
-            throw new InsufficientPermissionsException("You do not have permission to revoke roles");
+            throw new InsufficientPermissionsException(adminId, Action.REVOKE_ROLE.name());
         }
         
         // 2. Verify user exists
@@ -487,26 +498,26 @@ public class UserServiceImpl implements UserService {
         // 3. Validate user has the role
         if (!user.hasRole(role)) {
             logger.warn("Attempt to revoke role {} from user {} who doesn't have it", role, userId);
-            throw new ValidationException("User does not have role: " + role.getValue());
+            throw new ValidationException("role", "User does not have role: " + role.getValue());
         }
         
         // 4. Validate user will have at least one role remaining
         if (user.getRoles().size() <= 1) {
             logger.warn("Attempt to revoke last role from user {}", userId);
-            throw new ValidationException("Cannot revoke last role from user. Users must have at least one role.");
+            throw new ValidationException("role", "Cannot revoke last role from user. Users must have at least one role.");
         }
         
         // 5. Validate admin is not revoking their own ADMINISTRATOR role
         if (adminId.equals(userId) && role == Role.ADMINISTRATOR) {
             logger.warn("Admin {} attempted to revoke their own ADMINISTRATOR role", adminId);
-            throw new ValidationException("You cannot revoke your own ADMINISTRATOR role");
+            throw new ValidationException("role", "You cannot revoke your own ADMINISTRATOR role");
         }
         
         // 6. Find and remove UserRole
         UserRole userRoleToRemove = user.getRoles().stream()
             .filter(ur -> ur.getRole() == role)
             .findFirst()
-            .orElseThrow(() -> new ValidationException("User role not found"));
+            .orElseThrow(() -> new ValidationException("role", "User role not found"));
         
         user.removeRole(userRoleToRemove);
         userRoleRepository.delete(userRoleToRemove);
@@ -520,7 +531,7 @@ public class UserServiceImpl implements UserService {
             .actionType(Action.REVOKE_ROLE)
             .resourceType("USER")
             .resourceId(userId)
-            .details(Map.of(
+            .metadata(Map.of(
                 "username", user.getUsername(),
                 "role", role.getValue()
             ))

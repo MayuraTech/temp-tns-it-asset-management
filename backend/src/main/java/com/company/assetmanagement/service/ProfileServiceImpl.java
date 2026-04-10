@@ -143,7 +143,7 @@ public class ProfileServiceImpl implements ProfileService {
         if (!changes.isEmpty()) {
             AuditEventDTO auditEvent = new AuditEventDTO();
             auditEvent.setUserId(UUID.fromString(userId));
-            auditEvent.setActionType(Action.UPDATE);
+            auditEvent.setActionType(Action.UPDATE_USER);
             auditEvent.setResourceType("USER_PROFILE");
             auditEvent.setResourceId(userId);
             auditEvent.setChanges(changes);
@@ -173,13 +173,13 @@ public class ProfileServiceImpl implements ProfileService {
         // 2. Validate current password
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             logger.warn("Failed password change attempt for user: {} - incorrect current password", userId);
-            throw new ValidationException("Current password is incorrect");
+            throw new ValidationException("currentPassword", "Current password is incorrect");
         }
         
         // 3. Validate new password is different from current
         if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
             logger.warn("Failed password change attempt for user: {} - new password same as current", userId);
-            throw new ValidationException("New password must be different from current password");
+            throw new ValidationException("newPassword", "New password must be different from current password");
         }
         
         // 4. Hash new password with BCrypt (strength 10)
@@ -202,7 +202,7 @@ public class ProfileServiceImpl implements ProfileService {
         // 7. Log the password change event via AuditService (without password values)
         AuditEventDTO auditEvent = new AuditEventDTO();
         auditEvent.setUserId(UUID.fromString(userId));
-        auditEvent.setActionType(Action.UPDATE);
+        auditEvent.setActionType(Action.PASSWORD_CHANGE);
         auditEvent.setResourceType("USER_PASSWORD");
         auditEvent.setResourceId(userId);
         auditEvent.setTimestamp(LocalDateTime.now());
