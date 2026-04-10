@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { AssetService } from '../../services/asset.service';
+import { AssetPlaceholderService } from '../../services/asset-placeholder.service';
 import { Asset, AssetType, LifecycleStatus } from '../../models';
 
 /**
@@ -38,6 +39,7 @@ import { Asset, AssetType, LifecycleStatus } from '../../models';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     MatButtonModule,
     MatIconModule,
@@ -74,6 +76,7 @@ export class AssetDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private assetService: AssetService,
+    private assetPlaceholderService: AssetPlaceholderService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -368,6 +371,16 @@ export class AssetDetailComponent implements OnInit, OnDestroy {
     } else {
       this.assignmentHistory = [];
     }
+  }
+
+  /**
+   * Gets the image URL for the asset (custom or placeholder)
+   */
+  getAssetImageUrl(): string {
+    if (!this.asset) {
+      return this.assetPlaceholderService.getDefaultPlaceholderUrl();
+    }
+    return this.assetPlaceholderService.getAssetImageUrl(this.asset.imageUrl, this.asset.assetType);
   }
 
   /**

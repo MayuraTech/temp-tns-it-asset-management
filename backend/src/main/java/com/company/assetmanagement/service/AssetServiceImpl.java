@@ -5,6 +5,7 @@ import com.company.assetmanagement.exception.DuplicateSerialNumberException;
 import com.company.assetmanagement.exception.InsufficientPermissionsException;
 import com.company.assetmanagement.exception.InvalidStatusTransitionException;
 import com.company.assetmanagement.exception.ResourceNotFoundException;
+import com.company.assetmanagement.exception.ValidationException;
 import com.company.assetmanagement.model.Action;
 import com.company.assetmanagement.model.Asset;
 import com.company.assetmanagement.model.LifecycleStatus;
@@ -13,7 +14,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -924,7 +934,7 @@ public class AssetServiceImpl implements AssetService {
             } catch (ValidationException ve) {
                 // Collect validation errors with line numbers
                 StringBuilder errorMsg = new StringBuilder();
-                for (ValidationError error : ve.getErrors()) {
+                for (ValidationException.ValidationError error : ve.getErrors()) {
                     if (errorMsg.length() > 0) {
                         errorMsg.append("; ");
                     }
@@ -1245,5 +1255,127 @@ public class AssetServiceImpl implements AssetService {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to calculate asset statistics", e);
         }
+    }
+    
+    @Override
+    @Transactional
+    public AssetDTO uploadAssetImage(String userId, UUID assetId, MultipartFile file) {
+        // 1. Authorization check
+        if (!authorizationService.hasPermission(userId, Action.UPDATE_ASSET)) {
+            throw new InsufficientPermissionsException();
+        }
+        
+        // 2. Validate file
+        validateImageFile(file);
+        
+        // 3. Get existing asset
+        Asset asset = assetRepository.findById(assetId)
+            .orElseThrow(() -> new ResourceNotFoundException("Asset", assetId.toString()));
+        
+        // 4. Check if asset can be modified
+        if (asset.isReadOnly()) {
+            throw new ValidationException(List.of(
+                new ValidationException.ValidationError("asset", "Cannot upload image for read-only asset")
+            ));
+        }
+        
+        try {
+            // 5. Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = getFileExtension(originalFilename);
+            String uniqueFilename = assetId + "_" + System.currentTimeMillis() + fileExtension;
+            
+            // 6. Create upload directory if it doesn't exist
+            Path uploadDir = Paths.get("uploads/assets");
+            Files.createDirectories(uploadDir);
+            
+            // 7. Save file to disk
+            Path filePath = uploadDir.resolve(uniqueFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
+            // 8. Update asset with image information
+            asset.setImageUrl("/api/v1/assets/" + assetId + "/image");
+            asset.setImageFilename(uniqueFilename);
+            asset.setImageSize(file.getSize());
+            asset.setImageContentType(file.getContentType());
+            asset.setUpdatedBy(UUID.fromString(userId));
+            
+            // 9. Save asset
+            Asset savedAsset = assetRepository.save(asset);
+            
+            // 10. Audit logging
+            auditService.logEvent(AuditEventDTO.builder()
+                .userId(UUID.fromString(userId))
+                .actionType(Action.UPDATE_ASSET)
+                .resourceType("ASSET")
+                .resourceId(assetId.toString())
+                .changes(Map.of(
+                    "imageUrl", new FieldChangeDTO("imageUrl", null, asset.getImageUrl()),
+                    "imageFilename", new FieldChangeDTO("imageFilename", null, asset.getImageFilename())
+                ))
+                .build());
+            
+            // 11. Return updated DTO
+            return AssetMapper.toDTO(savedAsset);
+            
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image file", e);
+        }
+    }
+    
+    /**
+     * Validate uploaded image file.
+     * 
+     * @param file the file to validate
+     * @throws ValidationException if validation fails
+     */
+    private void validateImageFile(MultipartFile file) {
+        List<ValidationException.ValidationError> errors = new java.util.ArrayList<>();
+        
+        // Check if file is empty
+        if (file.isEmpty()) {
+            errors.add(new ValidationException.ValidationError("file", "Image file is required"));
+        }
+        
+        // Check file size (max 5MB)
+        long maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.getSize() > maxSize) {
+            errors.add(new ValidationException.ValidationError("file", "Image file size must not exceed 5MB"));
+        }
+        
+        // Check content type
+        String contentType = file.getContentType();
+        List<String> allowedTypes = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp");
+        if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
+            errors.add(new ValidationException.ValidationError("file", "Image format must be JPG, PNG, or WebP"));
+        }
+        
+        // Check file extension
+        String filename = file.getOriginalFilename();
+        if (filename != null) {
+            String extension = getFileExtension(filename).toLowerCase();
+            List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".webp");
+            if (!allowedExtensions.contains(extension)) {
+                errors.add(new ValidationException.ValidationError("file", "Image file extension must be .jpg, .jpeg, .png, or .webp"));
+            }
+        }
+        
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+    }
+    
+    /**
+     * Get file extension from filename.
+     * 
+     * @param filename the filename
+     * @return the file extension including the dot
+     */
+    private String getFileExtension(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return "";
+        }
+        int lastDotIndex = filename.lastIndexOf('.');
+        return lastDotIndex > 0 ? filename.substring(lastDotIndex) : "";
     }
 }

@@ -98,77 +98,11 @@
   }
 }
 
-// Quick Stats Dashboard Widget
-.quick-stats {
+// Dashboard Stats Section
+.dashboard-stats-section {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-xl);
   margin-bottom: var(--spacing-xxl);
-  
-  &__card {
-    background: var(--color-surface-container-lowest);
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-xl);
-    box-shadow: var(--shadow-editorial);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 24px 48px rgba(20, 59, 125, 0.1);
-    }
-  }
-  
-  &__icon {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--border-radius-md);
-    background: linear-gradient(135deg, var(--color-primary-blue-800) 0%, var(--color-primary-blue-700) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    
-    mat-icon {
-      color: var(--color-white);
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
-    
-    &--in-use {
-      background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-    }
-    
-    &--available {
-      background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
-    }
-  }
-  
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-  
-  &__label {
-    font-family: var(--font-family-body);
-    font-size: var(--font-size-sm);
-    color: var(--color-editorial-on-surface-variant);
-    font-weight: 500;
-  }
-  
-  &__value {
-    font-family: var(--font-family-heading);
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--color-editorial-on-surface);
-    line-height: 1;
-  }
 }
 
 // Filter Bar
@@ -659,8 +593,8 @@
     font-size: 36px;
   }
   
-  .quick-stats {
-    grid-template-columns: 1fr;
+  .dashboard-stats-section {
+    margin-bottom: var(--spacing-xl);
   }
 }
 

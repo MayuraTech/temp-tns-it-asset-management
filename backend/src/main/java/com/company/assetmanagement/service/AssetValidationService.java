@@ -1,7 +1,6 @@
 package com.company.assetmanagement.service;
 
 import com.company.assetmanagement.dto.AssetRequest;
-import com.company.assetmanagement.dto.ValidationError;
 import com.company.assetmanagement.exception.InvalidStatusTransitionException;
 import com.company.assetmanagement.exception.ValidationException;
 import com.company.assetmanagement.model.LifecycleStatus;
@@ -31,7 +30,7 @@ public class AssetValidationService {
      * @throws ValidationException if validation fails with all validation errors
      */
     public void validateAssetRequest(AssetRequest request) {
-        List<ValidationError> errors = new ArrayList<>();
+        List<ValidationException.ValidationError> errors = new ArrayList<>();
         
         // Validate required fields
         validateRequiredFields(request, errors);
@@ -58,30 +57,30 @@ public class AssetValidationService {
      * @param request the asset request
      * @param errors list to collect validation errors
      */
-    private void validateRequiredFields(AssetRequest request, List<ValidationError> errors) {
+    private void validateRequiredFields(AssetRequest request, List<ValidationException.ValidationError> errors) {
         // Asset type is required
         if (request.getAssetType() == null) {
-            errors.add(new ValidationError("assetType", ErrorMessages.ASSET_TYPE_REQUIRED));
+            errors.add(new ValidationException.ValidationError("assetType", ErrorMessages.ASSET_TYPE_REQUIRED));
         }
         
         // Name is required
         if (ValidationUtil.isNullOrEmpty(request.getName())) {
-            errors.add(new ValidationError("name", ErrorMessages.NAME_REQUIRED));
+            errors.add(new ValidationException.ValidationError("name", ErrorMessages.NAME_REQUIRED));
         }
         
         // Serial number is required
         if (ValidationUtil.isNullOrEmpty(request.getSerialNumber())) {
-            errors.add(new ValidationError("serialNumber", ErrorMessages.SERIAL_NUMBER_REQUIRED));
+            errors.add(new ValidationException.ValidationError("serialNumber", ErrorMessages.SERIAL_NUMBER_REQUIRED));
         }
         
         // Acquisition date is required
         if (request.getAcquisitionDate() == null) {
-            errors.add(new ValidationError("acquisitionDate", ErrorMessages.ACQUISITION_DATE_REQUIRED));
+            errors.add(new ValidationException.ValidationError("acquisitionDate", ErrorMessages.ACQUISITION_DATE_REQUIRED));
         }
         
         // Status is required
         if (request.getStatus() == null) {
-            errors.add(new ValidationError("status", ErrorMessages.STATUS_REQUIRED));
+            errors.add(new ValidationException.ValidationError("status", ErrorMessages.STATUS_REQUIRED));
         }
     }
     
@@ -94,16 +93,16 @@ public class AssetValidationService {
      * @param request the asset request
      * @param errors list to collect validation errors
      */
-    private void validateFieldLengths(AssetRequest request, List<ValidationError> errors) {
+    private void validateFieldLengths(AssetRequest request, List<ValidationException.ValidationError> errors) {
         // Validate name length (1-255 characters)
         if (request.getName() != null) {
             int nameLength = request.getName().length();
             if (nameLength < 1) {
-                errors.add(new ValidationError("name", 
+                errors.add(new ValidationException.ValidationError("name", 
                     ErrorMessages.fieldTooShort("Name", 1), 
                     request.getName()));
             } else if (nameLength > AppConstants.MAX_ASSET_NAME_LENGTH) {
-                errors.add(new ValidationError("name", 
+                errors.add(new ValidationException.ValidationError("name", 
                     ErrorMessages.NAME_TOO_LONG, 
                     request.getName()));
             }
@@ -113,11 +112,11 @@ public class AssetValidationService {
         if (request.getSerialNumber() != null) {
             int serialLength = request.getSerialNumber().length();
             if (serialLength < AppConstants.MIN_SERIAL_NUMBER_LENGTH) {
-                errors.add(new ValidationError("serialNumber", 
+                errors.add(new ValidationException.ValidationError("serialNumber", 
                     ErrorMessages.SERIAL_NUMBER_TOO_SHORT, 
                     request.getSerialNumber()));
             } else if (serialLength > AppConstants.MAX_SERIAL_NUMBER_LENGTH) {
-                errors.add(new ValidationError("serialNumber", 
+                errors.add(new ValidationException.ValidationError("serialNumber", 
                     ErrorMessages.SERIAL_NUMBER_TOO_LONG, 
                     request.getSerialNumber()));
             }
@@ -126,7 +125,7 @@ public class AssetValidationService {
         // Validate location length (max 255 characters)
         if (request.getLocation() != null && 
             request.getLocation().length() > AppConstants.MAX_LOCATION_LENGTH) {
-            errors.add(new ValidationError("location", 
+            errors.add(new ValidationException.ValidationError("location", 
                 ErrorMessages.LOCATION_TOO_LONG, 
                 request.getLocation()));
         }
@@ -139,11 +138,11 @@ public class AssetValidationService {
      * @param request the asset request
      * @param errors list to collect validation errors
      */
-    private void validateAcquisitionDate(AssetRequest request, List<ValidationError> errors) {
+    private void validateAcquisitionDate(AssetRequest request, List<ValidationException.ValidationError> errors) {
         if (request.getAcquisitionDate() != null) {
             LocalDate today = LocalDate.now();
             if (request.getAcquisitionDate().isAfter(today)) {
-                errors.add(new ValidationError("acquisitionDate", 
+                errors.add(new ValidationException.ValidationError("acquisitionDate", 
                     ErrorMessages.ACQUISITION_DATE_FUTURE, 
                     request.getAcquisitionDate()));
             }
@@ -157,10 +156,10 @@ public class AssetValidationService {
      * @param request the asset request
      * @param errors list to collect validation errors
      */
-    private void validateEmailFormat(AssetRequest request, List<ValidationError> errors) {
+    private void validateEmailFormat(AssetRequest request, List<ValidationException.ValidationError> errors) {
         if (ValidationUtil.isNotNullOrEmpty(request.getAssignedUserEmail())) {
             if (!ValidationUtil.isValidEmail(request.getAssignedUserEmail())) {
-                errors.add(new ValidationError("assignedUserEmail", 
+                errors.add(new ValidationException.ValidationError("assignedUserEmail", 
                     ErrorMessages.EMAIL_INVALID, 
                     request.getAssignedUserEmail()));
             }

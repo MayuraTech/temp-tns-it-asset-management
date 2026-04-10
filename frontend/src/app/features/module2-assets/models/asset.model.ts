@@ -47,6 +47,18 @@ export interface Asset {
   /** Custom fields in JSON format for extensibility */
   customFields?: string;
   
+  /** URL of the asset image */
+  imageUrl?: string;
+  
+  /** Original filename of the uploaded image */
+  imageFilename?: string;
+  
+  /** Size of the image file in bytes */
+  imageSize?: number;
+  
+  /** MIME type of the image */
+  imageContentType?: string;
+  
   /** Timestamp when the asset was created (ISO 8601 format) */
   createdAt: string;
   

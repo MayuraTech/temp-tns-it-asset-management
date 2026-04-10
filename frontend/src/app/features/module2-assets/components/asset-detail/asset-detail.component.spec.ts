@@ -53,7 +53,7 @@ describe('AssetDetailComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [AssetDetailComponent],
+      imports: [AssetDetailComponent],
       providers: [
         { provide: AssetService, useValue: mockAssetService },
         { provide: Router, useValue: mockRouter },

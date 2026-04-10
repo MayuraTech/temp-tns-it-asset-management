@@ -1072,4 +1072,46 @@ public class AssetController {
         AssetStatsDTO stats = assetService.getAssetStats();
         return ResponseEntity.ok(stats);
     }
+    
+    @Operation(
+        summary = "Upload asset image",
+        description = "Upload an image file for an asset. Supports JPG, PNG, and WebP formats with maximum size of 5MB.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Image uploaded successfully",
+                content = @Content(schema = @Schema(implementation = AssetDTO.class))
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "Invalid file format or size",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                responseCode = "403",
+                description = "Insufficient permissions"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "Asset not found"
+            ),
+            @ApiResponse(
+                responseCode = "422",
+                description = "Asset is read-only"
+            )
+        }
+    )
+    @PostMapping("/{id}/image")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ASSET_MANAGER')")
+    public ResponseEntity<AssetDTO> uploadAssetImage(
+            @Parameter(description = "Asset ID", required = true)
+            @PathVariable UUID id,
+            @Parameter(description = "Image file to upload", required = true)
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            Authentication authentication) {
+        
+        String userId = getUserId(authentication);
+        AssetDTO updatedAsset = assetService.uploadAssetImage(userId, id, file);
+        return ResponseEntity.ok(updatedAsset);
+    }
 }

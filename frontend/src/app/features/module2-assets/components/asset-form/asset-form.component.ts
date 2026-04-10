@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { AssetService } from '../../services/asset.service';
 import { Asset, AssetRequest, AssetType, LifecycleStatus } from '../../models';
+import { ImageUploadComponent } from '../shared/image-upload/image-upload.component';
 
 /**
  * Asset Form Component
@@ -45,7 +46,8 @@ import { Asset, AssetRequest, AssetType, LifecycleStatus } from '../../models';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ImageUploadComponent
   ],
   templateUrl: './asset-form.component.html',
   styleUrls: ['./asset-form.component.scss']
@@ -65,6 +67,11 @@ export class AssetFormComponent implements OnInit, OnDestroy {
   
   // Current asset data (for edit mode)
   currentAsset: Asset | null = null;
+  
+  // Image upload
+  selectedImageFile: File | null = null;
+  imageUploadError: string | null = null;
+  uploadingImage = false;
   
   private destroy$ = new Subject<void>();
 
@@ -246,6 +253,11 @@ export class AssetFormComponent implements OnInit, OnDestroy {
             ? 'Asset updated successfully'
             : 'Asset created successfully';
           
+          // Upload image if selected
+          if (this.selectedImageFile) {
+            this.uploadImageIfSelected(asset.id);
+          }
+          
           // Navigate to asset detail view after short delay
           setTimeout(() => {
             this.router.navigate(['/assets', asset.id]);
@@ -380,5 +392,64 @@ export class AssetFormComponent implements OnInit, OnDestroy {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+  
+  /**
+   * Handle image file selection
+   */
+  onImageSelected(file: File): void {
+    this.selectedImageFile = file;
+    this.imageUploadError = null;
+  }
+  
+  /**
+   * Handle image file removal
+   */
+  onImageRemoved(): void {
+    this.selectedImageFile = null;
+    this.imageUploadError = null;
+  }
+  
+  /**
+   * Handle image validation error
+   */
+  onImageValidationError(error: string): void {
+    this.imageUploadError = error;
+    this.selectedImageFile = null;
+  }
+  
+  /**
+   * Handle use default placeholder
+   */
+  onUseDefaultPlaceholder(): void {
+    this.selectedImageFile = null;
+    this.imageUploadError = null;
+    // The placeholder will be shown automatically by the service
+  }
+  
+  /**
+   * Upload image after asset is created/updated
+   */
+  private uploadImageIfSelected(assetId: string): void {
+    if (!this.selectedImageFile) {
+      return;
+    }
+    
+    this.uploadingImage = true;
+    
+    this.assetService.uploadAssetImage(assetId, this.selectedImageFile)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.uploadingImage = false)
+      )
+      .subscribe({
+        next: () => {
+          // Image uploaded successfully
+          this.selectedImageFile = null;
+        },
+        error: (error) => {
+          this.imageUploadError = error.message || 'Failed to upload image';
+        }
+      });
   }
 }

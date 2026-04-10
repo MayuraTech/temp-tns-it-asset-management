@@ -3,9 +3,6 @@
 -- This script verifies the Assets table meets all Module 2 requirements
 -- and adds any missing indexes or constraints
 
-USE ITAssetManagement;
-GO
-
 PRINT '========================================================================';
 PRINT 'Module 2: Asset Management - Assets Table Verification';
 PRINT '========================================================================';
@@ -76,7 +73,6 @@ BEGIN
     PRINT '✗ Assets table does not exist';
     RAISERROR('Assets table must be created before running this migration', 16, 1);
 END
-GO
 
 -- ============================================================================
 -- PART 2: Verify Constraints
@@ -176,7 +172,6 @@ BEGIN
     PRINT '✗ Foreign key constraints missing or incomplete';
     RAISERROR('Foreign key constraints required on Assets.CreatedBy and Assets.UpdatedBy', 16, 1);
 END
-GO
 
 -- ============================================================================
 -- PART 3: Verify Indexes
@@ -229,7 +224,6 @@ BEGIN
     SELECT '  ✗ ' + IndexName + ' on ' + ColumnName FROM @RequiredIndexes WHERE Exists = 0;
     RAISERROR('Required indexes missing on Assets table', 16, 1);
 END
-GO
 
 -- ============================================================================
 -- PART 4: Verify NOT NULL Constraints
@@ -258,7 +252,6 @@ ELSE
 BEGIN
     PRINT '✓ All required columns have NOT NULL constraint';
 END
-GO
 
 -- ============================================================================
 -- PART 5: Summary Report
@@ -285,4 +278,3 @@ PRINT '  - Requirement 1: Asset Registration (structure) ✓';
 PRINT '';
 PRINT 'Module 2 database schema is ready for implementation.';
 PRINT '========================================================================';
-GO

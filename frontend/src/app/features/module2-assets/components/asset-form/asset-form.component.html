@@ -310,13 +310,30 @@
       <!-- Visual Identity Card -->
       <div class="panel-card visual-identity">
         <h3 class="card-title">Visual Identity</h3>
-        <div class="asset-image-preview">
-          <div class="image-placeholder">
-            <span class="placeholder-icon">🖼️</span>
-            <p>No image uploaded</p>
-          </div>
-          <button type="button" class="link-button">Change Image</button>
+        
+        <!-- Image Upload Component -->
+        <app-image-upload
+          [currentImageUrl]="currentAsset?.imageUrl"
+          [assetType]="assetForm.get('assetType')?.value"
+          [disabled]="submitting || uploadingImage"
+          (fileSelected)="onImageSelected($event)"
+          (fileRemoved)="onImageRemoved()"
+          (validationError)="onImageValidationError($event)"
+          (useDefaultPlaceholder)="onUseDefaultPlaceholder()">
+        </app-image-upload>
+        
+        <!-- Image Upload Error -->
+        <div class="image-error" *ngIf="imageUploadError" role="alert">
+          <span class="error-icon">⚠️</span>
+          <span>{{ imageUploadError }}</span>
         </div>
+        
+        <!-- Uploading Indicator -->
+        <div class="uploading-indicator" *ngIf="uploadingImage">
+          <span class="spinner-small"></span>
+          <span>Uploading image...</span>
+        </div>
+        
         <div class="asset-info" *ngIf="currentAsset">
           <h4>{{ currentAsset.name }}</h4>
           <p class="asset-serial">{{ currentAsset.serialNumber }}</p>

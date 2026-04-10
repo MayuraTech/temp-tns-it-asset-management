@@ -92,6 +92,21 @@ public class Asset {
     @Column(name = "CustomFields", columnDefinition = "NVARCHAR(MAX)")
     private String customFields; // JSON string
     
+    @Size(max = 500, message = "Image URL must not exceed 500 characters")
+    @Column(name = "ImageUrl", length = 500)
+    private String imageUrl;
+    
+    @Size(max = 255, message = "Image filename must not exceed 255 characters")
+    @Column(name = "ImageFilename", length = 255)
+    private String imageFilename;
+    
+    @Column(name = "ImageSize")
+    private Long imageSize;
+    
+    @Size(max = 50, message = "Image content type must not exceed 50 characters")
+    @Column(name = "ImageContentType", length = 50)
+    private String imageContentType;
+    
     @CreatedDate
     @Column(name = "CreatedAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -279,6 +294,38 @@ public class Asset {
     
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+    }
+    
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
+    public String getImageFilename() {
+        return imageFilename;
+    }
+    
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
+    }
+    
+    public Long getImageSize() {
+        return imageSize;
+    }
+    
+    public void setImageSize(Long imageSize) {
+        this.imageSize = imageSize;
+    }
+    
+    public String getImageContentType() {
+        return imageContentType;
+    }
+    
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
     
     /**

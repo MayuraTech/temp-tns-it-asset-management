@@ -81,7 +81,7 @@ public class SecurityConfig {
                                         "img-src 'self' data:; " +
                                         "font-src 'self' data:"))
                         // XSS Protection
-                        .xssProtection(xss -> xss.headerValue("1; mode=block"))
+                        .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                         // Frame Options
                         .frameOptions(frame -> frame.deny())
                         // HTTP Strict Transport Security (HSTS)

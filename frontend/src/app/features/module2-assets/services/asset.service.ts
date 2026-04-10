@@ -283,6 +283,23 @@ export class AssetService {
   }
 
   /**
+   * Upload an image for an asset.
+   * 
+   * @param id Asset ID
+   * @param file Image file to upload
+   * @returns Observable of updated asset with image information
+   */
+  uploadAssetImage(id: string, file: File): Observable<Asset> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return this.http.post<Asset>(`${this.apiUrl}/${id}/image`, formData)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  /**
    * Builds HTTP query parameters from an AssetSearchQuery object.
    * 
    * @param params - Existing HttpParams object

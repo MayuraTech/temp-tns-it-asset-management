@@ -334,9 +334,10 @@ export class AssignmentCardComponent {
    * Get user initials for avatar
    */
   getInitials(name: string): string {
-    if (!name) return '?';
+    if (!name || !name.trim()) return '?';
     
-    const parts = name.trim().split(' ');
+    const parts = name.trim().split(' ').filter(part => part.length > 0);
+    if (parts.length === 0) return '?';
     if (parts.length === 1) {
       return parts[0].charAt(0).toUpperCase();
     }

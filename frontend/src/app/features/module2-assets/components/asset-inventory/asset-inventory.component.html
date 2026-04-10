@@ -31,37 +31,9 @@
     </div>
   </header>
   
-  <!-- Dashboard Snapshot Widget - Quick Stats -->
-  <section class="quick-stats" aria-label="Asset statistics">
-    <div class="quick-stats__card">
-      <div class="quick-stats__icon">
-        <mat-icon>inventory_2</mat-icon>
-      </div>
-      <div class="quick-stats__content">
-        <span class="quick-stats__label">Total Assets</span>
-        <span class="quick-stats__value">{{ totalAssets }}</span>
-      </div>
-    </div>
-    
-    <div class="quick-stats__card">
-      <div class="quick-stats__icon quick-stats__icon--in-use">
-        <mat-icon>check_circle</mat-icon>
-      </div>
-      <div class="quick-stats__content">
-        <span class="quick-stats__label">In Use</span>
-        <span class="quick-stats__value">{{ assetsInUse }}</span>
-      </div>
-    </div>
-    
-    <div class="quick-stats__card">
-      <div class="quick-stats__icon quick-stats__icon--available">
-        <mat-icon>done_all</mat-icon>
-      </div>
-      <div class="quick-stats__content">
-        <span class="quick-stats__label">Available</span>
-        <span class="quick-stats__value">{{ assetsAvailable }}</span>
-      </div>
-    </div>
+  <!-- Dashboard Stats Widget -->
+  <section class="dashboard-stats-section" aria-label="Asset statistics">
+    <app-dashboard-stats></app-dashboard-stats>
   </section>
   
   <!-- Advanced Filter Bar -->

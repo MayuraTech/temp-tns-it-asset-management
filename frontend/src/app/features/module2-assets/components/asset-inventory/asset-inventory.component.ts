@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject, BehaviorSubject, debounceTime, distinctUntilChanged, takeUntil, finalize } from 'rxjs';
 import { AssetService } from '../../services/asset.service';
 import { Asset, AssetSearchQuery, AssetType, LifecycleStatus, Page } from '../../models';
+import { DashboardStatsComponent } from '../dashboard-stats/dashboard-stats.component';
 import { environment } from '../../../../../environments/environment';
 
 /**
@@ -36,7 +37,8 @@ import { environment } from '../../../../../environments/environment';
     MatIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    DashboardStatsComponent
   ],
   templateUrl: './asset-inventory.component.html',
   styleUrls: ['./asset-inventory.component.scss']
@@ -66,11 +68,6 @@ export class AssetInventoryComponent implements OnInit, OnDestroy {
   sortField = 'createdAt';
   sortDirection: 'asc' | 'desc' = 'desc';
   
-  // Quick stats
-  totalAssets = 0;
-  assetsInUse = 0;
-  assetsAvailable = 0;
-  
   // Enums for template
   assetTypes = Object.values(AssetType);
   lifecycleStatuses = Object.values(LifecycleStatus);
@@ -90,7 +87,6 @@ export class AssetInventoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupSearchDebounce();
     this.loadAssets();
-    this.loadQuickStats();
   }
   
   ngOnDestroy(): void {
@@ -151,22 +147,6 @@ export class AssetInventoryComponent implements OnInit, OnDestroy {
           console.error('Error loading assets:', error);
         }
       });
-  }
-  
-  /**
-   * Load quick statistics for dashboard widget
-   */
-  private loadQuickStats(): void {
-    // This would typically be a separate API call
-    // For now, we'll calculate from loaded assets
-    this.assets$.pipe(takeUntil(this.destroy$)).subscribe(assets => {
-      this.totalAssets = this.totalElements;
-      this.assetsInUse = assets.filter(a => a.status === LifecycleStatus.IN_USE).length;
-      this.assetsAvailable = assets.filter(a => 
-        a.status === LifecycleStatus.DEPLOYED || 
-        a.status === LifecycleStatus.STORAGE
-      ).length;
-    });
   }
   
   /**
@@ -284,7 +264,6 @@ export class AssetInventoryComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.loadAssets();
-            this.loadQuickStats();
           },
           error: (error) => {
             this.error$.next(error.message || 'Failed to delete asset');

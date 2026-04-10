@@ -321,4 +321,36 @@ public interface AssetService {
      * @throws IllegalStateException if statistics calculation fails
      */
     AssetStatsDTO getAssetStats();
+    
+    /**
+     * Upload an image for an asset.
+     * 
+     * <p>This method handles asset image upload with validation for file format,
+     * size, and content type. Supported formats are JPG, PNG, and WebP with
+     * a maximum file size of 5MB.
+     * 
+     * <p><strong>Authorization:</strong> Requires UPDATE_ASSET permission.
+     * 
+     * <p><strong>Validation:</strong>
+     * <ul>
+     *   <li>File format must be JPG, PNG, or WebP</li>
+     *   <li>File size must not exceed 5MB</li>
+     *   <li>Asset must exist and not be read-only</li>
+     * </ul>
+     * 
+     * <p><strong>Requirements:</strong>
+     * <ul>
+     *   <li>Requirement 21: Visual Asset Representation</li>
+     *   <li>Requirement 13: Authorization and Security</li>
+     * </ul>
+     * 
+     * @param userId User uploading the image
+     * @param assetId Asset ID to associate the image with
+     * @param file Image file to upload
+     * @return Updated asset DTO with image information
+     * @throws ResourceNotFoundException if asset not found
+     * @throws ValidationException if file validation fails
+     * @throws InsufficientPermissionsException if user lacks permission
+     */
+    AssetDTO uploadAssetImage(String userId, UUID assetId, org.springframework.web.multipart.MultipartFile file);
 }

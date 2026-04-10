@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { DashboardStatsComponent } from './dashboard-stats.component';
@@ -14,6 +14,15 @@ describe('DashboardStatsComponent', () => {
     assetsInUse: 120,
     lastUpdated: '2024-01-15T10:30:00Z'
   };
+
+  afterEach(() => {
+    // Clean up any pending timers
+    try {
+      discardPeriodicTasks();
+    } catch (e) {
+      // Ignore if no timers to discard
+    }
+  });
 
   beforeEach(async () => {
     const assetServiceSpy = jasmine.createSpyObj('AssetService', ['getAssetStats']);
@@ -47,20 +56,31 @@ describe('DashboardStatsComponent', () => {
       expect(mockAssetService.getAssetStats).toHaveBeenCalled();
       expect(component.stats$.value).toEqual(mockStats);
       expect(component.loading$.value).toBeFalse();
+      
+      // Clean up the interval
+      component.ngOnDestroy();
+      discardPeriodicTasks();
     }));
 
     it('should handle loading state correctly', fakeAsync(() => {
       mockAssetService.getAssetStats.and.returnValue(of(mockStats));
 
+      // Check initial loading state before ngOnInit
+      expect(component.loading$.value).toBeFalse();
+      
       component.ngOnInit();
       
-      // Initially loading should be true
+      // Loading should be true during the request
       expect(component.loading$.value).toBeTrue();
       
       tick();
       
       // After response, loading should be false
       expect(component.loading$.value).toBeFalse();
+      
+      // Clean up the interval
+      component.ngOnDestroy();
+      discardPeriodicTasks();
     }));
 
     it('should handle error state correctly', fakeAsync(() => {
@@ -74,6 +94,10 @@ describe('DashboardStatsComponent', () => {
       expect(component.error$.value).toBe('Failed to load statistics');
       expect(component.loading$.value).toBeFalse();
       expect(console.error).toHaveBeenCalled();
+      
+      // Clean up the interval
+      component.ngOnDestroy();
+      discardPeriodicTasks();
     }));
   });
 
@@ -109,6 +133,8 @@ describe('DashboardStatsComponent', () => {
 
       expect(mockAssetService.getAssetStats).toHaveBeenCalled();
       expect(component.stats$.value).toEqual(mockStats);
+      
+      discardPeriodicTasks();
     }));
 
     it('should handle refresh errors', fakeAsync(() => {
@@ -120,6 +146,8 @@ describe('DashboardStatsComponent', () => {
 
       expect(component.error$.value).toBe('Failed to load statistics');
       expect(console.error).toHaveBeenCalled();
+      
+      discardPeriodicTasks();
     }));
   });
 
@@ -136,6 +164,10 @@ describe('DashboardStatsComponent', () => {
       tick(30000);
       
       expect(mockAssetService.getAssetStats).toHaveBeenCalledTimes(2);
+      
+      // Clean up the interval
+      component.ngOnDestroy();
+      discardPeriodicTasks();
     }));
   });
 
@@ -152,9 +184,15 @@ describe('DashboardStatsComponent', () => {
   });
 
   describe('Template Integration', () => {
-    beforeEach(() => {
+    beforeEach(fakeAsync(() => {
       mockAssetService.getAssetStats.and.returnValue(of(mockStats));
-    });
+      // Prevent automatic initialization
+      spyOn(component, 'ngOnInit');
+    }));
+
+    afterEach(fakeAsync(() => {
+      discardPeriodicTasks();
+    }));
 
     it('should display loading spinner when loading', fakeAsync(() => {
       component.loading$.next(true);
@@ -221,9 +259,15 @@ describe('DashboardStatsComponent', () => {
   });
 
   describe('Accessibility', () => {
-    beforeEach(() => {
+    beforeEach(fakeAsync(() => {
       mockAssetService.getAssetStats.and.returnValue(of(mockStats));
-    });
+      // Prevent automatic initialization
+      spyOn(component, 'ngOnInit');
+    }));
+
+    afterEach(fakeAsync(() => {
+      discardPeriodicTasks();
+    }));
 
     it('should have proper ARIA labels', fakeAsync(() => {
       component.stats$.next(mockStats);

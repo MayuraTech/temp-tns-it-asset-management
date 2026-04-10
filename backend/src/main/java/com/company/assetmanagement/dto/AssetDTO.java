@@ -57,6 +57,18 @@ public class AssetDTO {
     @Schema(description = "Custom fields in JSON format for extensibility", example = "{\"warranty_expiry\": \"2026-01-15\", \"vendor\": \"Dell\"}")
     private String customFields;
     
+    @Schema(description = "URL of the asset image", example = "https://cdn.example.com/assets/images/server-001.jpg", maxLength = 500)
+    private String imageUrl;
+    
+    @Schema(description = "Original filename of the uploaded image", example = "server-photo.jpg", maxLength = 255)
+    private String imageFilename;
+    
+    @Schema(description = "Size of the image file in bytes", example = "2048576")
+    private Long imageSize;
+    
+    @Schema(description = "MIME type of the image", example = "image/jpeg", maxLength = 50)
+    private String imageContentType;
+    
     @Schema(description = "Timestamp when the asset was created", example = "2024-01-15T10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;
     
@@ -221,6 +233,38 @@ public class AssetDTO {
         this.readOnly = readOnly;
     }
     
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
+    public String getImageFilename() {
+        return imageFilename;
+    }
+    
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
+    }
+    
+    public Long getImageSize() {
+        return imageSize;
+    }
+    
+    public void setImageSize(Long imageSize) {
+        this.imageSize = imageSize;
+    }
+    
+    public String getImageContentType() {
+        return imageContentType;
+    }
+    
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
+    }
+    
     /**
      * Builder for creating AssetDTO instances.
      */
@@ -293,6 +337,26 @@ public class AssetDTO {
         
         public Builder customFields(String customFields) {
             dto.customFields = customFields;
+            return this;
+        }
+        
+        public Builder imageUrl(String imageUrl) {
+            dto.imageUrl = imageUrl;
+            return this;
+        }
+        
+        public Builder imageFilename(String imageFilename) {
+            dto.imageFilename = imageFilename;
+            return this;
+        }
+        
+        public Builder imageSize(Long imageSize) {
+            dto.imageSize = imageSize;
+            return this;
+        }
+        
+        public Builder imageContentType(String imageContentType) {
+            dto.imageContentType = imageContentType;
             return this;
         }
         
