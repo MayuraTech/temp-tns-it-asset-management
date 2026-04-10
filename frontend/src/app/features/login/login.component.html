@@ -1,0 +1,139 @@
+<!-- 
+  Login Component Template
+  
+  Implements the login form with real-time validation and geometric accents.
+  Requirements: 1.1, 1.4, 2.1, 2.4, 3.2, 3.4, 4.4, 6.5, 8.1, 8.2, 9.5
+-->
+
+<main role="main" class="login-container" aria-labelledby="login-title">
+  <!-- Geometric Accent Triangles - Requirement 1.4, 9.5 -->
+  <!-- Top-left triangle accent -->
+  <app-geometric-triangle
+    size="large"
+    position="top-left"
+    color="#143b7d"
+    [opacity]="0.1"
+    [blur]="false"
+    [responsive]="true"
+    aria-hidden="true">
+  </app-geometric-triangle>
+  
+  <!-- Bottom-right triangle accent -->
+  <app-geometric-triangle
+    size="xlarge"
+    position="bottom-right"
+    color="#143b7d"
+    [opacity]="0.1"
+    [blur]="true"
+    [responsive]="true"
+    aria-hidden="true">
+  </app-geometric-triangle>
+  
+  <div class="login-form-wrapper">
+    <!-- Application Title -->
+    <h1 id="login-title" class="login-title">IT Asset Management</h1>
+    
+    <!-- Authentication Error Message - Requirements 3.4, 4.4, 4.5 -->
+    <app-error-message
+      *ngIf="authError"
+      [error]="authError"
+      (dismiss)="onErrorDismiss()"
+      role="alert"
+      aria-live="assertive">
+    </app-error-message>
+    
+    <!-- Login Form -->
+    <form 
+      class="login-form" 
+      (submit)="onSubmit(); $event.preventDefault()"
+      aria-labelledby="login-title"
+      aria-describedby="login-description"
+      novalidate>
+      
+      <!-- Screen reader only description -->
+      <p id="login-description" class="sr-only">
+        Enter your username and password to sign in to the IT Asset Management system.
+      </p>
+      
+      <!-- Username Input - Requirement 8.1: Disable during authentication -->
+      <app-credential-input
+        type="text"
+        label="Username"
+        inputId="username"
+        placeholder="Enter your username"
+        autocomplete="username"
+        [value]="username"
+        [error]="usernameError"
+        [disabled]="isLoading"
+        [autofocus]="true"
+        (valueChange)="onUsernameChange($event)"
+        (blur)="onUsernameBlur()"
+        (keypress)="onInputKeyPress($event)">
+      </app-credential-input>
+      
+      <!-- Password Input - Requirement 8.1: Disable during authentication -->
+      <app-credential-input
+        type="password"
+        label="Password"
+        inputId="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        [value]="password"
+        [error]="passwordError"
+        [disabled]="isLoading"
+        [showVisibilityToggle]="true"
+        [isPasswordVisible]="showPassword"
+        (valueChange)="onPasswordChange($event)"
+        (blur)="onPasswordBlur()"
+        (visibilityToggle)="onPasswordVisibilityToggle()"
+        (keypress)="onInputKeyPress($event)">
+      </app-credential-input>
+      
+      <!-- Remember Me Checkbox - Requirement 8.1: Disable during authentication -->
+      <div class="remember-me-container">
+        <label class="remember-me-label">
+          <input 
+            type="checkbox" 
+            class="remember-me-checkbox"
+            id="remember-me"
+            [checked]="rememberMe"
+            [disabled]="isLoading"
+            (change)="onRememberMeChange($event)"
+            aria-describedby="remember-me-description">
+          <span class="remember-me-text">Remember me</span>
+        </label>
+        <span id="remember-me-description" class="sr-only">
+          Keep me signed in for 30 days on this device
+        </span>
+      </div>
+      
+      <!-- Submit Button - Requirements 3.2, 8.2: Show loading indicator -->
+      <button 
+        type="submit" 
+        class="login-submit-button"
+        [disabled]="isSubmitDisabled()"
+        [class.loading]="isLoading"
+        [attr.aria-busy]="isLoading"
+        aria-label="Sign in to IT Asset Management">
+        <span class="button-content" [class.hidden]="isLoading" [attr.aria-hidden]="isLoading">Sign In</span>
+        <span class="button-loading" [class.visible]="isLoading" [attr.aria-hidden]="!isLoading">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="loading-text">Signing in...</span>
+        </span>
+      </button>
+      
+      <!-- Forgot Password Link - Requirement 8.1: Disable during authentication -->
+      <button 
+        type="button"
+        class="forgot-password-link"
+        [disabled]="isLoading"
+        (click)="onForgotPasswordClick()"
+        (keydown.enter)="onForgotPasswordClick()"
+        (keydown.space)="onForgotPasswordClick(); $event.preventDefault()"
+        aria-label="Navigate to password reset page">
+        Forgot password?
+        <span class="triangle-icon" aria-hidden="true">▲</span>
+      </button>
+    </form>
+  </div>
+</main>

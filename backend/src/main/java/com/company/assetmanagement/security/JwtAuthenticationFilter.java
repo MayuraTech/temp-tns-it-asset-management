@@ -1,5 +1,6 @@
 package com.company.assetmanagement.security;
 
+import com.company.assetmanagement.service.AuthenticationEventService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
     
+    @Autowired
+    private AuthenticationEventService authenticationEventService;
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -40,22 +44,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
             
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromToken(jwt);
-                
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = 
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, 
-                                null, 
-                                userDetails.getAuthorities()
-                        );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.debug("Set authentication for user: {}", username);
+            if (StringUtils.hasText(jwt)) {
+                if (tokenProvider.validateToken(jwt)) {
+                    String username = tokenProvider.getUsernameFromToken(jwt);
+                    
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = 
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, 
+                                    null, 
+                                    userDetails.getAuthorities()
+                            );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.debug("Set authentication for user: {}", username);
+                } else {
+                    // Log invalid token attempt
+                    String ipAddress = authenticationEventService.getClientIpAddress(request);
+                    authenticationEventService.logInvalidTokenAttempt("Token validation failed", ipAddress);
+                    logger.warn("Invalid JWT token from IP: {}", ipAddress);
+                }
             }
+        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
+            // Log expired token
+            String ipAddress = authenticationEventService.getClientIpAddress(request);
+            authenticationEventService.logInvalidTokenAttempt("Token expired", ipAddress);
+            logger.warn("Expired JWT token from IP: {}", ipAddress);
+        } catch (io.jsonwebtoken.MalformedJwtException ex) {
+            // Log malformed token
+            String ipAddress = authenticationEventService.getClientIpAddress(request);
+            authenticationEventService.logInvalidTokenAttempt("Malformed token", ipAddress);
+            logger.warn("Malformed JWT token from IP: {}", ipAddress);
+        } catch (io.jsonwebtoken.SignatureException ex) {
+            // Log signature validation failure
+            String ipAddress = authenticationEventService.getClientIpAddress(request);
+            authenticationEventService.logInvalidTokenAttempt("Invalid signature", ipAddress);
+            logger.warn("Invalid JWT signature from IP: {}", ipAddress);
         } catch (Exception ex) {
+            // Log general authentication error
+            String ipAddress = authenticationEventService.getClientIpAddress(request);
+            authenticationEventService.logInvalidTokenAttempt("Authentication error: " + ex.getMessage(), ipAddress);
             logger.error("Could not set user authentication in security context", ex);
         }
         
