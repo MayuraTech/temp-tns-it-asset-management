@@ -1,0 +1,375 @@
+<!-- Asset Form Component Template -->
+<div class="asset-form-container">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="breadcrumb-nav">
+        <button class="back-button" (click)="onCancel()" aria-label="Go back">
+          <span class="back-icon">←</span>
+        </button>
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb">
+            <li><a routerLink="/assets">Assets</a></li>
+            <li aria-current="page">{{ isEditMode ? 'Edit Asset' : 'Add New Asset' }}</li>
+          </ol>
+        </nav>
+      </div>
+      
+      <div class="header-status">
+        <span class="last-saved" *ngIf="isEditMode && currentAsset">
+          Last saved: {{ currentAsset.updatedAt | date:'short' }}
+        </span>
+        <span class="draft-indicator" *ngIf="!isEditMode">Draft</span>
+      </div>
+    </div>
+    
+    <h1 class="page-title">{{ isEditMode ? 'Edit Asset' : 'Add New Asset' }}</h1>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading asset data...</p>
+  </div>
+
+  <!-- Form Content -->
+  <div class="form-layout" *ngIf="!loading">
+    <!-- Main Form Area -->
+    <form [formGroup]="assetForm" (ngSubmit)="onSubmit()" class="main-form">
+      
+      <!-- Section 1: General Details -->
+      <section class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📋</span>
+          <h2 class="section-title">General Details</h2>
+        </div>
+        
+        <div class="form-grid">
+          <!-- Asset Type -->
+          <div class="form-field">
+            <label for="assetType" class="field-label">
+              Asset Type <span class="required">*</span>
+            </label>
+            <select 
+              id="assetType" 
+              formControlName="assetType"
+              class="field-input"
+              [class.error]="hasError('assetType', 'required')">
+              <option value="">Select asset type</option>
+              <option *ngFor="let type of assetTypes" [value]="type">
+                {{ formatAssetType(type) }}
+              </option>
+            </select>
+            <span class="error-message" *ngIf="hasError('assetType', 'required')">
+              {{ getErrorMessage('assetType') }}
+            </span>
+          </div>
+
+          <!-- Manufacturer -->
+          <div class="form-field">
+            <label for="manufacturer" class="field-label">Manufacturer</label>
+            <input 
+              type="text" 
+              id="manufacturer" 
+              formControlName="manufacturer"
+              class="field-input"
+              placeholder="Enter manufacturer name"
+              [class.error]="hasError('manufacturer', 'maxlength')">
+            <span class="error-message" *ngIf="hasError('manufacturer', 'maxlength')">
+              {{ getErrorMessage('manufacturer') }}
+            </span>
+          </div>
+
+          <!-- Model Name -->
+          <div class="form-field">
+            <label for="modelName" class="field-label">Model Name</label>
+            <input 
+              type="text" 
+              id="modelName" 
+              formControlName="modelName"
+              class="field-input"
+              placeholder="Enter model name"
+              [class.error]="hasError('modelName', 'maxlength')">
+            <span class="error-message" *ngIf="hasError('modelName', 'maxlength')">
+              {{ getErrorMessage('modelName') }}
+            </span>
+          </div>
+
+          <!-- Serial Number -->
+          <div class="form-field">
+            <label for="serialNumber" class="field-label">
+              Serial Number <span class="required">*</span>
+              <span class="lock-icon" *ngIf="isEditMode" title="Read-only in edit mode">🔒</span>
+            </label>
+            <input 
+              type="text" 
+              id="serialNumber" 
+              formControlName="serialNumber"
+              class="field-input"
+              [class.readonly]="isEditMode"
+              placeholder="Enter serial number"
+              [class.error]="hasError('serialNumber', 'required') || hasError('serialNumber', 'minlength') || hasError('serialNumber', 'maxlength')">
+            <span class="error-message" *ngIf="getControl('serialNumber')?.errors && (getControl('serialNumber')?.dirty || getControl('serialNumber')?.touched)">
+              {{ getErrorMessage('serialNumber') }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Lifecycle & Warranty -->
+      <section class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📅</span>
+          <h2 class="section-title">Lifecycle & Warranty</h2>
+        </div>
+        
+        <div class="form-grid">
+          <!-- Purchase Date -->
+          <div class="form-field">
+            <label for="purchaseDate" class="field-label">
+              Purchase Date <span class="required">*</span>
+            </label>
+            <input 
+              type="date" 
+              id="purchaseDate" 
+              formControlName="purchaseDate"
+              class="field-input"
+              [class.error]="hasError('purchaseDate', 'required') || hasError('purchaseDate', 'futureDate')">
+            <span class="error-message" *ngIf="getControl('purchaseDate')?.errors && (getControl('purchaseDate')?.dirty || getControl('purchaseDate')?.touched)">
+              {{ getErrorMessage('purchaseDate') }}
+            </span>
+          </div>
+
+          <!-- Warranty Expiry -->
+          <div class="form-field">
+            <label for="warrantyExpiry" class="field-label">Warranty Expiry</label>
+            <input 
+              type="date" 
+              id="warrantyExpiry" 
+              formControlName="warrantyExpiry"
+              class="field-input">
+          </div>
+
+          <!-- Cost Center -->
+          <div class="form-field">
+            <label for="costCenter" class="field-label">Cost Center</label>
+            <input 
+              type="text" 
+              id="costCenter" 
+              formControlName="costCenter"
+              class="field-input"
+              placeholder="Enter cost center"
+              [class.error]="hasError('costCenter', 'maxlength')">
+            <span class="error-message" *ngIf="hasError('costCenter', 'maxlength')">
+              {{ getErrorMessage('costCenter') }}
+            </span>
+          </div>
+
+          <!-- Purchase Value (USD) -->
+          <div class="form-field">
+            <label for="purchaseValue" class="field-label">Purchase Value (USD)</label>
+            <input 
+              type="number" 
+              id="purchaseValue" 
+              formControlName="purchaseValue"
+              class="field-input"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              [class.error]="hasError('purchaseValue', 'min')">
+            <span class="error-message" *ngIf="hasError('purchaseValue', 'min')">
+              {{ getErrorMessage('purchaseValue') }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Asset Tracking -->
+      <section class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📍</span>
+          <h2 class="section-title">Asset Tracking</h2>
+        </div>
+        
+        <div class="form-grid">
+          <!-- Current Status -->
+          <div class="form-field">
+            <label for="status" class="field-label">
+              Current Status <span class="required">*</span>
+            </label>
+            <select 
+              id="status" 
+              formControlName="status"
+              class="field-input"
+              [class.error]="hasError('status', 'required')">
+              <option value="">Select status</option>
+              <option *ngFor="let status of lifecycleStatuses" [value]="status">
+                {{ formatLifecycleStatus(status) }}
+              </option>
+            </select>
+            <span class="error-message" *ngIf="hasError('status', 'required')">
+              {{ getErrorMessage('status') }}
+            </span>
+          </div>
+
+          <!-- Assigned User -->
+          <div class="form-field">
+            <label for="assignedUser" class="field-label">Assigned User</label>
+            <div class="input-with-prefix">
+              <span class="input-prefix">&#64;</span>
+              <input 
+                type="text" 
+                id="assignedUser" 
+                formControlName="assignedUser"
+                class="field-input with-prefix"
+                placeholder="username"
+                [class.error]="hasError('assignedUser', 'maxlength')">
+            </div>
+            <span class="error-message" *ngIf="hasError('assignedUser', 'maxlength')">
+              {{ getErrorMessage('assignedUser') }}
+            </span>
+          </div>
+
+          <!-- Office Location -->
+          <div class="form-field full-width">
+            <label for="officeLocation" class="field-label">Office Location</label>
+            <textarea 
+              id="officeLocation" 
+              formControlName="officeLocation"
+              class="field-input textarea"
+              rows="3"
+              placeholder="Enter office location"
+              [class.error]="hasError('officeLocation', 'maxlength')"></textarea>
+            <span class="error-message" *ngIf="hasError('officeLocation', 'maxlength')">
+              {{ getErrorMessage('officeLocation') }}
+            </span>
+          </div>
+
+          <!-- IP Address -->
+          <div class="form-field">
+            <label for="ipAddress" class="field-label">IP Address</label>
+            <input 
+              type="text" 
+              id="ipAddress" 
+              formControlName="ipAddress"
+              class="field-input"
+              placeholder="192.168.1.1"
+              [class.error]="hasError('ipAddress', 'invalidIpAddress')">
+            <span class="error-message" *ngIf="hasError('ipAddress', 'invalidIpAddress')">
+              {{ getErrorMessage('ipAddress') }}
+            </span>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-field full-width">
+            <label for="notes" class="field-label">Notes</label>
+            <textarea 
+              id="notes" 
+              formControlName="notes"
+              class="field-input textarea"
+              rows="4"
+              placeholder="Add any additional notes"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions Container -->
+      <div class="actions-container">
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          (click)="onCancel()"
+          [disabled]="submitting">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="submitting || assetForm.invalid">
+          <span class="btn-icon" *ngIf="!submitting">✓</span>
+          <span class="spinner-small" *ngIf="submitting"></span>
+          {{ submitting ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Create Asset') }}
+        </button>
+      </div>
+
+      <!-- Error/Success Messages -->
+      <div class="message-container">
+        <div class="error-alert" *ngIf="errorMessage" role="alert">
+          <span class="alert-icon">⚠️</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <div class="success-alert" *ngIf="successMessage" role="alert">
+          <span class="alert-icon">✓</span>
+          <span>{{ successMessage }}</span>
+        </div>
+      </div>
+    </form>
+
+    <!-- Side Panel -->
+    <aside class="side-panel">
+      <!-- Visual Identity Card -->
+      <div class="panel-card visual-identity">
+        <h3 class="card-title">Visual Identity</h3>
+        <div class="asset-image-preview">
+          <div class="image-placeholder">
+            <span class="placeholder-icon">🖼️</span>
+            <p>No image uploaded</p>
+          </div>
+          <button type="button" class="link-button">Change Image</button>
+        </div>
+        <div class="asset-info" *ngIf="currentAsset">
+          <h4>{{ currentAsset.name }}</h4>
+          <p class="asset-serial">{{ currentAsset.serialNumber }}</p>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="panel-card recent-activity">
+        <h3 class="card-title">Recent Activity</h3>
+        <div class="activity-timeline" *ngIf="currentAsset">
+          <div class="timeline-item">
+            <span class="timeline-icon">📝</span>
+            <div class="timeline-content">
+              <p class="timeline-action">Asset updated</p>
+              <p class="timeline-date">{{ currentAsset.updatedAt | date:'short' }}</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-icon">➕</span>
+            <div class="timeline-content">
+              <p class="timeline-action">Asset created</p>
+              <p class="timeline-date">{{ currentAsset.createdAt | date:'short' }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!currentAsset">
+          <p>No activity yet</p>
+        </div>
+        <button type="button" class="link-button" *ngIf="currentAsset">View All Activity</button>
+      </div>
+
+      <!-- Technical Specs -->
+      <div class="panel-card technical-specs">
+        <h3 class="card-title">Technical Specs</h3>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">Type</span>
+            <span class="spec-value">{{ assetForm.get('assetType')?.value ? formatAssetType(assetForm.get('assetType')?.value) : '—' }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Status</span>
+            <span class="spec-value">{{ assetForm.get('status')?.value ? formatLifecycleStatus(assetForm.get('status')?.value) : '—' }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Location</span>
+            <span class="spec-value">{{ assetForm.get('officeLocation')?.value || '—' }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Assigned To</span>
+            <span class="spec-value">{{ assetForm.get('assignedUser')?.value ? '&#64;' + assetForm.get('assignedUser')?.value : '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

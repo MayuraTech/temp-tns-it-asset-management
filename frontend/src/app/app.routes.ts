@@ -18,11 +18,7 @@ export const routes: Routes = [
   },
   {
     path: 'assets',
-    loadComponent: () => import('./features/assets/assets.component').then(m => m.AssetsComponent)
-  },
-  {
-    path: 'assets/create',
-    loadComponent: () => import('./features/assets/asset-create/asset-create.component').then(m => m.AssetCreateComponent)
+    loadChildren: () => import('./features/module2-assets/assets.routes').then(m => m.ASSET_ROUTES)
   },
   {
     path: 'software',

@@ -1,0 +1,88 @@
+<!-- Dashboard Stats Widget -->
+<div class="dashboard-stats-widget">
+  <!-- Header Section -->
+  <div class="stats-header">
+    <h2 class="stats-title">Quick Stats</h2>
+    <button 
+      mat-icon-button 
+      class="refresh-button"
+      (click)="refreshStats()"
+      [disabled]="loading$ | async"
+      aria-label="Refresh statistics">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <mat-spinner diameter="32"></mat-spinner>
+    <span class="loading-text">Loading statistics...</span>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <span class="error-text">{{ error }}</span>
+    <button mat-button class="retry-button" (click)="refreshStats()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Stats Content -->
+  <div *ngIf="stats$ | async as stats" class="stats-content">
+    
+    <!-- Total Assets Card -->
+    <mat-card class="stat-card total-assets">
+      <mat-card-content>
+        <div class="stat-icon-container">
+          <mat-icon class="stat-icon">inventory_2</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ stats.totalAssets | number }}</div>
+          <div class="stat-label">Total Assets</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Assets In Use Card -->
+    <mat-card class="stat-card assets-in-use">
+      <mat-card-content>
+        <div class="stat-icon-container">
+          <mat-icon class="stat-icon">assignment_turned_in</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ stats.assetsInUse | number }}</div>
+          <div class="stat-label">Assets In Use</div>
+          <div class="stat-percentage">{{ getUsagePercentage(stats) }}% of total</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Assets Available Card -->
+    <mat-card class="stat-card assets-available">
+      <mat-card-content>
+        <div class="stat-icon-container">
+          <mat-icon class="stat-icon">check_circle_outline</mat-icon>
+        </div>
+        <div class="stat-details">
+          <div class="stat-value">{{ getAvailableAssets(stats) | number }}</div>
+          <div class="stat-label">Assets Available</div>
+          <div class="stat-percentage">{{ 100 - getUsagePercentage(stats) }}% available</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Last Updated Info -->
+    <div class="last-updated">
+      <mat-icon class="update-icon">schedule</mat-icon>
+      <span class="update-text">Last updated: {{ stats.lastUpdated | date:'short' }}</span>
+    </div>
+  </div>
+
+  <!-- Geometric Accent -->
+  <div class="geometric-accent" aria-hidden="true">
+    <svg viewBox="0 0 100 100" class="triangle-accent">
+      <polygon points="0,100 50,0 100,100" />
+    </svg>
+  </div>
+</div>

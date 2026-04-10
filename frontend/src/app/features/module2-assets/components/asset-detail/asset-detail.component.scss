@@ -1,0 +1,891 @@
+/**
+ * Asset Detail Component Styles
+ * 
+ * Implements Editorial Geometry design system with:
+ * - 3-column bento grid layout (40% / 30% / 30%)
+ * - Surface hierarchy through tonal layering
+ * - No 1px borders (use background color shifts)
+ * - Manrope for headings, Inter for body text
+ * - Blue-tinted shadows for depth
+ * - Responsive design (stacks on mobile)
+ */
+
+// Editorial Geometry Color Palette
+$primary: #143b7d;
+$primary-container: #315396;
+$secondary: #a9371d;
+$tertiary: #80002b;
+
+$surface: #faf9ff;
+$surface-container: #eeedf4;
+$surface-container-low: #f4f3f9;
+$surface-container-lowest: #ffffff;
+$surface-container-high: #e8e7ee;
+
+$on-surface: #1a1b20;
+$on-surface-variant: #434750;
+$outline: #747782;
+$outline-variant: #c4c6d2;
+
+// Typography
+$font-heading: 'Manrope', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+// Spacing
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 12px;
+$space-lg: 16px;
+$space-xl: 24px;
+$space-xxl: 32px;
+
+// Shadows
+$editorial-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+$button-shadow: 0px 10px 15px -3px rgba(20, 59, 125, 0.2), 0px 4px 6px -4px rgba(20, 59, 125, 0.2);
+
+// Container
+.asset-detail-container {
+  background: $surface;
+  min-height: 100vh;
+  padding: $space-xxl;
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $space-lg;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid $surface-container;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 14px;
+    color: $on-surface-variant;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Error State
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $space-lg;
+  text-align: center;
+
+  .error-icon {
+    font-size: 64px;
+    color: $secondary;
+  }
+
+  h2 {
+    font-family: $font-heading;
+    font-size: 24px;
+    color: $on-surface;
+    margin: 0;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 14px;
+    color: $on-surface-variant;
+    max-width: 400px;
+  }
+}
+
+// Breadcrumb Navigation
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-xl;
+  font-family: $font-body;
+  font-size: 14px;
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-sm $space-lg;
+    background: transparent;
+    border: none;
+    color: $primary;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $surface-container-low;
+    }
+
+    .material-icons {
+      font-size: 18px;
+    }
+  }
+
+  .breadcrumb-separator {
+    color: $outline-variant;
+  }
+
+  .breadcrumb-current {
+    color: $on-surface-variant;
+  }
+}
+
+// Asset Header
+.asset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-xxl;
+  padding: $space-xl;
+  background: $surface-container-lowest;
+  border-radius: 8px;
+  box-shadow: $editorial-shadow;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: $space-lg;
+
+    .asset-icon {
+      font-size: 48px;
+      color: $primary;
+      background: $surface-container-low;
+      padding: $space-lg;
+      border-radius: 8px;
+    }
+
+    .header-info {
+      .asset-name {
+        font-family: $font-heading;
+        font-size: 30px;
+        font-weight: 700;
+        color: $on-surface;
+        margin: 0 0 $space-sm 0;
+        letter-spacing: -0.75px;
+      }
+
+      .asset-serial {
+        font-family: $font-body;
+        font-size: 14px;
+        color: $on-surface-variant;
+        margin: 0;
+      }
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: $space-lg;
+  }
+}
+
+// Status Badge
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-sm $space-lg;
+  border-radius: 8px;
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &.status-ordered {
+    background: rgba(20, 59, 125, 0.1);
+    color: $primary;
+  }
+
+  &.status-received {
+    background: rgba(59, 93, 160, 0.1);
+    color: #3b5da0;
+  }
+
+  &.status-deployed {
+    background: rgba(0, 128, 96, 0.1);
+    color: #008060;
+  }
+
+  &.status-in-use {
+    background: rgba(0, 150, 0, 0.1);
+    color: #009600;
+  }
+
+  &.status-maintenance {
+    background: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+  }
+
+  &.status-storage {
+    background: rgba(116, 119, 130, 0.1);
+    color: $outline;
+  }
+
+  &.status-retired {
+    background: rgba(169, 55, 29, 0.1);
+    color: $secondary;
+  }
+}
+
+// Bento Grid Layout
+.bento-grid {
+  display: grid;
+  grid-template-columns: 40% 30% 30%;
+  gap: $space-xl;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr;
+
+    .column-right {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    .column-left,
+    .column-middle,
+    .column-right {
+      grid-column: 1;
+    }
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+// Card Styles
+.card {
+  background: $surface-container-lowest;
+  border-radius: 8px;
+  padding: $space-xl;
+  box-shadow: $editorial-shadow;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    margin-bottom: $space-xl;
+
+    .material-icons {
+      font-size: 24px;
+      color: $primary;
+    }
+
+    h2 {
+      font-family: $font-heading;
+      font-size: 20px;
+      font-weight: 700;
+      color: $on-surface;
+      margin: 0;
+    }
+  }
+
+  .card-content {
+    font-family: $font-body;
+  }
+}
+
+// General Details
+.general-details {
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: $space-lg 0;
+    background: transparent;
+
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+
+    &:nth-child(even) {
+      background: $surface-container-low;
+      padding-left: $space-lg;
+      padding-right: $space-lg;
+      margin-left: -$space-lg;
+      margin-right: -$space-lg;
+    }
+
+    &.detail-row-full {
+      flex-direction: column;
+      gap: $space-sm;
+    }
+
+    .detail-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: $on-surface-variant;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: $on-surface;
+      text-align: right;
+
+      &.notes {
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    }
+  }
+}
+
+// Asset Image Card
+.asset-image-card {
+  .image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background: $surface-container-low;
+    border-radius: 8px;
+    gap: $space-md;
+
+    .image-icon {
+      font-size: 64px;
+      color: $outline-variant;
+    }
+
+    p {
+      font-size: 14px;
+      font-weight: 600;
+      color: $on-surface-variant;
+      margin: 0;
+    }
+
+    .image-note {
+      font-size: 12px;
+      color: $outline;
+    }
+  }
+}
+
+// Assignment Card
+.assignment-card {
+  .assignment-info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+
+    .user-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: $surface-container-low;
+      border-radius: 50%;
+      margin: 0 auto;
+
+      .material-icons {
+        font-size: 48px;
+        color: $primary;
+      }
+    }
+
+    .user-details {
+      text-align: center;
+
+      .user-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: $on-surface;
+        margin: 0 0 $space-sm 0;
+      }
+
+      .user-email {
+        font-size: 14px;
+        color: $on-surface-variant;
+        margin: 0 0 $space-sm 0;
+      }
+
+      .assignment-date {
+        font-size: 12px;
+        color: $outline;
+        margin: 0;
+      }
+    }
+  }
+
+  .no-assignment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-lg;
+    padding: $space-xl 0;
+
+    .material-icons {
+      font-size: 48px;
+      color: $outline-variant;
+    }
+
+    p {
+      font-size: 14px;
+      color: $on-surface-variant;
+      margin: 0;
+    }
+  }
+}
+
+// Lifecycle Timeline
+.lifecycle-timeline {
+  .timeline {
+    position: relative;
+
+    .timeline-event {
+      position: relative;
+      display: flex;
+      gap: $space-lg;
+      padding-bottom: $space-xl;
+
+      .timeline-marker {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $primary;
+        border-radius: 50%;
+        z-index: 1;
+
+        .material-icons {
+          font-size: 20px;
+          color: white;
+        }
+      }
+
+      .timeline-content {
+        flex: 1;
+        padding-top: $space-sm;
+
+        .event-description {
+          font-size: 14px;
+          font-weight: 600;
+          color: $on-surface;
+          margin: 0 0 $space-sm 0;
+        }
+
+        .event-date {
+          font-size: 12px;
+          color: $on-surface-variant;
+        }
+      }
+
+      .timeline-line {
+        position: absolute;
+        left: 19px;
+        top: 40px;
+        bottom: 0;
+        width: 2px;
+        background: $outline-variant;
+      }
+    }
+  }
+}
+
+// Quick Actions
+.quick-actions {
+  .action-button {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    width: 100%;
+    padding: $space-lg;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    font-family: $font-body;
+    font-size: 14px;
+    font-weight: 600;
+    color: $on-surface;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $surface-container-low;
+    }
+
+    &.action-danger {
+      color: $secondary;
+
+      &:hover {
+        background: rgba(169, 55, 29, 0.1);
+      }
+    }
+
+    .material-icons {
+      font-size: 20px;
+      color: $primary;
+    }
+
+    &.action-danger .material-icons {
+      color: $secondary;
+    }
+  }
+}
+
+// Assignment History
+.assignment-history {
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+    margin-bottom: $space-lg;
+
+    .history-entry {
+      padding: $space-lg;
+      background: $surface-container-low;
+      border-radius: 8px;
+
+      .history-user {
+        display: flex;
+        align-items: center;
+        gap: $space-md;
+        margin-bottom: $space-md;
+
+        .material-icons {
+          font-size: 32px;
+          color: $primary;
+        }
+
+        .history-details {
+          h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: $on-surface;
+            margin: 0 0 $space-xs 0;
+          }
+
+          .history-email {
+            font-size: 12px;
+            color: $on-surface-variant;
+            margin: 0;
+          }
+        }
+      }
+
+      .history-dates {
+        .history-period {
+          font-size: 12px;
+          color: $on-surface-variant;
+          margin: 0 0 $space-xs 0;
+
+          .current-badge {
+            display: inline-flex;
+            padding: 2px $space-sm;
+            background: rgba(0, 150, 0, 0.1);
+            color: #009600;
+            border-radius: 4px;
+            font-weight: 700;
+          }
+        }
+
+        .history-duration {
+          font-size: 12px;
+          color: $outline;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .no-history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-md;
+    padding: $space-xl 0;
+
+    .material-icons {
+      font-size: 48px;
+      color: $outline-variant;
+    }
+
+    p {
+      font-size: 14px;
+      color: $on-surface-variant;
+      margin: 0;
+    }
+  }
+}
+
+// Buttons
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-md $space-xl;
+  background: linear-gradient(135deg, $primary 0%, $primary-container 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: $button-shadow;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0px 12px 18px -3px rgba(20, 59, 125, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-md $space-xl;
+  background: $surface-container;
+  color: $on-surface;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $surface-container-high;
+  }
+
+  &.btn-small {
+    padding: $space-sm $space-lg;
+    font-size: 11px;
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-md $space-xl;
+  background: $secondary;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0px 10px 15px -3px rgba(169, 55, 29, 0.2);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-lg;
+  background: transparent;
+  color: $primary;
+  border: none;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $surface-container-low;
+  }
+
+  &.btn-full-width {
+    width: 100%;
+    justify-content: center;
+    margin-top: $space-lg;
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: $on-surface-variant;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $surface-container-low;
+  }
+
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+// Dialog Styles
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 27, 32, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $space-xl;
+}
+
+.dialog {
+  background: $surface-container-lowest;
+  border-radius: 8px;
+  box-shadow: 0 24px 48px rgba(20, 59, 125, 0.15);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    padding: $space-xl;
+    border-bottom: none;
+    background: $surface-container-low;
+
+    h2 {
+      flex: 1;
+      font-family: $font-heading;
+      font-size: 20px;
+      font-weight: 700;
+      color: $on-surface;
+      margin: 0;
+    }
+
+    .dialog-icon-danger {
+      font-size: 32px;
+      color: $secondary;
+    }
+  }
+
+  .dialog-content {
+    padding: $space-xl;
+    font-family: $font-body;
+
+    p {
+      font-size: 14px;
+      color: $on-surface;
+      margin: 0 0 $space-lg 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .warning-text {
+      font-weight: 700;
+      color: $secondary;
+    }
+
+    .warning-note {
+      font-size: 12px;
+      color: $on-surface-variant;
+      font-style: italic;
+    }
+
+    .status-options {
+      display: flex;
+      flex-direction: column;
+      gap: $space-md;
+      margin-top: $space-lg;
+
+      .status-option {
+        display: flex;
+        align-items: center;
+        gap: $space-md;
+        padding: $space-md;
+        background: $surface-container-low;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: $surface-container;
+        }
+
+        input[type="radio"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-md;
+    padding: $space-xl;
+    background: $surface-container-low;
+  }
+}
