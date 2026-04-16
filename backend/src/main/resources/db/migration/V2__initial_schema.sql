@@ -2,7 +2,7 @@
 -- Initial database schema for IT Asset Management
 -- Creates all core tables, indexes, constraints, and seeds default data
 
-USE ITAssetManagement;
+USE IT_Asset;
 GO
 
 -- ============================================================================

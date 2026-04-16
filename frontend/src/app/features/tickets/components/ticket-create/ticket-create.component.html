@@ -1,0 +1,184 @@
+<div class="ticket-create-container">
+  <!-- Header -->
+  <header class="page-header">
+    <h1>Raise Asset Request</h1>
+    <p class="subtitle">Submit a new allocation or de-allocation request</p>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      class="tab" 
+      [class.active]="selectedTab === 'allocation'"
+      (click)="onTabChange('allocation')">
+      Allocation
+    </button>
+    <button 
+      class="tab" 
+      [class.active]="selectedTab === 'deallocation'"
+      (click)="onTabChange('deallocation')">
+      De-allocation
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error$ | async as error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="ticket-form">
+    <div class="form-grid">
+      <!-- Main Form Section -->
+      <div class="form-main">
+        <!-- Asset Selection -->
+        <div class="form-field">
+          <label for="assetId">SELECT ASSET TYPE *</label>
+          <input 
+            id="assetId"
+            type="text" 
+            formControlName="assetId"
+            placeholder="Search for asset..."
+            [class.invalid]="isFieldInvalid('assetId')">
+          <span class="error-text" *ngIf="isFieldInvalid('assetId')">
+            {{ getFieldError('assetId') }}
+          </span>
+        </div>
+
+        <!-- Priority Level -->
+        <div class="form-field">
+          <label>PRIORITY LEVEL *</label>
+          <div class="priority-buttons">
+            <button 
+              type="button"
+              class="priority-btn"
+              [class.active]="ticketForm.get('priority')?.value === TicketPriority.LOW"
+              (click)="setPriority(TicketPriority.LOW)">
+              Low
+            </button>
+            <button 
+              type="button"
+              class="priority-btn"
+              [class.active]="ticketForm.get('priority')?.value === TicketPriority.STANDARD"
+              (click)="setPriority(TicketPriority.STANDARD)">
+              Standard
+            </button>
+            <button 
+              type="button"
+              class="priority-btn"
+              [class.active]="ticketForm.get('priority')?.value === TicketPriority.URGENT"
+              (click)="setPriority(TicketPriority.URGENT)">
+              Urgent
+            </button>
+          </div>
+        </div>
+
+        <!-- Allocation-specific fields -->
+        <ng-container *ngIf="selectedTab === 'allocation'">
+          <div class="form-field">
+            <label for="requestReason">REASON FOR REQUEST *</label>
+            <textarea 
+              id="requestReason"
+              formControlName="requestReason"
+              rows="4"
+              placeholder="Describe why you need this asset..."
+              [class.invalid]="isFieldInvalid('requestReason')"></textarea>
+            <span class="error-text" *ngIf="isFieldInvalid('requestReason')">
+              {{ getFieldError('requestReason') }}
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label for="assignToUser">ASSIGN TO USER</label>
+            <input 
+              id="assignToUser"
+              type="text" 
+              formControlName="assignToUser"
+              placeholder="User name (optional)">
+          </div>
+
+          <div class="form-field">
+            <label for="assignToUserEmail">ASSIGN TO EMAIL</label>
+            <input 
+              id="assignToUserEmail"
+              type="email" 
+              formControlName="assignToUserEmail"
+              placeholder="user@example.com (optional)"
+              [class.invalid]="isFieldInvalid('assignToUserEmail')">
+            <span class="error-text" *ngIf="isFieldInvalid('assignToUserEmail')">
+              {{ getFieldError('assignToUserEmail') }}
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label for="assignToLocation">LOCATION</label>
+            <input 
+              id="assignToLocation"
+              type="text" 
+              formControlName="assignToLocation"
+              placeholder="Location (optional)">
+          </div>
+        </ng-container>
+
+        <!-- De-allocation-specific fields -->
+        <ng-container *ngIf="selectedTab === 'deallocation'">
+          <div class="form-field">
+            <label for="deallocationReason">REASON FOR DE-ALLOCATION *</label>
+            <textarea 
+              id="deallocationReason"
+              formControlName="deallocationReason"
+              rows="4"
+              placeholder="Describe why this asset should be de-allocated..."
+              [class.invalid]="isFieldInvalid('deallocationReason')"></textarea>
+            <span class="error-text" *ngIf="isFieldInvalid('deallocationReason')">
+              {{ getFieldError('deallocationReason') }}
+            </span>
+          </div>
+        </ng-container>
+
+        <!-- Policy Reminder -->
+        <div class="policy-reminder">
+          <span class="info-icon">ℹ️</span>
+          <p>Please ensure your request complies with company asset allocation policies.</p>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn-cancel"
+            (click)="cancel()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-submit"
+            [disabled]="submitting$ | async">
+            {{ (submitting$ | async) ? 'Submitting...' : 'Submit Request' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="form-sidebar">
+        <!-- Recent Requests -->
+        <div class="sidebar-panel">
+          <h3>Recent Requests</h3>
+          <p class="sidebar-text">Your last 2-3 tickets will appear here</p>
+        </div>
+
+        <!-- Need Assistance -->
+        <div class="sidebar-panel">
+          <h3>Need Assistance?</h3>
+          <button type="button" class="btn-chat">Open Chat</button>
+        </div>
+
+        <!-- Asset Guidelines -->
+        <div class="sidebar-panel">
+          <h3>Asset Guidelines</h3>
+          <a href="#" class="link-download">Download Guidelines</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
