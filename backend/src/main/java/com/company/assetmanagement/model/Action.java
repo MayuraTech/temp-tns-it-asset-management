@@ -10,6 +10,8 @@ public enum Action {
     UPDATE_ASSET,
     DELETE_ASSET,
     VIEW_ASSET,
+    ALLOCATE_ASSET,
+    DEALLOCATE_ASSET,
     
     // User Management Actions
     CREATE_USER,

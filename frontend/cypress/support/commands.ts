@@ -5,6 +5,9 @@
  */
 
 /**
+ * Login command - authenticates a user and stores the JWT token
+ * @param username - The username to login with
+ * @param password - The password to login with
  * Login command - authenticates a user and stores the token
  */
 Cypress.Commands.add('login', (username: string, password: string) => {

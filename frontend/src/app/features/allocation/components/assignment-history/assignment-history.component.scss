@@ -1,0 +1,398 @@
+// Editorial Geometry Styles for Assignment History Component
+
+.assignment-history-container {
+  position: relative;
+  min-height: 100vh;
+  background: var(--surface, #faf9ff);
+  padding: var(--space-xxxl, 40px);
+}
+
+// Geometric Triangle Accent
+.triangle-accent {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 300px;
+  height: 300px;
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+
+  polygon {
+    fill: var(--primary, #143b7d);
+  }
+}
+
+// History Card with Editorial Shadow
+.history-card {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-container-lowest, #ffffff);
+  border-radius: 8px;
+  padding: var(--space-xxxl, 40px);
+  box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+}
+
+// Card Header
+.card-header {
+  margin-bottom: var(--space-xxxl, 40px);
+
+  .headline-lg {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--secondary, #a9371d);
+    letter-spacing: -0.75px;
+    margin: 0 0 var(--space-md, 12px) 0;
+  }
+
+  .body-md {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface-variant, #434750);
+    margin: 0;
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxxl, 40px) var(--space-xxxl, 40px) 80px;
+  gap: var(--space-lg, 16px);
+
+  .loading-text {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface-variant, #434750);
+    margin: 0;
+  }
+
+  ::ng-deep .mat-mdc-progress-spinner circle {
+    stroke: var(--primary, #143b7d);
+  }
+}
+
+// Error State
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxxl, 40px);
+  text-align: center;
+  gap: var(--space-lg, 16px);
+
+  .error-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--space-md, 12px);
+  }
+
+  .error-title {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--on-surface, #1a1b20);
+    margin: 0;
+  }
+
+  .error-message {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--secondary, #a9371d);
+    margin: 0;
+  }
+}
+
+// Empty State
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px var(--space-xxxl, 40px);
+  gap: var(--space-lg, 16px);
+
+  .empty-icon {
+    width: 120px;
+    height: 120px;
+    margin-bottom: var(--space-md, 12px);
+  }
+
+  .empty-title {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--on-surface, #1a1b20);
+    margin: 0;
+  }
+
+  .empty-description {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface-variant, #434750);
+    margin: 0;
+    max-width: 400px;
+    text-align: center;
+    line-height: 1.6;
+  }
+}
+
+// Table Container
+.table-container {
+  overflow-x: auto;
+  margin-top: var(--space-xl, 24px);
+}
+
+.table-wrapper {
+  background: var(--surface-container-lowest, #ffffff);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// History Table
+.history-table {
+  width: 100%;
+  background: transparent;
+
+  // Header Styles
+  .table-header {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--on-surface-variant, #434750);
+    background: var(--surface-container-low, #f4f3f9);
+    padding: var(--space-lg, 16px);
+    border-bottom: none;
+  }
+
+  // Cell Styles
+  .table-cell {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface, #1a1b20);
+    padding: var(--space-lg, 16px);
+    border-bottom: none;
+  }
+
+  // Row Styles (No borders - use background alternation)
+  .table-row {
+    transition: background-color 0.2s ease;
+
+    &:nth-child(even) {
+      background: var(--surface-container-low, #f4f3f9);
+    }
+
+    &:hover {
+      background: var(--surface-container, #eeedf4);
+    }
+
+    // Highlight active assignments
+    &.row-active {
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container, #315396) 100%);
+      }
+    }
+  }
+
+  // Assigned To Styling
+  .assigned-to {
+    font-weight: 600;
+    color: var(--on-surface, #1a1b20);
+  }
+
+  // Assigned By Styling
+  .assigned-by {
+    color: var(--on-surface-variant, #434750);
+  }
+
+  // Date Styling
+  .date {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 13px;
+    color: var(--on-surface-variant, #434750);
+  }
+
+  // Chip Styling
+  .type-chip,
+  .status-chip {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    height: auto;
+    min-height: 24px;
+
+    ::ng-deep .mat-mdc-chip-action-label {
+      padding: 0;
+    }
+  }
+
+  // Type Chip Colors
+  .chip-user {
+    background: var(--primary, #143b7d);
+    color: white;
+  }
+
+  .chip-location {
+    background: var(--secondary, #a9371d);
+    color: white;
+  }
+
+  // Status Chip Colors
+  .chip-active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container, #315396) 100%);
+    color: white;
+    font-weight: 700;
+  }
+
+  .chip-historical {
+    background: var(--surface-container-high, #e8e7ee);
+    color: var(--on-surface-variant, #434750);
+  }
+}
+
+// Paginator Styling
+.history-paginator {
+  background: transparent;
+  margin-top: var(--space-xl, 24px);
+  border-top: 1px solid var(--outline-variant, #c4c6d2);
+  border-top-color: rgba(196, 198, 210, 0.15);
+
+  ::ng-deep {
+    .mat-mdc-paginator-container {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      color: var(--on-surface-variant, #434750);
+      padding: var(--space-lg, 16px) 0;
+    }
+
+    .mat-mdc-paginator-page-size-label,
+    .mat-mdc-paginator-range-label {
+      font-size: 12px;
+      margin: 0 var(--space-md, 12px);
+    }
+
+    .mat-mdc-select-value {
+      font-size: 12px;
+      color: var(--on-surface, #1a1b20);
+    }
+
+    .mat-mdc-icon-button {
+      color: var(--primary, #143b7d);
+
+      &:disabled {
+        color: var(--outline-variant, #c4c6d2);
+      }
+    }
+  }
+}
+
+// Material Table Overrides (Remove default borders)
+::ng-deep {
+  .mat-mdc-table {
+    background: transparent;
+  }
+
+  .mat-mdc-header-row {
+    border-bottom: none;
+  }
+
+  .mat-mdc-row {
+    border-bottom: none;
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    border-bottom: none;
+  }
+
+  // Chip color overrides
+  .mat-mdc-chip.mat-primary {
+    --mdc-chip-elevated-container-color: var(--primary, #143b7d);
+    --mdc-chip-label-text-color: white;
+  }
+
+  .mat-mdc-chip.mat-accent {
+    --mdc-chip-elevated-container-color: var(--secondary, #a9371d);
+    --mdc-chip-label-text-color: white;
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .assignment-history-container {
+    padding: var(--space-xl, 24px);
+  }
+
+  .history-card {
+    padding: var(--space-xl, 24px);
+  }
+
+  .triangle-accent {
+    width: 200px;
+    height: 200px;
+  }
+
+  // Make table scrollable on smaller screens
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .history-table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    .headline-lg {
+      font-size: 24px;
+    }
+  }
+
+  .history-paginator ::ng-deep {
+    .mat-mdc-paginator-container {
+      flex-wrap: wrap;
+      gap: var(--space-md, 12px);
+    }
+  }
+}
+
+// Accessibility: High Contrast Mode
+@media (prefers-contrast: high) {
+  .history-table {
+    .table-row {
+      border-bottom: 1px solid var(--on-surface, #1a1b20);
+    }
+  }
+
+  .type-chip,
+  .status-chip {
+    border: 2px solid currentColor;
+  }
+}
+
+// Focus Indicators (Accessibility)
+.history-table {
+  .table-row:focus-within {
+    outline: 2px solid var(--primary, #143b7d);
+    outline-offset: -2px;
+  }
+}

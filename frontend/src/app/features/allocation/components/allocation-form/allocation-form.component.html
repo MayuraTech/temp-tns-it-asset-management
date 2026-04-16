@@ -1,0 +1,94 @@
+<div class="allocation-form-container">
+  <!-- Geometric Triangle Accent -->
+  <svg class="triangle-accent" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,200 200,200 200,0" />
+  </svg>
+
+  <div class="form-card">
+    <div class="form-header">
+      <h1 class="headline-lg">Assign Asset</h1>
+      <p class="body-md on-surface-variant">Assign this asset to a user or location</p>
+    </div>
+
+    <form [formGroup]="allocationForm" (ngSubmit)="onSubmit()" class="allocation-form">
+      <!-- Assignment Type Field -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Assignment Type</mat-label>
+        <mat-select formControlName="assignmentType">
+          <mat-option *ngFor="let type of assignmentTypes" [value]="type.value">
+            {{ type.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('assignmentType')">
+          {{ getErrorMessage('assignmentType') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Assigned To Field -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>
+          {{ allocationForm.get('assignmentType')?.value === 'USER' ? 'User Name' : 'Location Name' }}
+        </mat-label>
+        <input 
+          matInput 
+          formControlName="assignedTo"
+          [placeholder]="allocationForm.get('assignmentType')?.value === 'USER' ? 'Enter user name' : 'Enter location name'"
+          maxlength="255"
+        />
+        <mat-hint align="end">
+          {{ allocationForm.get('assignedTo')?.value?.length || 0 }}/255
+        </mat-hint>
+        <mat-error *ngIf="hasError('assignedTo')">
+          {{ getErrorMessage('assignedTo') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Email Field (Conditional - Only for USER assignments) -->
+      <mat-form-field 
+        appearance="outline" 
+        class="form-field"
+        *ngIf="allocationForm.get('assignmentType')?.value === 'USER'"
+      >
+        <mat-label>Email Address</mat-label>
+        <input 
+          matInput 
+          type="email"
+          formControlName="assignedUserEmail"
+          placeholder="user@example.com"
+        />
+        <mat-error *ngIf="hasError('assignedUserEmail')">
+          {{ getErrorMessage('assignedUserEmail') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          mat-raised-button 
+          type="button"
+          class="btn-ghost"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        
+        <button 
+          mat-raised-button 
+          color="primary"
+          type="submit"
+          class="btn-primary"
+          [disabled]="isSubmitting || allocationForm.invalid"
+        >
+          <mat-spinner 
+            *ngIf="isSubmitting" 
+            diameter="20" 
+            class="button-spinner"
+          ></mat-spinner>
+          <span *ngIf="!isSubmitting">Assign Asset</span>
+          <span *ngIf="isSubmitting">Assigning...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

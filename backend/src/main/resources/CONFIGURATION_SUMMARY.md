@@ -35,7 +35,7 @@ This document summarizes the application properties configuration completed for 
 
 **Key Features:**
 - Local SQL Server connection (localhost:1433)
-- Database: ITAssetManagement_Dev
+- Database: IT_Asset
 - HikariCP pool: max 10 connections, min 2 idle
 - SQL logging enabled (DEBUG level)
 - Verbose logging for debugging

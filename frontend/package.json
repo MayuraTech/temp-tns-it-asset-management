@@ -12,7 +12,11 @@
     "test:watch": "ng test",
     "test:coverage": "ng test --no-watch --code-coverage --browsers=ChromeHeadless",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
+    "e2e:headless": "cypress run --headless",
+    "e2e:chrome": "cypress run --browser chrome",
+    "e2e:allocation": "cypress run --spec 'cypress/e2e/allocation/**/*.cy.ts'"
   },
   "private": true,
   "dependencies": {
