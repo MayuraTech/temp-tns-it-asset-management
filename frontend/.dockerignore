@@ -1,0 +1,21 @@
+# Dependencies and build output (image runs npm ci in-container)
+node_modules
+dist
+
+# Tooling / IDE
+.angular
+.idea
+.vscode
+*.md
+cypress
+coverage
+
+# Git and env
+.git
+.gitignore
+.env
+.env.*
+
+# Tests (not needed for production image)
+**/*.spec.ts
+karma.conf.js

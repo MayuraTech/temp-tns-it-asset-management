@@ -2161,7 +2161,6 @@ class AllocationServiceImplTest {
         assignment.setAssignedAt(LocalDateTime.now());
         return assignment;
     }
-}
 
     // Task 3.4: Query Operations Tests
     

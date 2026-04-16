@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { Asset, AssetRequest, AssetSearchQuery, Page } from '../models';
+import { Asset, AssetRequest, AssetSearchQuery, Page, SpringPagePayload, mapSpringPageToAppPage } from '../models';
 import { LifecycleStatus } from '../models/lifecycle-status.enum';
 import { AssetHistoryEvent, AssetHistoryQuery } from '../models/asset-history-event.model';
 import { AssignmentHistoryEntry, AssignmentHistoryQuery, AssignmentHistorySummary } from '../models/assignment-history-entry.model';
@@ -58,6 +58,7 @@ export class AssetService {
 
     return this.http.get<Page<Asset>>(this.apiUrl, { params })
       .pipe(
+        map(body => mapSpringPageToAppPage(body as SpringPagePayload<Asset>)),
         catchError(this.handleError)
       );
   }
@@ -162,6 +163,7 @@ export class AssetService {
 
     return this.http.get<Page<Asset>>(`${this.apiUrl}/search`, { params })
       .pipe(
+        map(body => mapSpringPageToAppPage(body as SpringPagePayload<Asset>)),
         catchError(this.handleError)
       );
   }
@@ -225,6 +227,7 @@ export class AssetService {
 
     return this.http.get<Page<AssetHistoryEvent>>(`${this.apiUrl}/${id}/history`, { params })
       .pipe(
+        map(body => mapSpringPageToAppPage(body as SpringPagePayload<AssetHistoryEvent>)),
         catchError(this.handleError)
       );
   }
@@ -246,6 +249,7 @@ export class AssetService {
 
     return this.http.get<Page<AssignmentHistoryEntry>>(`${this.apiUrl}/${id}/assignments`, { params })
       .pipe(
+        map(body => mapSpringPageToAppPage(body as SpringPagePayload<AssignmentHistoryEntry>)),
         catchError(this.handleError)
       );
   }

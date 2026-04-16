@@ -11,8 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Subject } from 'rxjs';
-import { takeUntil, finalize } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { takeUntil, finalize, map, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AssetService } from '../../services/asset.service';
 import { Asset, AssetRequest, AssetType, LifecycleStatus } from '../../models';
 import { ImageUploadComponent } from '../shared/image-upload/image-upload.component';
@@ -84,7 +84,57 @@ export class AssetFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.checkEditMode();
+    this.route.paramMap
+      .pipe(
+        map((params) => params.get('id')),
+        distinctUntilChanged(),
+        switchMap((id) => {
+          this.errorMessage = null;
+          this.successMessage = null;
+          this.selectedImageFile = null;
+          this.imageUploadError = null;
+
+          if (!id) {
+            this.isEditMode = false;
+            this.assetId = null;
+            this.currentAsset = null;
+            this.loading = false;
+            this.assetForm.reset();
+            this.assetForm.get('serialNumber')?.enable({ emitEvent: false });
+            this.assetForm.markAsPristine();
+            this.assetForm.markAsUntouched();
+            return of(null);
+          }
+
+          this.isEditMode = true;
+          this.assetId = id;
+          this.assetForm.get('serialNumber')?.enable({ emitEvent: false });
+          this.loading = true;
+
+          return this.assetService.getAsset(id).pipe(
+            finalize(() => {
+              this.loading = false;
+            })
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (asset) => {
+          if (!asset) {
+            return;
+          }
+          this.currentAsset = asset;
+          this.populateForm(asset);
+          this.assetForm.get('serialNumber')?.disable();
+        },
+        error: (error: unknown) => {
+          const message =
+            error instanceof Error ? error.message : 'Failed to load asset';
+          this.errorMessage = message;
+          this.currentAsset = null;
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -122,46 +172,6 @@ export class AssetFormComponent implements OnInit, OnDestroy {
       // Additional fields
       notes: ['']
     });
-  }
-
-  /**
-   * Check if we're in edit mode and load asset data if needed
-   */
-  private checkEditMode(): void {
-    this.assetId = this.route.snapshot.paramMap.get('id');
-    
-    if (this.assetId) {
-      this.isEditMode = true;
-      this.loadAsset(this.assetId);
-    }
-  }
-
-  /**
-   * Load asset data for editing
-   */
-  private loadAsset(id: string): void {
-    this.loading = true;
-    this.errorMessage = null;
-    
-    this.assetService.getAsset(id)
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.loading = false)
-      )
-      .subscribe({
-        next: (asset) => {
-          this.currentAsset = asset;
-          this.populateForm(asset);
-          
-          // Make serial number read-only in edit mode
-          if (this.isEditMode) {
-            this.assetForm.get('serialNumber')?.disable();
-          }
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Failed to load asset';
-        }
-      });
   }
 
   /**
@@ -257,11 +267,8 @@ export class AssetFormComponent implements OnInit, OnDestroy {
           if (this.selectedImageFile) {
             this.uploadImageIfSelected(asset.id);
           }
-          
-          // Navigate to asset detail view after short delay
-          setTimeout(() => {
-            this.router.navigate(['/assets', asset.id]);
-          }, 1500);
+
+          void this.router.navigate(['/assets', asset.id]);
         },
         error: (error) => {
           this.errorMessage = error.message || 'Failed to save asset';
@@ -273,9 +280,10 @@ export class AssetFormComponent implements OnInit, OnDestroy {
    * Build AssetRequest from form values
    */
   private buildAssetRequest(formValue: any): AssetRequest {
+    const name = this.buildDisplayName(formValue);
     return {
       assetType: formValue.assetType,
-      name: formValue.modelName || formValue.manufacturer || 'Unnamed Asset',
+      name,
       serialNumber: formValue.serialNumber,
       acquisitionDate: formValue.purchaseDate,
       status: formValue.status,
@@ -284,6 +292,17 @@ export class AssetFormComponent implements OnInit, OnDestroy {
       assignedUserEmail: undefined, // Would need additional field
       notes: formValue.notes || undefined
     };
+  }
+
+  private buildDisplayName(formValue: {
+    manufacturer?: string;
+    modelName?: string;
+  }): string {
+    const parts = [formValue.manufacturer, formValue.modelName]
+      .map((p) => (p != null ? String(p).trim() : ''))
+      .filter((p) => p.length > 0);
+    const combined = parts.join(' ').trim();
+    return combined || 'Unnamed Asset';
   }
 
   /**

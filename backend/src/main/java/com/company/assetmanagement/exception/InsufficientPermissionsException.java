@@ -15,6 +15,12 @@ public class InsufficientPermissionsException extends RuntimeException {
         this.action = null;
     }
     
+    public InsufficientPermissionsException(String message) {
+        super(message);
+        this.userId = null;
+        this.action = null;
+    }
+    
     public InsufficientPermissionsException(String userId, String action) {
         super("User '" + userId + "' does not have permission to perform action: " + action);
         this.userId = userId;

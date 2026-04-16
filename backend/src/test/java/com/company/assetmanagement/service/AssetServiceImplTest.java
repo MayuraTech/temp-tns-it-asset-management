@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,6 +53,9 @@ class AssetServiceImplTest {
     
     @Mock
     private AssetValidationService validationService;
+
+    @Mock
+    private AuthorizationService authorizationService;
     
     @InjectMocks
     private AssetServiceImpl assetService;
@@ -63,6 +67,9 @@ class AssetServiceImplTest {
     void setUp() {
         testUserId = UUID.randomUUID().toString();
         validRequest = createValidAssetRequest();
+        lenient().when(authorizationService.hasPermission(anyString(), any(Action.class))).thenReturn(true);
+        lenient().when(authorizationService.resolveActorUuid(anyString()))
+            .thenAnswer(invocation -> UUID.fromString(invocation.getArgument(0, String.class)));
     }
     
     // ========== Successful Creation Tests ==========

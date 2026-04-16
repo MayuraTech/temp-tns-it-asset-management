@@ -158,8 +158,7 @@ CREATE TABLE AuditLog (
     Metadata NVARCHAR(MAX) NULL, -- JSON string
     IpAddress NVARCHAR(45) NULL,
     
-    CONSTRAINT FK_AuditLog_UserId FOREIGN KEY (UserId) REFERENCES Users(Id),
-    CONSTRAINT CHK_AuditLog_ActionType CHECK (ActionType IN ('CREATE', 'UPDATE', 'DELETE', 'STATUS_CHANGE', 'LOGIN', 'LOGOUT', 'FAILED_LOGIN', 'TICKET_CREATE', 'TICKET_UPDATE', 'TICKET_APPROVE', 'TICKET_REJECT', 'TICKET_COMPLETE'))
+    CONSTRAINT FK_AuditLog_UserId FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
 -- Create indexes for AuditLog table

@@ -389,7 +389,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             AuditEventDTO event = AuditEventDTO.builder()
                     .userId(user.getId())
                     .username(user.getUsername())
-                    .actionType(Action.VIEW_AUDIT_LOG) // Using existing action, ideally add LOGIN action
+                    .actionType(Action.LOGIN_SUCCESS)
                     .resourceType("USER")
                     .resourceId(user.getId().toString())
                     .metadata(metadata)
@@ -417,7 +417,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             AuditEventDTO event = AuditEventDTO.builder()
                     .userId(userId)
                     .username(username)
-                    .actionType(Action.VIEW_AUDIT_LOG) // Using existing action
+                    .actionType(Action.LOGIN_FAILURE)
                     .resourceType("USER")
                     .resourceId(userId != null ? userId.toString() : "unknown")
                     .metadata(metadata)
@@ -442,7 +442,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             AuditEventDTO event = AuditEventDTO.builder()
                     .userId(user.getId())
                     .username(user.getUsername())
-                    .actionType(Action.VIEW_AUDIT_LOG) // Using existing action
+                    .actionType(Action.LOGOUT)
                     .resourceType("USER")
                     .resourceId(user.getId().toString())
                     .metadata(metadata)
@@ -467,7 +467,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             AuditEventDTO event = AuditEventDTO.builder()
                     .userId(user.getId())
                     .username(user.getUsername())
-                    .actionType(Action.VIEW_AUDIT_LOG) // Using existing action
+                    .actionType(Action.TOKEN_REFRESH)
                     .resourceType("USER")
                     .resourceId(user.getId().toString())
                     .metadata(metadata)

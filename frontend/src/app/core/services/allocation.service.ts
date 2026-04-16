@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   Assignment,
@@ -11,7 +11,9 @@ import {
   BulkDeallocationResult,
   ExportFilters,
   Asset,
-  PageResponse
+  PageResponse,
+  SpringPagePayload,
+  mapSpringToPageResponse
 } from '../../shared/models';
 
 /**
@@ -163,6 +165,7 @@ export class AllocationService {
       `${this.assignmentsUrl}/user/${encodeURIComponent(userName)}`,
       { params }
     ).pipe(
+      map(body => mapSpringToPageResponse(body as SpringPagePayload<Asset>)),
       catchError(this.handleError)
     );
   }
@@ -189,6 +192,7 @@ export class AllocationService {
       `${this.assignmentsUrl}/location/${encodeURIComponent(location)}`,
       { params }
     ).pipe(
+      map(body => mapSpringToPageResponse(body as SpringPagePayload<Asset>)),
       catchError(this.handleError)
     );
   }

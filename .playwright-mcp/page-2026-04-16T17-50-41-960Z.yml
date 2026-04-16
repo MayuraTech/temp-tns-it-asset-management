@@ -1,0 +1,34 @@
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - application "TnS Assets Application" [ref=e5]:
+    - main "IT Asset Management" [ref=e8]:
+      - generic:
+        - img
+      - generic:
+        - img
+      - generic [ref=e9]:
+        - heading "IT Asset Management" [level=1] [ref=e10]
+        - form "IT Asset Management" [ref=e11]:
+          - paragraph [ref=e12]: Enter your username and password to sign in to the IT Asset Management system.
+          - generic [ref=e14]:
+            - generic [ref=e15]: Username
+            - textbox "Username" [ref=e17]:
+              - /placeholder: Enter your username
+          - generic [ref=e19]:
+            - generic [ref=e20]: Password
+            - generic [ref=e21]:
+              - textbox "Password" [ref=e22]:
+                - /placeholder: Enter your password
+              - button "Show password" [ref=e23] [cursor=pointer]:
+                - img [ref=e24]
+          - generic [ref=e26]:
+            - generic [ref=e27] [cursor=pointer]:
+              - checkbox "Remember me" [ref=e28]
+              - generic [ref=e29]: Remember me
+            - generic [ref=e30]: Keep me signed in for 30 days on this device
+          - button "Sign in to IT Asset Management" [disabled] [ref=e31]:
+            - generic [ref=e32]: Sign In
+          - button "Navigate to password reset page" [ref=e33] [cursor=pointer]:
+            - text: Forgot password?
+            - generic [ref=e34]: ▲

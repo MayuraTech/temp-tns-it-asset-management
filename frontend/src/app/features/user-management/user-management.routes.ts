@@ -22,9 +22,10 @@ export const userManagementRoutes: Routes = [
         path: '',
         loadComponent: () => import('./components/user-list/user-list.component')
           .then(m => m.UserListComponent),
-        data: { 
+        canActivate: [roleGuard],
+        data: {
           title: 'Users',
-          requiredRoles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
+          roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
         }
       },
       {
@@ -32,26 +33,17 @@ export const userManagementRoutes: Routes = [
         loadComponent: () => import('./components/user-create/user-create.component')
           .then(m => m.UserCreateComponent),
         canActivate: [roleGuard],
-        data: { 
+        data: {
           title: 'Create User',
-          requiredRoles: [Role.ADMINISTRATOR]
+          roles: [Role.ADMINISTRATOR]
         }
       },
       {
         path: 'profile',
         loadComponent: () => import('./components/user-profile/user-profile.component')
           .then(m => m.UserProfileComponent),
-        data: { 
+        data: {
           title: 'My Profile'
-        }
-      },
-      {
-        path: ':id',
-        loadComponent: () => import('./components/user-detail/user-detail.component')
-          .then(m => m.UserDetailComponent),
-        data: { 
-          title: 'User Details',
-          requiredRoles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER]
         }
       },
       {
@@ -59,9 +51,19 @@ export const userManagementRoutes: Routes = [
         loadComponent: () => import('./components/user-edit/user-edit.component')
           .then(m => m.UserEditComponent),
         canActivate: [roleGuard],
-        data: { 
+        data: {
           title: 'Edit User',
-          requiredRoles: [Role.ADMINISTRATOR]
+          roles: [Role.ADMINISTRATOR]
+        }
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./components/user-detail/user-detail.component')
+          .then(m => m.UserDetailComponent),
+        canActivate: [roleGuard],
+        data: {
+          title: 'User Details',
+          roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
         }
       }
     ]

@@ -1,0 +1,70 @@
+<div class="user-detail">
+  <div class="user-detail__toolbar">
+    <button mat-stroked-button type="button" (click)="goBack()" aria-label="Back to users list">
+      <mat-icon>arrow_back</mat-icon>
+      Users
+    </button>
+    @if (user() && canEdit()) {
+      <button mat-flat-button color="primary" type="button" (click)="editUser()" aria-label="Edit user">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="user-detail__loading" role="status">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Loading user…</span>
+    </div>
+  } @else if (error()) {
+    <mat-card class="user-detail__card user-detail__card--error">
+      <mat-card-content>
+        <p class="error-message">{{ error() }}</p>
+        <button mat-stroked-button type="button" (click)="goBack()">Back to list</button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    @if (user(); as u) {
+      <mat-card class="user-detail__card">
+        <mat-card-header>
+          <mat-card-title>{{ u.username }}</mat-card-title>
+          <mat-card-subtitle>{{ u.email }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <dl class="detail-grid">
+            <dt>Status</dt>
+            <dd>
+              @if (u.isActive) {
+                <span class="status status--active">Active</span>
+              } @else {
+                <span class="status status--inactive">Inactive</span>
+              }
+              @if (u.accountLocked) {
+                <span class="status status--locked">Locked</span>
+              }
+            </dd>
+
+            <dt>Roles</dt>
+            <dd>
+              <mat-chip-set aria-label="Assigned roles">
+                @for (role of u.roles; track role) {
+                  <mat-chip [class]="getRoleBadgeClass(role)">{{ getRoleDisplayName(role) }}</mat-chip>
+                }
+              </mat-chip-set>
+            </dd>
+
+            <dt>Last login</dt>
+            <dd>{{ u.lastLoginAt ? (u.lastLoginAt | date: 'medium') : 'Never' }}</dd>
+
+            <dt>Created</dt>
+            <dd>{{ u.createdAt | date: 'medium' }}</dd>
+
+            <dt>Updated</dt>
+            <dd>{{ u.updatedAt | date: 'medium' }}</dd>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</div>

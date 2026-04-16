@@ -35,3 +35,36 @@ export interface Page<T> {
     [key: string]: string;
   };
 }
+
+/** Raw Spring Data `Page` JSON (flat pagination fields). */
+export interface SpringPagePayload<T> {
+  content?: T[];
+  size?: number;
+  number?: number;
+  totalElements?: number;
+  totalPages?: number;
+  page?: PageInfo;
+  links?: Record<string, string>;
+}
+
+/**
+ * Maps Spring Boot {@code Page} JSON to the app's nested {@link Page} shape.
+ */
+export function mapSpringPageToAppPage<T>(raw: SpringPagePayload<T>): Page<T> {
+  const content = raw.content ?? [];
+  const nested = raw.page;
+  const page: PageInfo = nested
+    ? {
+        size: nested.size,
+        number: nested.number,
+        totalElements: nested.totalElements,
+        totalPages: nested.totalPages
+      }
+    : {
+        size: raw.size ?? content.length,
+        number: raw.number ?? 0,
+        totalElements: raw.totalElements ?? content.length,
+        totalPages: raw.totalPages ?? (content.length > 0 ? 1 : 0)
+      };
+  return { content, page, links: raw.links };
+}

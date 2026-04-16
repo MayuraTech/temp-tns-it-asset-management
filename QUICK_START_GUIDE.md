@@ -7,23 +7,46 @@
 - Maven 3.6+
 - npm or yarn
 
-## Backend Setup (No SQL Server Required!)
+## Backend Setup (SQL Server Required)
 
-### 1. Navigate to backend directory
+### 1. Setup SQL Server Database
+
+**IMPORTANT**: If you're switching from H2 or have an existing database with wrong schema, run this first:
+
+```sql
+-- Open SQL Server Management Studio or Azure Data Studio
+-- Connect to: TNS-IT-DESKTOP\SQLEXPRESS
+-- Run this script:
+
+USE master;
+GO
+
+ALTER DATABASE IT_Asset SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE IT_Asset;
+GO
+
+CREATE DATABASE IT_Asset;
+GO
+```
+
+Or simply execute the provided script: `FIX_SQL_SERVER_SCHEMA_NOW.sql`
+
+### 2. Navigate to backend directory
 ```bash
 cd backend
 ```
 
-### 2. Start the backend with development profile
+### 3. Start the backend with development profile
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 The backend will:
 - Start on `http://localhost:8080`
-- Use H2 in-memory database (no SQL Server needed)
-- Auto-create database schema
-- Enable H2 console at `http://localhost:8080/h2-console`
+- Connect to SQL Server at `TNS-IT-DESKTOP\SQLEXPRESS`
+- Use database `IT_Asset`
+- Auto-create database schema (if database is empty)
+- Seed default users (admin, manager, viewer)
 
 ### 3. Verify backend is running
 ```bash
@@ -32,6 +55,15 @@ curl http://localhost:8080/actuator/health
 
 # Access Swagger UI
 # Open browser: http://localhost:8080/swagger-ui.html
+```
+
+**Expected logs on successful startup:**
+```
+Hibernate: create table Users (...)
+DataInitializer: Created user: admin
+DataInitializer: Created user: manager
+DataInitializer: Created user: viewer
+Started ItAssetManagementApplication in X.XXX seconds
 ```
 
 ## Frontend Setup
@@ -69,14 +101,14 @@ The application automatically seeds default users on first startup (dev profile 
 | `manager` | `Manager@123456` | Asset Manager | Can manage assets |
 | `viewer` | `Viewer@123456` | Viewer | Read-only access |
 
-**Note**: These users are only created when the database is empty. If you need to reset, restart the application (H2 in-memory database clears on restart).
+**Note**: These users are only created when the database is empty. If you need to reset, drop and recreate the database using `FIX_SQL_SERVER_SCHEMA_NOW.sql`.
 
 ## Common Commands
 
 ### Backend
 
 ```bash
-# Run with dev profile (H2 database)
+# Run with dev profile (SQL Server database)
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 # Run tests
@@ -85,8 +117,8 @@ mvn test
 # Build JAR
 mvn clean package
 
-# Run with test profile (requires SQL Server)
-mvn spring-boot:run -Dspring-boot.run.profiles=test
+# Clean Maven cache (after dependency changes)
+mvn clean
 ```
 
 ### Frontend
@@ -110,14 +142,29 @@ npm run lint
 
 ## Troubleshooting
 
-### Backend won't start - Driver mismatch error
+### Backend won't start - "Invalid column name" error
 
-**Problem**: `Driver com.microsoft.sqlserver.jdbc.SQLServerDriver claims to not accept jdbcUrl`
+**Problem**: `Invalid column name 'account_locked'` or similar errors
 
-**Solution**: Make sure you're running with the dev profile:
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
+**Root Cause**: Database has old schema from H2 with snake_case column names
+
+**Solution**: Drop and recreate the database:
+1. Run `FIX_SQL_SERVER_SCHEMA_NOW.sql` in SQL Server Management Studio
+2. Restart backend: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
+3. See `CURRENT_STATUS_AND_FIX.md` for detailed instructions
+
+### Backend won't start - Connection error
+
+**Problem**: Cannot connect to SQL Server
+
+**Solution**: 
+1. Verify SQL Server is running
+2. Check connection details in `backend/src/main/resources/application-dev.properties`:
+   - Server: `TNS-IT-DESKTOP\SQLEXPRESS`
+   - Database: `IT_Asset`
+   - Username: `itassetuser`
+   - Password: `its@2345`
+3. Verify SQL Server authentication mode allows SQL Server authentication
 
 ### Frontend build errors
 
@@ -154,13 +201,18 @@ lsof -ti:4200 | xargs kill -9
 
 ### H2 Console Access
 
-1. Ensure backend is running with dev profile
-2. Navigate to: `http://localhost:8080/h2-console`
-3. Connection settings:
-   - **JDBC URL**: `jdbc:h2:mem:itassetdb`
-   - **Username**: `sa`
-   - **Password**: (leave empty)
-4. Click "Connect"
+**Not applicable** - This project uses SQL Server for development.
+
+To view database contents, use:
+- SQL Server Management Studio (SSMS)
+- Azure Data Studio
+- Any SQL Server client tool
+
+Connection details:
+- Server: `TNS-IT-DESKTOP\SQLEXPRESS`
+- Database: `IT_Asset`
+- Username: `itassetuser`
+- Password: `its@2345`
 
 ## Development Workflow
 
@@ -225,6 +277,9 @@ Once the backend is running, access the interactive API documentation:
 
 ## Need Help?
 
-- Check `BACKEND_DATABASE_CONFIG_FIX.md` for database configuration details
+- Check `CURRENT_STATUS_AND_FIX.md` for SQL Server schema fix
+- Check `BACKEND_RESTART_INSTRUCTIONS.md` for restart procedures
+- Check `SQL_SERVER_SCHEMA_FIX.md` for database schema issues
+- Check `SCHEMA_COMPARISON.md` for schema details
 - Check `FRONTEND_BUILD_FIXES.md` for frontend build issue resolutions
 - Review the steering documents in `.kiro/steering/` for coding standards

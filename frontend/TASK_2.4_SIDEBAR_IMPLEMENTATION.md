@@ -32,7 +32,7 @@ Successfully implemented the SidebarComponent with Editorial Geometry navigation
 1. **Brand Header** (Requirement 2.1)
    - Geometric triangle accent background using `<app-geometric-triangle>`
    - Logo icon with SVG (40x40px)
-   - Application name "AssetIntel" with Manrope font
+   - Application name "TnS Assets" with Manrope font
    - Subtitle "Corporate IT - Global Infrastructure"
 
 2. **Primary Navigation** (Requirement 2.2)
@@ -117,7 +117,7 @@ Successfully implemented the SidebarComponent with Editorial Geometry navigation
 
 ### Core Requirements
 
-✅ **2.1**: Brand header with logo (40x40px) and application name "AssetIntel"
+✅ **2.1**: Brand header with logo (40x40px) and application name "TnS Assets"
 ✅ **2.2**: Primary navigation items in correct order (Assets, Software, Licenses, Network, Users)
 ✅ **2.6**: Sidebar background color (#f8fafc) and proper surface hierarchy
 ✅ **2.7**: 24px vertical padding applied

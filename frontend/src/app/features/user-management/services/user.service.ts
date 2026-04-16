@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { 
   UserDTO, 
@@ -10,7 +11,7 @@ import {
   UserFilterOptions 
 } from '../models';
 import { Role } from '../../../core/models/auth.model';
-import { PageResponse } from '../../../shared/models/page-response.model';
+import { PageResponse, SpringPagePayload, mapSpringToPageResponse } from '../../../shared/models/page-response.model';
 
 /**
  * User Service
@@ -53,7 +54,9 @@ export class UserService {
       params = params.set('search', filters.searchText);
     }
 
-    return this.http.get<PageResponse<UserDTO>>(this.apiUrl, { params });
+    return this.http.get<PageResponse<UserDTO>>(this.apiUrl, { params }).pipe(
+      map(body => mapSpringToPageResponse(body as SpringPagePayload<UserDTO>))
+    );
   }
 
   /**
@@ -122,6 +125,8 @@ export class UserService {
       .set('size', size.toString())
       .set('role', role);
 
-    return this.http.get<PageResponse<UserDTO>>(this.apiUrl, { params });
+    return this.http.get<PageResponse<UserDTO>>(this.apiUrl, { params }).pipe(
+      map(body => mapSpringToPageResponse(body as SpringPagePayload<UserDTO>))
+    );
   }
 }

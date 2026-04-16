@@ -9,7 +9,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { filter, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { AssetService } from '../../services/asset.service';
 import { AssetPlaceholderService } from '../../services/asset-placeholder.service';
 import { Asset, AssetType, LifecycleStatus } from '../../models';
@@ -83,31 +84,22 @@ export class AssetDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.paramMap
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        this.assetId = params.get('id');
-        if (this.assetId) {
-          this.loadAsset(this.assetId);
-        }
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  /**
-   * Loads asset details by ID from the backend
-   */
-  loadAsset(id: string): void {
-    this.loading = true;
-    this.error = null;
-
-    this.assetService.getAsset(id)
       .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.loading = false)
+        map(params => params.get('id')),
+        filter((id): id is string => !!id),
+        tap(id => {
+          this.assetId = id;
+          this.loading = true;
+          this.error = null;
+        }),
+        switchMap(id =>
+          this.assetService.getAsset(id).pipe(
+            finalize(() => {
+              this.loading = false;
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
       )
       .subscribe({
         next: (asset) => {
@@ -116,10 +108,16 @@ export class AssetDetailComponent implements OnInit, OnDestroy {
           this.generateAssignmentHistory(asset);
         },
         error: (error) => {
+          this.asset = null;
           this.error = error.message || 'Failed to load asset details';
           console.error('Error loading asset:', error);
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**

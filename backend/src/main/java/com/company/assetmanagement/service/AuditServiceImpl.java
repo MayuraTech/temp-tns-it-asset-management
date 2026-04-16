@@ -5,7 +5,9 @@ import com.company.assetmanagement.dto.AuditLogDTO;
 import com.company.assetmanagement.dto.FieldChangeDTO;
 import com.company.assetmanagement.model.Action;
 import com.company.assetmanagement.model.AuditLog;
+import com.company.assetmanagement.model.User;
 import com.company.assetmanagement.repository.AuditLogRepository;
+import com.company.assetmanagement.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,10 +38,15 @@ public class AuditServiceImpl implements AuditService {
     private static final Logger logger = LoggerFactory.getLogger(AuditServiceImpl.class);
     
     private final AuditLogRepository auditLogRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     
-    public AuditServiceImpl(AuditLogRepository auditLogRepository, ObjectMapper objectMapper) {
+    public AuditServiceImpl(
+            AuditLogRepository auditLogRepository,
+            UserRepository userRepository,
+            ObjectMapper objectMapper) {
         this.auditLogRepository = auditLogRepository;
+        this.userRepository = userRepository;
         this.objectMapper = objectMapper;
     }
     
@@ -50,7 +57,7 @@ public class AuditServiceImpl implements AuditService {
             AuditLog auditLog = new AuditLog();
             auditLog.setTimestamp(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now());
             auditLog.setUserId(event.getUserId());
-            auditLog.setUsername(event.getUsername());
+            auditLog.setUsername(resolveUsernameForAudit(event));
             auditLog.setActionType(event.getActionType());
             auditLog.setResourceType(event.getResourceType());
             auditLog.setResourceId(event.getResourceId());
@@ -85,6 +92,25 @@ public class AuditServiceImpl implements AuditService {
             logger.error("Failed to create audit log entry", e);
             // Don't throw exception - audit logging should not break business operations
         }
+    }
+
+    /**
+     * SQL Server and the {@link AuditLog} entity require a non-null username. Callers often
+     * only supply {@code userId}; resolve the login name from the user table when needed.
+     */
+    private String resolveUsernameForAudit(AuditEventDTO event) {
+        String username = event.getUsername();
+        if (username != null && !username.isBlank()) {
+            return username;
+        }
+        UUID userId = event.getUserId();
+        if (userId != null) {
+            return userRepository.findById(userId)
+                .map(User::getUsername)
+                .filter(u -> u != null && !u.isBlank())
+                .orElseGet(() -> "id:" + userId);
+        }
+        return "unknown";
     }
     
     @Override

@@ -186,7 +186,7 @@
             <td>{{ getAssetTypeLabel(asset.assetType) }}</td>
             <td class="serial-number">{{ asset.serialNumber }}</td>
             <td>
-              <span class="status-badge status-badge--{{ asset.status.toLowerCase() }}">
+              <span class="status-badge status-badge--{{ getStatusCssModifier(asset.status) }}">
                 {{ getStatusLabel(asset.status) }}
               </span>
             </td>

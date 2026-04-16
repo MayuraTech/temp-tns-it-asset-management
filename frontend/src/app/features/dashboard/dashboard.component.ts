@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="dashboard-container">
       <h1 class="dashboard-title">Dashboard</h1>
-      <p class="dashboard-description">Welcome to AssetIntel - Corporate IT Global Infrastructure</p>
+      <p class="dashboard-description">Welcome to TnS Assets - Corporate IT Global Infrastructure</p>
       
       <div class="dashboard-content">
         <div class="placeholder-card">

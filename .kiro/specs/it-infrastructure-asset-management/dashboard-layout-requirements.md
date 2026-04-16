@@ -23,7 +23,7 @@ The dashboard implements a standard enterprise application layout pattern with:
 
 ### Visual Identity
 
-**Brand Name**: AssetIntel  
+**Brand Name**: TnS Assets  
 **Tagline**: Corporate IT - Global Infrastructure  
 **Design System**: Prism Logic editorial guidelines  
 **Color Palette**:
@@ -62,7 +62,7 @@ The dashboard implements a standard enterprise application layout pattern with:
 **Components**:
 1. **Brand Header**
    - Logo icon (40x40px, blue background #315396)
-   - Application name: "AssetIntel"
+   - Application name: "TnS Assets"
    - Subtitle: "Corporate IT - Global Infrastructure"
 
 2. **Primary Navigation Menu**
@@ -96,7 +96,7 @@ The dashboard implements a standard enterprise application layout pattern with:
 
 **Components**:
 1. **Brand Name** (left section)
-   - "AssetIntel" text logo
+   - "TnS Assets" text logo
 
 2. **Search Bar** (left-center)
    - 256px width

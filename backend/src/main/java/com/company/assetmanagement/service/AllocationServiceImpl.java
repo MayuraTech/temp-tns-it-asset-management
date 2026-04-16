@@ -467,7 +467,7 @@ public class AllocationServiceImpl implements AllocationService {
             logger.warn("Bulk deallocation request exceeds maximum size: {} > {}", 
                 assetIds.size(), MAX_BULK_SIZE);
             throw new ValidationException(Collections.singletonList(
-                new ValidationError("assetIds", "Bulk operation limited to " + MAX_BULK_SIZE + " assets")
+                new ValidationException.ValidationError("assetIds", "Bulk operation limited to " + MAX_BULK_SIZE + " assets")
             ));
         }
         
@@ -602,7 +602,7 @@ public class AllocationServiceImpl implements AllocationService {
         // Check size limit
         if (assignments.size() > MAX_EXPORT_SIZE) {
             throw new ValidationException(Collections.singletonList(
-                new ValidationError("export", "Export limited to " + MAX_EXPORT_SIZE + " records. Please apply filters.")
+                new ValidationException.ValidationError("export", "Export limited to " + MAX_EXPORT_SIZE + " records. Please apply filters.")
             ));
         }
         
@@ -665,28 +665,28 @@ public class AllocationServiceImpl implements AllocationService {
      * @param expectedType the expected assignment type
      */
     private void validateAssignmentRequest(AssignmentRequest request, AssignmentType expectedType) {
-        List<ValidationError> errors = new ArrayList<>();
+        List<ValidationException.ValidationError> errors = new ArrayList<>();
         
         if (request.getAssignmentType() != expectedType) {
-            errors.add(new ValidationError("assignmentType", 
+            errors.add(new ValidationException.ValidationError("assignmentType", 
                 "Assignment type must be " + expectedType));
         }
         
         if (request.getAssignedTo() == null || request.getAssignedTo().isBlank()) {
-            errors.add(new ValidationError("assignedTo", "Assigned to is required"));
+            errors.add(new ValidationException.ValidationError("assignedTo", "Assigned to is required"));
         }
         
         if (request.getAssignedTo() != null && request.getAssignedTo().length() > 255) {
-            errors.add(new ValidationError("assignedTo", 
+            errors.add(new ValidationException.ValidationError("assignedTo", 
                 "Assigned to must not exceed 255 characters"));
         }
         
         if (expectedType == AssignmentType.USER) {
             if (request.getAssignedUserEmail() == null || request.getAssignedUserEmail().isBlank()) {
-                errors.add(new ValidationError("assignedUserEmail", 
+                errors.add(new ValidationException.ValidationError("assignedUserEmail", 
                     "Assigned user email is required for user assignments"));
             } else if (!isValidEmail(request.getAssignedUserEmail())) {
-                errors.add(new ValidationError("assignedUserEmail", 
+                errors.add(new ValidationException.ValidationError("assignedUserEmail", 
                     "Invalid email format"));
             }
         }
@@ -709,7 +709,6 @@ public class AllocationServiceImpl implements AllocationService {
         // Simple email validation pattern
         String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email.matches(emailPattern);
-    }
     }
     
     /**
@@ -764,7 +763,7 @@ public class AllocationServiceImpl implements AllocationService {
      */
     private AssetDTO mapAssetToDTO(Asset asset) {
         AssetDTO dto = new AssetDTO();
-        dto.setId(asset.getId());
+        dto.setId(asset.getId() != null ? asset.getId().toString() : null);
         dto.setAssetType(asset.getAssetType());
         dto.setName(asset.getName());
         dto.setSerialNumber(asset.getSerialNumber());

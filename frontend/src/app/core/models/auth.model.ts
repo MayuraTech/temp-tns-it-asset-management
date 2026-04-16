@@ -25,10 +25,14 @@ export interface User {
   accountLocked: boolean;
 }
 
+/**
+ * Must match backend {@code Role} JSON (Jackson serializes enum {@code name()},
+ * e.g. ADMINISTRATOR, ASSET_MANAGER, VIEWER).
+ */
 export enum Role {
-  ADMINISTRATOR = 'Administrator',
-  ASSET_MANAGER = 'Asset_Manager',
-  VIEWER = 'Viewer'
+  ADMINISTRATOR = 'ADMINISTRATOR',
+  ASSET_MANAGER = 'ASSET_MANAGER',
+  VIEWER = 'VIEWER'
 }
 
 export enum Action {

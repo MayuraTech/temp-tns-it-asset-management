@@ -8,9 +8,12 @@
  * Sub-task 5.1: Geometric triangle accents in background
  */
 
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
 import { GeometricTriangleComponent } from '../../../shared/components/geometric-triangle/geometric-triangle.component';
 
 @Component({
@@ -26,13 +29,18 @@ export class MainContentComponent implements OnInit {
   /**
    * Empty state observable - determines if empty state should be shown
    */
-  isEmpty$ = new BehaviorSubject<boolean>(true);
-  
-  constructor() {}
-  
+  isEmpty$ = new BehaviorSubject<boolean>(false);
+
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+
   ngOnInit(): void {
-    // Initialize component
-    // TODO: Connect to router to detect when content is loaded
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => this.isEmpty$.next(false));
   }
   
   /**

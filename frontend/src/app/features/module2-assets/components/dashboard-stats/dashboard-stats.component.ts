@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BehaviorSubject, Subject, interval, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, interval, EMPTY } from 'rxjs';
 import { takeUntil, switchMap, startWith, catchError, tap } from 'rxjs/operators';
 import { AssetService, AssetStats } from '../../services/asset.service';
 
@@ -84,16 +84,12 @@ export class DashboardStatsComponent implements OnInit, OnDestroy {
           console.error('Failed to load asset stats:', error);
           this.error$.next('Failed to load statistics');
           this.loading$.next(false);
-          return throwError(() => error);
+          return EMPTY;
         }),
-        tap({
-          next: (stats) => {
-            this.stats$.next(stats);
-            this.loading$.next(false);
-          },
-          error: () => {
-            this.loading$.next(false);
-          }
+        tap((stats) => {
+          this.stats$.next(stats);
+          this.error$.next(null);
+          this.loading$.next(false);
         })
       );
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, timer, of } from 'rxjs';
 import { tap, catchError, switchMap, map } from 'rxjs/operators';
-import { LoginRequest, LoginResponse, User } from '../models/auth.model';
+import { LoginRequest, LoginResponse, Role, User } from '../models/auth.model';
 import { AuthError, AuthErrorType } from '../models/error.model';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
@@ -95,7 +95,8 @@ export class AuthService {
     return this.http.get<User>(`${environment.apiUrl}/users/me`)
       .pipe(
         map(user => {
-          this.currentUserSubject.next(user);
+          const normalized = this.normalizeUserRoles(user);
+          this.currentUserSubject.next(normalized);
           this.isAuthenticatedSubject.next(true);
           return true;
         }),
@@ -283,9 +284,10 @@ export class AuthService {
     this.http.get<User>(`${environment.apiUrl}/users/me`)
       .subscribe({
         next: user => {
-          this.currentUserSubject.next(user);
+          const normalized = this.normalizeUserRoles(user);
+          this.currentUserSubject.next(normalized);
           const isPersistent = this.storageService.isPersistent('access_token');
-          this.storageService.setItem('current_user', JSON.stringify(user), isPersistent);
+          this.storageService.setItem('current_user', JSON.stringify(normalized), isPersistent);
         },
         error: error => {
           console.error('Failed to load user:', error);
@@ -304,8 +306,8 @@ export class AuthService {
     const userJson = this.storageService.getItem('current_user');
     if (userJson) {
       try {
-        const user = JSON.parse(userJson);
-        this.currentUserSubject.next(user);
+        const user = JSON.parse(userJson) as User;
+        this.currentUserSubject.next(this.normalizeUserRoles(user));
       } catch (error) {
         console.error('Failed to parse stored user:', error);
         this.storageService.removeItem('current_user');
@@ -318,6 +320,29 @@ export class AuthService {
    * 
    * Requirement 10.4: Clear sensitive form data from memory after successful authentication
    */
+  /**
+   * Align stored/API role strings with {@link Role} (API uses enum names; older clients used display values).
+   */
+  private normalizeUserRoles(user: User): User {
+    const mapOne = (raw: string): Role => {
+      const s = String(raw).trim();
+      if (s === Role.ADMINISTRATOR || s === 'Administrator') {
+        return Role.ADMINISTRATOR;
+      }
+      if (s === Role.ASSET_MANAGER || s === 'Asset_Manager') {
+        return Role.ASSET_MANAGER;
+      }
+      if (s === Role.VIEWER || s === 'Viewer') {
+        return Role.VIEWER;
+      }
+      return s as Role;
+    };
+    return {
+      ...user,
+      roles: (user.roles ?? []).map((r) => mapOne(r as string))
+    };
+  }
+
   private clearSession(): void {
     this.storageService.clear();
     this.currentUserSubject.next(null);

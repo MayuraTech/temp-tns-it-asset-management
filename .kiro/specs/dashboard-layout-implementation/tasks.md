@@ -2,7 +2,7 @@
 
 ## Overview
 
-This implementation plan converts the Angular-based dashboard layout design into a series of incremental coding tasks. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area for the AssetIntel IT Asset Management application.
+This implementation plan converts the Angular-based dashboard layout design into a series of incremental coding tasks. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area for the TnS Assets IT Asset Management application.
 
 The implementation uses Angular 17+ with component-based CSS, CSS Grid layout, design tokens, and comprehensive accessibility compliance. Each task builds on previous steps to create a fully functional, tested, and accessible dashboard layout.
 

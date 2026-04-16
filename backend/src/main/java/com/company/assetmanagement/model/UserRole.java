@@ -68,7 +68,7 @@ public class UserRole {
      * Stored as string in database for flexibility.
      */
     @Column(name = "Role", nullable = false, length = 50)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleJpaConverter.class)
     @NotNull(message = "Role is required")
     private Role role;
 

@@ -5,7 +5,9 @@ import com.company.assetmanagement.dto.AuditLogDTO;
 import com.company.assetmanagement.dto.FieldChangeDTO;
 import com.company.assetmanagement.model.Action;
 import com.company.assetmanagement.model.AuditLog;
+import com.company.assetmanagement.model.User;
 import com.company.assetmanagement.repository.AuditLogRepository;
+import com.company.assetmanagement.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +34,9 @@ class AuditServiceImplTest {
     
     @Mock
     private AuditLogRepository auditLogRepository;
+    
+    @Mock
+    private UserRepository userRepository;
     
     @Mock
     private ObjectMapper objectMapper;
@@ -63,7 +68,7 @@ class AuditServiceImplTest {
         AuditEventDTO event = AuditEventDTO.builder()
             .userId(testUserId)
             .username(testUsername)
-            .actionType(Action.UPDATE)
+            .actionType(Action.UPDATE_ASSET)
             .resourceType("ASSET")
             .resourceId(testResourceId)
             .changes(changes)
@@ -85,11 +90,12 @@ class AuditServiceImplTest {
         AuditLog savedLog = auditLogCaptor.getValue();
         assertThat(savedLog.getUserId()).isEqualTo(testUserId);
         assertThat(savedLog.getUsername()).isEqualTo(testUsername);
-        assertThat(savedLog.getActionType()).isEqualTo(Action.UPDATE);
+        assertThat(savedLog.getActionType()).isEqualTo(Action.UPDATE_ASSET);
         assertThat(savedLog.getResourceType()).isEqualTo("ASSET");
         assertThat(savedLog.getResourceId()).isEqualTo(testResourceId);
         assertThat(savedLog.getIpAddress()).isEqualTo("192.168.1.100");
         assertThat(savedLog.getTimestamp()).isNotNull();
+        verify(userRepository, never()).findById(any());
     }
     
     @Test
@@ -99,7 +105,7 @@ class AuditServiceImplTest {
         AuditEventDTO event = AuditEventDTO.builder()
             .userId(testUserId)
             .username(testUsername)
-            .actionType(Action.CREATE)
+            .actionType(Action.CREATE_ASSET)
             .resourceType("ASSET")
             .resourceId(testResourceId)
             .build();
@@ -115,9 +121,52 @@ class AuditServiceImplTest {
         
         AuditLog savedLog = auditLogCaptor.getValue();
         assertThat(savedLog.getUserId()).isEqualTo(testUserId);
-        assertThat(savedLog.getActionType()).isEqualTo(Action.CREATE);
+        assertThat(savedLog.getActionType()).isEqualTo(Action.CREATE_ASSET);
         assertThat(savedLog.getChanges()).isNull();
         assertThat(savedLog.getMetadata()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should resolve username from user repository when omitted")
+    void shouldResolveUsernameFromUserRepositoryWhenOmitted() {
+        User actor = new User();
+        actor.setUsername("from-db");
+        when(userRepository.findById(testUserId)).thenReturn(Optional.of(actor));
+        when(auditLogRepository.save(any(AuditLog.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AuditEventDTO event = AuditEventDTO.builder()
+            .userId(testUserId)
+            .actionType(Action.CREATE_USER)
+            .resourceType("USER")
+            .resourceId(testResourceId)
+            .build();
+
+        auditService.logEvent(event);
+
+        verify(userRepository).findById(testUserId);
+        ArgumentCaptor<AuditLog> auditLogCaptor = ArgumentCaptor.forClass(AuditLog.class);
+        verify(auditLogRepository).save(auditLogCaptor.capture());
+        assertThat(auditLogCaptor.getValue().getUsername()).isEqualTo("from-db");
+    }
+
+    @Test
+    @DisplayName("Should use id fallback when user not found for audit username")
+    void shouldUseIdFallbackWhenUserMissing() {
+        when(userRepository.findById(testUserId)).thenReturn(Optional.empty());
+        when(auditLogRepository.save(any(AuditLog.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AuditEventDTO event = AuditEventDTO.builder()
+            .userId(testUserId)
+            .actionType(Action.CREATE_ASSET)
+            .resourceType("ASSET")
+            .resourceId(testResourceId)
+            .build();
+
+        auditService.logEvent(event);
+
+        ArgumentCaptor<AuditLog> auditLogCaptor = ArgumentCaptor.forClass(AuditLog.class);
+        verify(auditLogRepository).save(auditLogCaptor.capture());
+        assertThat(auditLogCaptor.getValue().getUsername()).isEqualTo("id:" + testUserId);
     }
     
     @Test
@@ -127,7 +176,7 @@ class AuditServiceImplTest {
         AuditEventDTO event = AuditEventDTO.builder()
             .userId(testUserId)
             .username(testUsername)
-            .actionType(Action.CREATE)
+            .actionType(Action.CREATE_ASSET)
             .resourceType("ASSET")
             .resourceId(testResourceId)
             .build();
@@ -152,22 +201,22 @@ class AuditServiceImplTest {
         Page<AuditLog> auditLogPage = new PageImpl<>(List.of(auditLog));
         
         when(auditLogRepository.searchAuditLog(
-            testUserId, Action.UPDATE, "ASSET", testResourceId, startDate, endDate, pageable
+            testUserId, Action.UPDATE_ASSET, "ASSET", testResourceId, startDate, endDate, pageable
         )).thenReturn(auditLogPage);
         
         // When
         Page<AuditLogDTO> result = auditService.searchAuditLog(
-            testUserId, Action.UPDATE, "ASSET", testResourceId, startDate, endDate, pageable
+            testUserId, Action.UPDATE_ASSET, "ASSET", testResourceId, startDate, endDate, pageable
         );
         
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).getUserId()).isEqualTo(testUserId);
-        assertThat(result.getContent().get(0).getActionType()).isEqualTo(Action.UPDATE);
+        assertThat(result.getContent().get(0).getActionType()).isEqualTo(Action.UPDATE_ASSET);
         
         verify(auditLogRepository).searchAuditLog(
-            testUserId, Action.UPDATE, "ASSET", testResourceId, startDate, endDate, pageable
+            testUserId, Action.UPDATE_ASSET, "ASSET", testResourceId, startDate, endDate, pageable
         );
     }
     
@@ -203,10 +252,10 @@ class AuditServiceImplTest {
     void shouldGetResourceAuditTrail() {
         // Given
         AuditLog auditLog1 = createTestAuditLog();
-        auditLog1.setActionType(Action.CREATE);
+        auditLog1.setActionType(Action.CREATE_ASSET);
         
         AuditLog auditLog2 = createTestAuditLog();
-        auditLog2.setActionType(Action.UPDATE);
+        auditLog2.setActionType(Action.UPDATE_ASSET);
         
         when(auditLogRepository.findByResourceIdOrderByTimestampDesc(testResourceId))
             .thenReturn(List.of(auditLog2, auditLog1));
@@ -216,8 +265,8 @@ class AuditServiceImplTest {
         
         // Then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getActionType()).isEqualTo(Action.UPDATE);
-        assertThat(result.get(1).getActionType()).isEqualTo(Action.CREATE);
+        assertThat(result.get(0).getActionType()).isEqualTo(Action.UPDATE_ASSET);
+        assertThat(result.get(1).getActionType()).isEqualTo(Action.CREATE_ASSET);
         
         verify(auditLogRepository).findByResourceIdOrderByTimestampDesc(testResourceId);
     }
@@ -265,7 +314,7 @@ class AuditServiceImplTest {
         auditLog.setTimestamp(LocalDateTime.now());
         auditLog.setUserId(testUserId);
         auditLog.setUsername(testUsername);
-        auditLog.setActionType(Action.UPDATE);
+        auditLog.setActionType(Action.UPDATE_ASSET);
         auditLog.setResourceType("ASSET");
         auditLog.setResourceId(testResourceId);
         auditLog.setIpAddress("192.168.1.100");

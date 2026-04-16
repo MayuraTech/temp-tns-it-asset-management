@@ -9,8 +9,7 @@
  */
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { SecondaryNavItem } from '../../../shared/constants/navigation.config';
+import { BehaviorSubject } from 'rxjs';
 import { NavigationService } from '../../services/navigation.service';
 import { SearchBarComponent } from '../../../shared/components/search-bar/search-bar.component';
 import { UserControlsComponent, UserControlAction, UserInfo } from '../../../shared/components/user-controls/user-controls.component';
@@ -27,17 +26,6 @@ import { AuthService } from '../../services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopNavigationComponent {
-  
-  /**
-   * Current route observable for active state detection
-   */
-  currentRoute$: Observable<string>;
-  
-  /**
-   * Secondary navigation items with active state
-   */
-  topNavItems$: Observable<SecondaryNavItem[]>;
-  
   /**
    * Search query subject for reactive search
    */
@@ -48,7 +36,7 @@ export class TopNavigationComponent {
    */
   userInfo: UserInfo = {
     name: 'Admin User',
-    email: 'admin@assetintel.com',
+    email: 'admin@TnS Assets.com',
     initials: 'AU'
   };
   
@@ -62,20 +50,6 @@ export class TopNavigationComponent {
     private router: Router,
     private authService: AuthService
   ) {
-    // Subscribe to current route for active state detection
-    this.currentRoute$ = this.navigationService.currentRoute$;
-    
-    // Get top navigation items as observable
-    this.topNavItems$ = new BehaviorSubject(this.navigationService.topNavigation);
-    
-    // Update top nav items when route changes
-    this.currentRoute$.subscribe(() => {
-      (this.topNavItems$ as BehaviorSubject<SecondaryNavItem[]>).next(
-        this.navigationService.topNavigation
-      );
-    });
-    
-    // Load current user information
     this.loadUserInfo();
   }
   
@@ -111,20 +85,6 @@ export class TopNavigationComponent {
   onSearchInput(query: string): void {
     this.searchQuery$.next(query);
     // TODO: Implement search functionality
-  }
-  
-  /**
-   * Handle secondary navigation click
-   */
-  onSecondaryNavClick(item: SecondaryNavItem): void {
-    this.navigationService.navigateTo(item.route);
-  }
-  
-  /**
-   * Check if a route is currently active
-   */
-  isActiveRoute(route: string): boolean {
-    return this.navigationService.isActiveRoute(route);
   }
   
   /**

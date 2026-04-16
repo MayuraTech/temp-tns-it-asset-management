@@ -2,7 +2,7 @@
 
 ## Overview
 
-This design document outlines the technical architecture and implementation approach for the AssetIntel IT Asset Management Dashboard Layout based on the **Editorial Geometry** design system. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the application.
+This design document outlines the technical architecture and implementation approach for the TnS Assets IT Asset Management Dashboard Layout based on the **Editorial Geometry** design system. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the application.
 
 The implementation follows the **"Corporate Curator"** philosophy, treating digital space like a premium printed journal. It establishes a consistent visual identity through intentional asymmetry, geometric triangle accents, and tonal layering while maintaining navigation structure and responsive layout patterns using Angular 17+ with component-based CSS architecture.
 

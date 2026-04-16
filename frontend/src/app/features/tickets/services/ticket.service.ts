@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import {
   Ticket,
   AllocationTicketRequest,
@@ -10,7 +10,7 @@ import {
   TicketStatusHistory,
   TicketPriority
 } from '../../../shared/models/ticket.model';
-import { PageResponse } from '../../../shared/models/page-response.model';
+import { PageResponse, SpringPagePayload, mapSpringToPageResponse } from '../../../shared/models/page-response.model';
 
 /**
  * Service for managing tickets (allocation and de-allocation requests)
@@ -36,7 +36,10 @@ export class TicketService {
     }
 
     return this.http.get<PageResponse<Ticket>>(this.apiUrl, { params })
-      .pipe(catchError(this.handleError));
+      .pipe(
+        map(body => mapSpringToPageResponse(body as SpringPagePayload<Ticket>)),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -72,7 +75,10 @@ export class TicketService {
       .set('size', size.toString());
 
     return this.http.get<PageResponse<Ticket>>(`${this.apiUrl}/my-requests`, { params })
-      .pipe(catchError(this.handleError));
+      .pipe(
+        map(body => mapSpringToPageResponse(body as SpringPagePayload<Ticket>)),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -84,7 +90,10 @@ export class TicketService {
       .set('size', size.toString());
 
     return this.http.get<PageResponse<Ticket>>(`${this.apiUrl}/pending-approvals`, { params })
-      .pipe(catchError(this.handleError));
+      .pipe(
+        map(body => mapSpringToPageResponse(body as SpringPagePayload<Ticket>)),
+        catchError(this.handleError)
+      );
   }
 
   /**

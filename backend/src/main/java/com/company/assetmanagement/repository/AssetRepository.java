@@ -78,6 +78,8 @@ public interface AssetRepository extends JpaRepository<Asset, UUID> {
      */
     @Query("SELECT COUNT(a) FROM Asset a WHERE a.assignedUser IS NOT NULL OR a.location IS NOT NULL")
     long countAssignedAssets();
+    
+    /**
      * Check if an asset with the given serial number exists.
      * Used for enforcing serial number uniqueness before asset creation.
      * 

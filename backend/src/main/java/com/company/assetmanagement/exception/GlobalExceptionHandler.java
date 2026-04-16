@@ -283,6 +283,14 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
             .type("TICKET_NOT_FOUND")
             .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+    
+    /**
      * Handle BadCredentialsException - returns 401 Unauthorized.
      */
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
@@ -380,7 +388,6 @@ public class GlobalExceptionHandler {
             .build();
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
     
     /**

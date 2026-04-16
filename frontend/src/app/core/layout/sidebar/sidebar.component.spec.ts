@@ -126,6 +126,6 @@ describe('SidebarComponent', () => {
 
   it('should call navigateTo with asset creation route on action button click', () => {
     component.onActionButtonClick();
-    expect(navigationServiceSpy.navigateTo).toHaveBeenCalledWith('/assets/create');
+    expect(navigationServiceSpy.navigateTo).toHaveBeenCalledWith('/assets/new');
   });
 });

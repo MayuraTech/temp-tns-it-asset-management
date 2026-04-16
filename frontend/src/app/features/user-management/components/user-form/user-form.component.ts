@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal, computed, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -95,7 +95,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
   
   ngOnInit(): void {
@@ -107,6 +108,13 @@ export class UserFormComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /** Clears submit/load UI state; use detectChanges so OnPush always repaints after HTTP. */
+  private clearLoadingUi(): void {
+    this.loading.set(false);
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
   
   /**
@@ -170,7 +178,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userService.getUser(id)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.clearLoadingUi())
       )
       .subscribe({
         next: (user: UserDTO) => {
@@ -388,7 +396,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userService.createUser(request)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.clearLoadingUi())
       )
       .subscribe({
         next: (user: UserDTO) => {
@@ -398,20 +406,23 @@ export class UserFormComponent implements OnInit, OnDestroy {
           });
           this.router.navigate(['/users', user.id]);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error creating user:', error);
-          
+
           let errorMessage = 'Failed to create user';
-          if (error.error?.message) {
-            errorMessage = error.error.message;
-          } else if (error.error?.type === 'DUPLICATE_USERNAME') {
+          const body = (error as { error?: { message?: string; type?: string } })?.error;
+          if (body?.message) {
+            errorMessage = body.message;
+          } else if (body?.type === 'DUPLICATE_USERNAME') {
             errorMessage = 'Username already exists';
-          } else if (error.error?.type === 'DUPLICATE_EMAIL') {
+          } else if (body?.type === 'DUPLICATE_EMAIL') {
             errorMessage = 'Email already exists';
+          } else if (error instanceof Error && error.message) {
+            errorMessage = error.message;
           }
-          
+
           this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
+            duration: 8000,
             panelClass: ['error-snackbar']
           });
         }
@@ -436,7 +447,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userService.updateUser(id, request)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.clearLoadingUi())
       )
       .subscribe({
         next: (user: UserDTO) => {
@@ -449,20 +460,23 @@ export class UserFormComponent implements OnInit, OnDestroy {
           });
           this.router.navigate(['/users', user.id]);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error updating user:', error);
-          
+
           let errorMessage = 'Failed to update user';
-          if (error.error?.message) {
-            errorMessage = error.error.message;
-          } else if (error.error?.type === 'DUPLICATE_USERNAME') {
+          const body = (error as { error?: { message?: string; type?: string } })?.error;
+          if (body?.message) {
+            errorMessage = body.message;
+          } else if (body?.type === 'DUPLICATE_USERNAME') {
             errorMessage = 'Username already exists';
-          } else if (error.error?.type === 'DUPLICATE_EMAIL') {
+          } else if (body?.type === 'DUPLICATE_EMAIL') {
             errorMessage = 'Email already exists';
+          } else if (error instanceof Error && error.message) {
+            errorMessage = error.message;
           }
-          
+
           this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
+            duration: 8000,
             panelClass: ['error-snackbar']
           });
         }

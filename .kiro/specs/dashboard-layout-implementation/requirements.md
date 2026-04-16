@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document defines the requirements for implementing the IT Asset Management Dashboard Layout based on the **Editorial Geometry** design system and Google Stitch Layout Shell screen. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the AssetIntel application.
+This document defines the requirements for implementing the IT Asset Management Dashboard Layout based on the **Editorial Geometry** design system and Google Stitch Layout Shell screen. The dashboard provides a comprehensive application shell with fixed sidebar navigation, top navigation bar, and main content area that serves as the foundation for all feature modules in the TnS Assets application.
 
 The implementation follows the **"Corporate Curator"** philosophy, treating digital space like a premium printed journal. It establishes the visual identity through intentional asymmetry, geometric triangle accents, tonal layering, and glassmorphism effects while maintaining navigation structure and responsive layout patterns that will be used consistently across the entire application.
 
@@ -45,7 +45,7 @@ The implementation follows the **"Corporate Curator"** philosophy, treating digi
 
 #### Acceptance Criteria
 
-1. THE Sidebar SHALL display the Brand_Header at the top with logo icon (40x40px) and application name "AssetIntel"
+1. THE Sidebar SHALL display the Brand_Header at the top with logo icon (40x40px) and application name "TnS Assets"
 2. THE Sidebar SHALL display the subtitle "Corporate IT - Global Infrastructure" below the application name
 3. THE Sidebar SHALL render primary navigation items in the following order: Assets, Software, Licenses, Network, Users
 4. THE Sidebar SHALL display an "Add New Asset" action button below the primary navigation
@@ -75,7 +75,7 @@ The implementation follows the **"Corporate Curator"** philosophy, treating digi
 
 #### Acceptance Criteria
 
-1. THE Top_Navigation_Bar SHALL display the brand name "AssetIntel" on the left side
+1. THE Top_Navigation_Bar SHALL display the brand name "TnS Assets" on the left side
 2. THE Top_Navigation_Bar SHALL render a Search_Bar (256px width) to the right of the brand name
 3. THE Top_Navigation_Bar SHALL render secondary navigation links (Dashboard, Inventory, Reports, Settings) in the center-right area
 4. THE Top_Navigation_Bar SHALL render User_Controls (notification icon, settings icon, user avatar) on the right side

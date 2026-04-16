@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the implementation of Task 3: Navigation functionality and state management for the AssetIntel dashboard layout following Editorial Geometry design principles.
+This document summarizes the implementation of Task 3: Navigation functionality and state management for the TnS Assets dashboard layout following Editorial Geometry design principles.
 
 ## Completed Sub-Tasks
 

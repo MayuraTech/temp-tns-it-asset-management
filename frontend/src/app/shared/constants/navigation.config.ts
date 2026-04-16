@@ -1,7 +1,7 @@
 /**
  * Navigation Configuration for Editorial Geometry Dashboard
  * 
- * Defines the navigation structure for the AssetIntel application
+ * Defines the navigation structure for the TnS Assets application
  * following Editorial Geometry principles with geometric accents
  * and tonal layering.
  */

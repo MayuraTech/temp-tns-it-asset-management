@@ -93,6 +93,25 @@ class AuthorizationServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should grant permission when principal string is username (Spring Security)")
+    void shouldGrantPermissionWhenPrincipalIsUsername() {
+        when(userRepository.findByUsernameWithRoles("testuser")).thenReturn(Optional.of(testUser));
+
+        boolean hasPermission = authorizationService.hasPermission("testuser", Action.CREATE_ASSET);
+
+        assertThat(hasPermission).isTrue();
+        verify(userRepository).findByUsernameWithRoles("testuser");
+    }
+
+    @Test
+    @DisplayName("resolveActorUuid should map username to user id")
+    void resolveActorUuidShouldMapUsername() {
+        when(userRepository.findByUsernameWithRoles("testuser")).thenReturn(Optional.of(testUser));
+
+        assertThat(authorizationService.resolveActorUuid("testuser")).isEqualTo(testUserId);
+    }
+
+    @Test
     @DisplayName("Should deny permission when user lacks required role")
     void shouldDenyPermissionWhenUserLacksRequiredRole() {
         // Given

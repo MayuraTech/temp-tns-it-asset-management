@@ -64,8 +64,7 @@ export class SidebarComponent {
    * Handles action button click (Add New Asset)
    */
   onActionButtonClick(): void {
-    // Navigate to asset creation page
-    this.navigationService.navigateTo('/assets/create');
+    this.navigationService.navigateTo('/assets/new');
   }
   
   /**

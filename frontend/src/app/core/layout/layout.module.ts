@@ -1,7 +1,7 @@
 /**
  * Layout Module - Editorial Geometry Dashboard Layout
  * 
- * Provides the core layout components for the AssetIntel application
+ * Provides the core layout components for the TnS Assets application
  * following Editorial Geometry design principles with geometric accents,
  * tonal layering, and glassmorphism effects.
  */

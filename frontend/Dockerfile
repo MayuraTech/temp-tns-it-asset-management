@@ -18,8 +18,8 @@ WORKDIR /usr/share/nginx/html
 # Remove default nginx content
 RUN rm -rf ./*
 
-# Copy Angular build output (adjust project name if needed)
-COPY --from=build /app/dist/it-asset-management-frontend/browser ./
+# Copy Angular build output (Angular 17 outputs directly to dist/project-name)
+COPY --from=build /app/dist/it-asset-management-frontend ./
 
 # Copy nginx template (envsubst replaces ${API_URL} at startup)
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template

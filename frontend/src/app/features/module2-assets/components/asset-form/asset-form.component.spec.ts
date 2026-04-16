@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { ActivatedRoute, convertToParamMap, ParamMap, Router } from '@angular/router';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { AssetFormComponent } from './asset-form.component';
 import { AssetService } from '../../services/asset.service';
 import { Asset, AssetType, LifecycleStatus } from '../../models';
@@ -11,7 +11,8 @@ describe('AssetFormComponent', () => {
   let fixture: ComponentFixture<AssetFormComponent>;
   let mockAssetService: jasmine.SpyObj<AssetService>;
   let mockRouter: jasmine.SpyObj<Router>;
-  let mockActivatedRoute: any;
+  let mockActivatedRoute: { paramMap: Observable<ParamMap> };
+  let paramMap$: BehaviorSubject<ParamMap>;
 
   const mockAsset: Asset = {
     id: '550e8400-e29b-41d4-a716-446655440000',
@@ -40,12 +41,9 @@ describe('AssetFormComponent', () => {
 
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
+    paramMap$ = new BehaviorSubject<ParamMap>(convertToParamMap({}));
     mockActivatedRoute = {
-      snapshot: {
-        paramMap: {
-          get: jasmine.createSpy('get').and.returnValue(null)
-        }
-      }
+      paramMap: paramMap$.asObservable()
     };
 
     await TestBed.configureTestingModule({
@@ -116,7 +114,7 @@ describe('AssetFormComponent', () => {
 
   describe('Edit Mode', () => {
     beforeEach(() => {
-      mockActivatedRoute.snapshot.paramMap.get.and.returnValue('550e8400-e29b-41d4-a716-446655440000');
+      paramMap$.next(convertToParamMap({ id: '550e8400-e29b-41d4-a716-446655440000' }));
       mockAssetService.getAsset.and.returnValue(of(mockAsset));
     });
 
@@ -258,7 +256,7 @@ describe('AssetFormComponent', () => {
     // Note: This test is skipped due to complex async timing issues with route parameter detection
     // The functionality works correctly in the application, but the test setup is challenging
     xit('should update asset in edit mode', (done) => {
-      mockActivatedRoute.snapshot.paramMap.get.and.returnValue('550e8400-e29b-41d4-a716-446655440000');
+      paramMap$.next(convertToParamMap({ id: '550e8400-e29b-41d4-a716-446655440000' }));
       mockAssetService.getAsset.and.returnValue(of(mockAsset));
       
       const updatedAsset = { ...mockAsset, name: 'Updated Server Name' };
@@ -312,7 +310,7 @@ describe('AssetFormComponent', () => {
       expect(component.errorMessage).toBe('Failed to create asset');
     });
 
-    it('should navigate to asset detail after successful creation', (done) => {
+    it('should navigate to asset detail after successful creation', () => {
       const newAsset = { ...mockAsset };
       mockAssetService.createAsset.and.returnValue(of(newAsset));
 
@@ -326,16 +324,13 @@ describe('AssetFormComponent', () => {
 
       component.onSubmit();
 
-      setTimeout(() => {
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['/assets', newAsset.id]);
-        done();
-      }, 1600);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/assets', newAsset.id]);
     });
   });
 
   describe('Cancel Action', () => {
     it('should navigate to asset detail in edit mode', () => {
-      mockActivatedRoute.snapshot.paramMap.get.and.returnValue('550e8400-e29b-41d4-a716-446655440000');
+      paramMap$.next(convertToParamMap({ id: '550e8400-e29b-41d4-a716-446655440000' }));
       mockAssetService.getAsset.and.returnValue(of(mockAsset));
       fixture.detectChanges();
 

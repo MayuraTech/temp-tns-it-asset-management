@@ -122,7 +122,7 @@ public class AssetServiceImpl implements AssetService {
         
         // Step 4: Create entity
         Asset asset = AssetMapper.toEntity(request);
-        UUID userUuid = UUID.fromString(userId);
+        UUID userUuid = authorizationService.resolveActorUuid(userId);
         asset.setCreatedBy(userUuid);
         asset.setUpdatedBy(userUuid);
         asset.setReadOnly(false);
@@ -302,7 +302,7 @@ public class AssetServiceImpl implements AssetService {
         }
         
         // Step 8: Set updatedBy (updatedAt is set automatically by JPA)
-        UUID userUuid = UUID.fromString(userId);
+        UUID userUuid = authorizationService.resolveActorUuid(userId);
         existingAsset.setUpdatedBy(userUuid);
         
         // Step 9: Save updated asset to repository
@@ -506,7 +506,7 @@ public class AssetServiceImpl implements AssetService {
         }
         
         // Step 8: Set updatedBy to userId (updatedAt is set automatically by JPA)
-        UUID userUuid = UUID.fromString(userId);
+        UUID userUuid = authorizationService.resolveActorUuid(userId);
         existingAsset.setUpdatedBy(userUuid);
         
         // Step 9: Save updated asset to repository
@@ -580,7 +580,7 @@ public class AssetServiceImpl implements AssetService {
         
         // Step 5: Log audit event for asset deletion
         try {
-            UUID userUuid = UUID.fromString(userId);
+            UUID userUuid = authorizationService.resolveActorUuid(userId);
             auditService.logEvent(AuditEventDTO.builder()
                 .userId(userUuid)
                 .actionType(Action.DELETE_ASSET)
@@ -916,7 +916,7 @@ public class AssetServiceImpl implements AssetService {
                 
                 // Create asset entity
                 Asset asset = AssetMapper.toEntity(request);
-                UUID userUuid = UUID.fromString(userId);
+                UUID userUuid = authorizationService.resolveActorUuid(userId);
                 asset.setCreatedBy(userUuid);
                 asset.setUpdatedBy(userUuid);
                 asset.setReadOnly(false);
@@ -999,7 +999,7 @@ public class AssetServiceImpl implements AssetService {
             java.util.List<Asset> savedAssets = assetRepository.saveAll(assets);
             
             // Log audit events for each imported asset
-            UUID userUuid = UUID.fromString(userId);
+            UUID userUuid = authorizationService.resolveActorUuid(userId);
             for (Asset savedAsset : savedAssets) {
                 try {
                     auditService.logEvent(AuditEventDTO.builder()
@@ -1298,14 +1298,14 @@ public class AssetServiceImpl implements AssetService {
             asset.setImageFilename(uniqueFilename);
             asset.setImageSize(file.getSize());
             asset.setImageContentType(file.getContentType());
-            asset.setUpdatedBy(UUID.fromString(userId));
+            asset.setUpdatedBy(authorizationService.resolveActorUuid(userId));
             
             // 9. Save asset
             Asset savedAsset = assetRepository.save(asset);
             
             // 10. Audit logging
             auditService.logEvent(AuditEventDTO.builder()
-                .userId(UUID.fromString(userId))
+                .userId(authorizationService.resolveActorUuid(userId))
                 .actionType(Action.UPDATE_ASSET)
                 .resourceType("ASSET")
                 .resourceId(assetId.toString())

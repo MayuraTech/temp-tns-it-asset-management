@@ -5,13 +5,14 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth.service';
+import { Role } from '../../../core/models/auth.model';
 import { Observable, map } from 'rxjs';
 
 interface MenuItem {
   label: string;
   icon: string;
   route: string;
-  roles: string[];
+  roles: Role[];
 }
 
 @Component({
@@ -33,49 +34,49 @@ export class SidebarComponent implements OnInit {
       label: 'Dashboard',
       icon: 'dashboard',
       route: '/dashboard',
-      roles: ['Administrator', 'Asset_Manager', 'Viewer']
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
     },
     {
       label: 'Assets',
       icon: 'inventory_2',
       route: '/assets',
-      roles: ['Administrator', 'Asset_Manager', 'Viewer']
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
     },
     {
       label: 'My Requests',
       icon: 'assignment',
       route: '/tickets',
-      roles: ['Administrator', 'Asset_Manager', 'Viewer']
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER, Role.VIEWER]
     },
     {
       label: 'Ticket Management',
       icon: 'approval',
       route: '/ticket-management',
-      roles: ['Administrator', 'Asset_Manager']
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER]
     },
     {
       label: 'Reports',
       icon: 'assessment',
       route: '/reports',
-      roles: ['Administrator', 'Asset_Manager']
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER]
     },
     {
       label: 'Users',
       icon: 'people',
       route: '/users',
-      roles: ['Administrator']
+      roles: [Role.ADMINISTRATOR]
     },
     {
       label: 'Audit Logs',
       icon: 'history',
       route: '/audit-logs',
-      roles: ['Administrator']
+      roles: [Role.ADMINISTRATOR]
     },
     {
       label: 'Settings',
       icon: 'settings',
       route: '/settings',
-      roles: ['Administrator']
+      roles: [Role.ADMINISTRATOR]
     }
   ];
 

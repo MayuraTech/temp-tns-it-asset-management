@@ -346,4 +346,9 @@ export class AssetInventoryComponent implements OnInit, OnDestroy {
   getStatusLabel(status: LifecycleStatus): string {
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
+
+  /** CSS modifier for .status-badge--* (matches enum e.g. IN_USE → in_use). */
+  getStatusCssModifier(status: LifecycleStatus): string {
+    return String(status).toLowerCase();
+  }
 }

@@ -1,0 +1,99 @@
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - application "TnS Assets Application" [ref=e5]:
+    - application "TnS Assets Application" [ref=e35]:
+      - complementary [ref=e36]:
+        - navigation "Primary navigation" [ref=e38]:
+          - generic [ref=e39]:
+            - generic:
+              - generic:
+                - img
+            - generic [ref=e40]:
+              - img [ref=e43]
+              - generic [ref=e47]:
+                - paragraph [ref=e48]: TnS Assets
+                - paragraph [ref=e49]: Corporate IT - Global Infrastructure
+          - list [ref=e51]:
+            - listitem [ref=e52]:
+              - link "Assets" [active] [ref=e53] [cursor=pointer]:
+                - /url: /assets
+                - img [ref=e55]
+                - generic [ref=e57]: Assets
+            - listitem [ref=e58]:
+              - link "Software" [ref=e59] [cursor=pointer]:
+                - /url: /software
+                - img [ref=e61]
+                - generic [ref=e64]: Software
+            - listitem [ref=e65]:
+              - link "Licenses" [ref=e66] [cursor=pointer]:
+                - /url: /licenses
+                - img [ref=e68]
+                - generic [ref=e70]: Licenses
+            - listitem [ref=e71]:
+              - link "Network" [ref=e72] [cursor=pointer]:
+                - /url: /network
+                - img [ref=e74]
+                - generic [ref=e82]: Network
+            - listitem [ref=e83]:
+              - link "Users" [ref=e84] [cursor=pointer]:
+                - /url: /users
+                - img [ref=e86]
+                - generic [ref=e91]: Users
+          - button "Add New Asset" [ref=e94] [cursor=pointer]:
+            - img [ref=e96]
+            - generic [ref=e98]: Add New Asset
+          - navigation "Utility navigation" [ref=e99]:
+            - list [ref=e100]:
+              - listitem [ref=e101]:
+                - link "Audit Logs" [ref=e102] [cursor=pointer]:
+                  - /url: /audit-logs
+                  - img [ref=e104]
+                  - text: Audit Logs
+              - listitem [ref=e107]:
+                - link "Archived" [ref=e108] [cursor=pointer]:
+                  - /url: /archived
+                  - img [ref=e110]
+                  - text: Archived
+      - banner [ref=e113]:
+        - navigation "Secondary navigation" [ref=e115]:
+          - generic [ref=e116]: TnS Assets
+          - generic [ref=e120]:
+            - searchbox "Search infrastructure items" [ref=e121]
+            - img
+          - list [ref=e122]:
+            - listitem [ref=e158]:
+              - link "Dashboard" [ref=e159] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e160]:
+              - link "Inventory" [ref=e161] [cursor=pointer]:
+                - /url: /inventory
+            - listitem [ref=e162]:
+              - link "Reports" [ref=e163] [cursor=pointer]:
+                - /url: /reports
+            - listitem [ref=e164]:
+              - link "Settings" [ref=e165] [cursor=pointer]:
+                - /url: /settings
+          - generic [ref=e133]:
+            - button "View notifications" [ref=e134] [cursor=pointer]:
+              - img [ref=e135]
+              - generic "3 unread notifications" [ref=e138]: "3"
+            - button "Open settings" [ref=e139] [cursor=pointer]:
+              - img [ref=e140]
+            - button "Open user menu" [ref=e143] [cursor=pointer]:
+              - generic [ref=e145]: AD
+              - generic [ref=e146]: admin
+      - main [ref=e147]:
+        - generic [ref=e149]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e152]:
+            - generic [ref=e154]: 🎨
+            - heading "Workspace Canvas" [level=2] [ref=e155]
+            - paragraph [ref=e156]: This is your dynamic content area where feature modules will be displayed. The Editorial Geometry design system creates depth through tonal layering and geometric accents rather than harsh structural lines.
+            - paragraph [ref=e157]: Navigate using the sidebar to load different application sections, or use the search bar to find specific infrastructure items.

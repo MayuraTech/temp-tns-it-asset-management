@@ -18,7 +18,7 @@ export { AssignmentStatus } from './assignment-history-entry.model';
 export { Asset } from './asset.model';
 export { AssetRequest } from './asset-request.model';
 export { AssetSearchQuery } from './asset-search-query.model';
-export { Page, PageInfo } from './page.model';
+export { Page, PageInfo, SpringPagePayload, mapSpringPageToAppPage } from './page.model';
 
 // History Models
 export { 

@@ -7,7 +7,7 @@ import { loginGuard } from './core/guards/login.guard';
 /**
  * Application Routes - Editorial Geometry Dashboard
  * 
- * Defines the routing structure for the AssetIntel application
+ * Defines the routing structure for the TnS Assets application
  * with support for all navigation items defined in navigation.config.ts
  * 
  * All routes are protected by authGuard to ensure authentication.
@@ -30,6 +30,11 @@ export const routes: Routes = [
     canActivate: [loginGuard]
   },
   {
+    path: 'unauthorized',
+    loadComponent: () => import('./features/auth/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard],
@@ -38,20 +43,42 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'assets',
-    loadComponent: () => import('./features/assets/assets.component').then(m => m.AssetsComponent),
-    canActivate: [authGuard],
-    data: { 
-      title: 'Assets'
+    path: 'assets/new',
+    loadComponent: () => import('./features/module2-assets/components/asset-form/asset-form.component').then(m => m.AssetFormComponent),
+    canActivate: [authGuard, roleGuard],
+    data: {
+      title: 'Create Asset',
+      roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER]
     }
   },
   {
     path: 'assets/create',
-    loadComponent: () => import('./features/assets/asset-create/asset-create.component').then(m => m.AssetCreateComponent),
+    redirectTo: '/assets/new',
+    pathMatch: 'full'
+  },
+  {
+    path: 'assets/:id/edit',
+    loadComponent: () => import('./features/module2-assets/components/asset-form/asset-form.component').then(m => m.AssetFormComponent),
     canActivate: [authGuard, roleGuard],
-    data: { 
-      title: 'Create Asset',
+    data: {
+      title: 'Edit Asset',
       roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER]
+    }
+  },
+  {
+    path: 'assets/:id',
+    loadComponent: () => import('./features/module2-assets/components/asset-detail/asset-detail.component').then(m => m.AssetDetailComponent),
+    canActivate: [authGuard],
+    data: {
+      title: 'Asset Details'
+    }
+  },
+  {
+    path: 'assets',
+    loadComponent: () => import('./features/assets/assets.component').then(m => m.AssetsComponent),
+    canActivate: [authGuard],
+    data: {
+      title: 'Assets'
     }
   },
   {

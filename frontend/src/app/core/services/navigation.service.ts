@@ -1,7 +1,7 @@
 /**
  * Navigation Service - Editorial Geometry Navigation State Management
  * 
- * Manages navigation state for the AssetIntel dashboard layout
+ * Manages navigation state for the TnS Assets dashboard layout
  * with reactive updates for active states and geometric accent indicators.
  */
 
@@ -81,10 +81,13 @@ export class NavigationService {
   }
 
   /**
-   * Navigate to a specific route
+   * Navigate to a specific route.
+   * Uses URL navigation so paths like `/assets/new` are not treated as a single segment
+   * (which would miss configured routes and fall through to the wildcard redirect).
    */
   navigateTo(route: string): void {
-    this.router.navigate([route]);
+    const target = route.startsWith('/') ? route : `/${route}`;
+    void this.router.navigateByUrl(target);
   }
 
   /**

@@ -1,0 +1,156 @@
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - application "TnS Assets Application" [ref=e5]:
+    - application "TnS Assets Application" [ref=e6]:
+      - complementary [ref=e7]:
+        - navigation "Primary navigation" [ref=e9]:
+          - generic [ref=e10]:
+            - generic:
+              - generic:
+                - img
+            - generic [ref=e11]:
+              - img [ref=e14]
+              - generic [ref=e18]:
+                - paragraph [ref=e19]: TnS Assets
+                - paragraph [ref=e20]: Corporate IT - Global Infrastructure
+          - list [ref=e22]:
+            - listitem [ref=e23]:
+              - link "Assets" [ref=e24] [cursor=pointer]:
+                - /url: /assets
+                - img [ref=e26]
+                - generic [ref=e28]: Assets
+            - listitem [ref=e29]:
+              - link "Software" [ref=e30] [cursor=pointer]:
+                - /url: /software
+                - img [ref=e32]
+                - generic [ref=e35]: Software
+            - listitem [ref=e36]:
+              - link "Licenses" [ref=e37] [cursor=pointer]:
+                - /url: /licenses
+                - img [ref=e39]
+                - generic [ref=e41]: Licenses
+            - listitem [ref=e42]:
+              - link "Network" [ref=e43] [cursor=pointer]:
+                - /url: /network
+                - img [ref=e45]
+                - generic [ref=e53]: Network
+            - listitem [ref=e54]:
+              - link "Users" [ref=e55] [cursor=pointer]:
+                - /url: /users
+                - img [ref=e57]
+                - generic [ref=e62]: Users
+          - button "Add New Asset" [ref=e65] [cursor=pointer]:
+            - img [ref=e67]
+            - generic [ref=e69]: Add New Asset
+          - navigation "Utility navigation" [ref=e70]:
+            - list [ref=e71]:
+              - listitem [ref=e72]:
+                - link "Audit Logs" [ref=e73] [cursor=pointer]:
+                  - /url: /audit-logs
+                  - img [ref=e75]
+                  - text: Audit Logs
+              - listitem [ref=e78]:
+                - link "Archived" [ref=e79] [cursor=pointer]:
+                  - /url: /archived
+                  - img [ref=e81]
+                  - text: Archived
+      - banner [ref=e84]:
+        - navigation "Secondary navigation" [ref=e86]:
+          - generic [ref=e87]: TnS Assets
+          - generic [ref=e91]:
+            - searchbox "Search infrastructure items" [ref=e92]
+            - img
+          - list [ref=e93]:
+            - listitem [ref=e94]:
+              - link "Dashboard" [ref=e95] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e96]:
+              - link "Inventory" [ref=e97] [cursor=pointer]:
+                - /url: /inventory
+            - listitem [ref=e98]:
+              - link "Reports" [ref=e99] [cursor=pointer]:
+                - /url: /reports
+            - listitem [ref=e100]:
+              - link "Settings" [ref=e101] [cursor=pointer]:
+                - /url: /settings
+          - generic [ref=e104]:
+            - button "View notifications" [ref=e105] [cursor=pointer]:
+              - img [ref=e106]
+              - generic "3 unread notifications" [ref=e109]: "3"
+            - button "Open settings" [ref=e110] [cursor=pointer]:
+              - img [ref=e111]
+            - button "Open user menu" [ref=e114] [cursor=pointer]:
+              - generic [ref=e116]: AD
+              - generic [ref=e117]: admin
+      - main [ref=e118]:
+        - generic [ref=e120]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e125]:
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - heading "Asset Inventory" [level=1] [ref=e129]
+                - paragraph [ref=e130]: Manage and track your IT infrastructure assets
+              - generic [ref=e131]:
+                - button "Export assets to CSV" [ref=e132] [cursor=pointer]:
+                  - img [ref=e133]: download
+                  - generic [ref=e134]: Export
+                - button "Add new asset" [ref=e135] [cursor=pointer]:
+                  - img [ref=e136]: add
+                  - generic [ref=e137]: Add New Asset
+            - region "Asset statistics" [ref=e138]:
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - heading "Quick Stats" [level=2] [ref=e142]
+                  - button "Refresh statistics" [disabled] [ref=e143]:
+                    - img [ref=e144]: refresh
+                - generic [ref=e145]:
+                  - progressbar [ref=e146]:
+                    - img [ref=e148]
+                    - generic [ref=e151]:
+                      - img [ref=e153]
+                      - img [ref=e156]
+                      - img [ref=e159]
+                  - generic [ref=e161]: Loading statistics...
+                - img [ref=e163]
+            - region "Asset filters" [ref=e165]:
+              - generic [ref=e166]:
+                - img [ref=e167]: search
+                - textbox "Search assets" [ref=e168]:
+                  - /placeholder: Search assets by name, serial number, or location...
+              - generic [ref=e169]:
+                - generic [ref=e170]:
+                  - generic [ref=e171]: Asset Type
+                  - combobox "All Types" [ref=e172]:
+                    - generic [ref=e173] [cursor=pointer]:
+                      - generic [ref=e174]: All Types
+                      - img [ref=e177]
+                - generic [ref=e179]:
+                  - generic [ref=e180]: Status
+                  - combobox "All Statuses" [ref=e181]:
+                    - generic [ref=e182] [cursor=pointer]:
+                      - generic [ref=e183]: All Statuses
+                      - img [ref=e186]
+                - generic [ref=e188]:
+                  - generic [ref=e189]: Location
+                  - combobox "All Locations" [ref=e190]:
+                    - generic [ref=e191] [cursor=pointer]:
+                      - generic [ref=e193]: All Locations
+                      - img [ref=e196]
+                - button "Reset all filters" [ref=e198] [cursor=pointer]:
+                  - img [ref=e199]: refresh
+                  - generic [ref=e200]: Reset
+            - generic [ref=e201]:
+              - progressbar [ref=e202]:
+                - img [ref=e204]
+                - generic [ref=e207]:
+                  - img [ref=e209]
+                  - img [ref=e212]
+                  - img [ref=e215]
+              - paragraph [ref=e217]: Loading assets...

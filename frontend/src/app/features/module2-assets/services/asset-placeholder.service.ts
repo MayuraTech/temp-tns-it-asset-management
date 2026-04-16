@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { AssetType } from '../models/asset-type.enum';
 
 /**
@@ -63,9 +64,22 @@ export class AssetPlaceholderService {
    */
   getAssetImageUrl(imageUrl: string | undefined | null, assetType: AssetType): string {
     if (imageUrl) {
-      return imageUrl;
+      return this.resolveImageUrl(imageUrl);
     }
     return this.getPlaceholderUrl(assetType);
+  }
+
+  /**
+   * Turn backend-relative paths (e.g. /api/v1/assets/{id}/image) into absolute URLs
+   * so <img src> loads from the API host instead of the dev server.
+   */
+  private resolveImageUrl(url: string): string {
+    const trimmed = url.trim();
+    if (!trimmed.startsWith('/') || trimmed.startsWith('//')) {
+      return trimmed;
+    }
+    const origin = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
+    return `${origin}${trimmed}`;
   }
   
   /**
