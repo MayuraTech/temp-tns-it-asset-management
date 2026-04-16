@@ -5,6 +5,9 @@
 // Asset models
 export * from './asset.model';
 
+// Allocation models
+export * from './allocation.model';
+
 // Ticket models
 export * from './ticket.model';
 

@@ -9,6 +9,8 @@ public enum Action {
     UPDATE_ASSET,
     DELETE_ASSET,
     VIEW_ASSET,
+    ALLOCATE_ASSET,
+    DEALLOCATE_ASSET,
     MANAGE_USERS,
     VIEW_AUDIT_LOG,
     EXPORT_DATA,

@@ -1,0 +1,67 @@
+<div class="deallocation-form-container">
+  <!-- Geometric Triangle Accent -->
+  <svg class="triangle-accent" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="100,0 200,200 0,200" />
+  </svg>
+
+  <div class="deallocation-card">
+    <div class="card-header">
+      <h1 class="headline-lg">Deallocate Asset</h1>
+      <p class="body-md on-surface-variant">Remove the current assignment from this asset</p>
+    </div>
+
+    <div class="asset-info">
+      <div class="info-row">
+        <span class="info-label">Asset Name:</span>
+        <span class="info-value">{{ assetName }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Currently Assigned To:</span>
+        <span class="info-value highlight">{{ currentAssignment }}</span>
+      </div>
+    </div>
+
+    <div class="warning-message">
+      <svg class="warning-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+      </svg>
+      <div class="warning-content">
+        <h3 class="warning-title">Warning</h3>
+        <p class="warning-text">
+          Deallocating this asset will remove its current assignment. 
+          The asset will become available for reassignment.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        mat-raised-button 
+        type="button"
+        class="btn-ghost"
+        (click)="onCancel()"
+        [disabled]="isProcessing"
+      >
+        Cancel
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="warn"
+        type="button"
+        class="btn-deallocate"
+        (click)="deallocate()"
+        [disabled]="isProcessing"
+      >
+        <mat-spinner 
+          *ngIf="isProcessing" 
+          diameter="20" 
+          class="button-spinner"
+        ></mat-spinner>
+        <span *ngIf="!isProcessing">Deallocate Asset</span>
+        <span *ngIf="isProcessing">Deallocating...</span>
+      </button>
+    </div>
+  </div>
+</div>

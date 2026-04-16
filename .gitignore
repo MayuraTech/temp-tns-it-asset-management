@@ -1,0 +1,64 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Compiled output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+*.lcov
+
+# Build artifacts
+*.jar
+*.war
+*.ear
+target/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Angular cache
+.angular/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

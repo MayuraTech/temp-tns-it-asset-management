@@ -76,7 +76,7 @@ CREATE DATABASE ITAssetManagement_Dev;
 
 **Database Setup:**
 ```sql
-CREATE DATABASE ITAssetManagement_Test;
+CREATE DATABASE IT_Asset;
 ```
 
 **Required Environment Variables:**

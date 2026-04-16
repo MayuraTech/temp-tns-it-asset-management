@@ -1,0 +1,151 @@
+<div class="statistics-container">
+  <!-- Geometric Triangle Accents -->
+  <svg class="triangle-accent triangle-1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,0 200,0 200,200" />
+  </svg>
+  <svg class="triangle-accent triangle-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,200 200,200 0,0" />
+  </svg>
+
+  <!-- Header -->
+  <div class="statistics-header">
+    <h1 class="display-lg">Assignment Statistics</h1>
+    <p class="body-lg on-surface-variant">Overview of asset allocation and utilization</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p class="body-md">Loading statistics...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="(error$ | async) && !(loading$ | async)" class="error-container">
+    <p class="error-message">{{ error$ | async }}</p>
+    <button mat-raised-button class="btn-primary" (click)="loadStatistics()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Statistics Content -->
+  <div *ngIf="!(loading$ | async) && !(error$ | async) && (statistics$ | async) as stats" class="statistics-content">
+    
+    <!-- Key Metrics Grid -->
+    <div class="metrics-grid">
+      <!-- Total Assigned Assets -->
+      <div class="metric-card primary-metric">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ stats.totalAssigned }}</div>
+          <div class="metric-label">Total Assigned Assets</div>
+        </div>
+      </div>
+
+      <!-- User Assignments -->
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-value">{{ stats.userAssignments }}</div>
+          <div class="metric-label">Assigned to Users</div>
+          <div class="metric-percentage">
+            {{ calculatePercentage(stats.userAssignments, stats.totalAssigned) }}% of total
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Assignments -->
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-value">{{ stats.locationAssignments }}</div>
+          <div class="metric-label">Assigned to Locations</div>
+          <div class="metric-percentage">
+            {{ calculatePercentage(stats.locationAssignments, stats.totalAssigned) }}% of total
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Assets Section -->
+    <div class="section-card">
+      <h2 class="headline-lg">Available Assets by Status</h2>
+      <div class="available-assets-grid">
+        <div class="status-card">
+          <div class="status-value">{{ stats.availableAssets.inUse }}</div>
+          <div class="status-label">In Use</div>
+        </div>
+        <div class="status-card">
+          <div class="status-value">{{ stats.availableAssets.deployed }}</div>
+          <div class="status-label">Deployed</div>
+        </div>
+        <div class="status-card">
+          <div class="status-value">{{ stats.availableAssets.storage }}</div>
+          <div class="status-label">Storage</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Assignees Section -->
+    <div class="top-assignees-grid">
+      <!-- Top Users -->
+      <div class="section-card">
+        <h2 class="headline-lg">Top 10 Users</h2>
+        <p class="body-md on-surface-variant">Users with most assigned assets</p>
+        
+        <div *ngIf="stats.topUsers.length === 0" class="empty-state">
+          <p class="body-md">No user assignments yet</p>
+        </div>
+
+        <div *ngIf="stats.topUsers.length > 0" class="assignee-list">
+          <div 
+            *ngFor="let user of stats.topUsers; let i = index" 
+            class="assignee-item"
+          >
+            <div class="assignee-rank">{{ i + 1 }}</div>
+            <div class="assignee-info">
+              <div class="assignee-name">{{ user.name }}</div>
+              <div class="assignee-bar">
+                <div 
+                  class="assignee-bar-fill"
+                  [style.width.%]="getBarWidth(user.count, getMaxCount(stats.topUsers))"
+                ></div>
+              </div>
+            </div>
+            <div class="assignee-count">{{ user.count }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Locations -->
+      <div class="section-card">
+        <h2 class="headline-lg">Top 10 Locations</h2>
+        <p class="body-md on-surface-variant">Locations with most assigned assets</p>
+        
+        <div *ngIf="stats.topLocations.length === 0" class="empty-state">
+          <p class="body-md">No location assignments yet</p>
+        </div>
+
+        <div *ngIf="stats.topLocations.length > 0" class="assignee-list">
+          <div 
+            *ngFor="let location of stats.topLocations; let i = index" 
+            class="assignee-item"
+          >
+            <div class="assignee-rank">{{ i + 1 }}</div>
+            <div class="assignee-info">
+              <div class="assignee-name">{{ location.name }}</div>
+              <div class="assignee-bar">
+                <div 
+                  class="assignee-bar-fill location"
+                  [style.width.%]="getBarWidth(location.count, getMaxCount(stats.topLocations))"
+                ></div>
+              </div>
+            </div>
+            <div class="assignee-count">{{ location.count }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

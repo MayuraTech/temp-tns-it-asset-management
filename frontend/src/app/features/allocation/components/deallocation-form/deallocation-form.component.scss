@@ -1,0 +1,283 @@
+// Editorial Geometry Styles for Deallocation Form Component
+
+.deallocation-form-container {
+  position: relative;
+  min-height: 100vh;
+  background: var(--surface, #faf9ff);
+  padding: var(--space-xxxl, 40px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+// Geometric Triangle Accent
+.triangle-accent {
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translateY(-50%);
+  width: 300px;
+  height: 300px;
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+
+  polygon {
+    fill: var(--secondary, #a9371d);
+  }
+}
+
+// Deallocation Card
+.deallocation-card {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-container-lowest, #ffffff);
+  border-radius: 8px;
+  padding: var(--space-xxxl, 40px);
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+}
+
+// Card Header
+.card-header {
+  margin-bottom: var(--space-xxxl, 40px);
+
+  .headline-lg {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--secondary, #a9371d);
+    letter-spacing: -0.75px;
+    margin: 0 0 var(--space-md, 12px) 0;
+  }
+
+  .body-md {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface-variant, #434750);
+    margin: 0;
+  }
+}
+
+// Asset Info Section
+.asset-info {
+  background: var(--surface-container-low, #f4f3f9);
+  border-radius: 8px;
+  padding: var(--space-xl, 24px);
+  margin-bottom: var(--space-xl, 24px);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md, 12px) 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--outline-variant, #c4c6d2);
+    border-bottom-color: rgba(196, 198, 210, 0.15);
+  }
+
+  .info-label {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--on-surface-variant, #434750);
+  }
+
+  .info-value {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface, #1a1b20);
+
+    &.highlight {
+      font-weight: 700;
+      color: var(--primary, #143b7d);
+    }
+  }
+}
+
+// Warning Message
+.warning-message {
+  display: flex;
+  gap: var(--space-lg, 16px);
+  background: rgba(169, 55, 29, 0.05);
+  border-left: 4px solid var(--secondary, #a9371d);
+  border-radius: 4px;
+  padding: var(--space-lg, 16px);
+  margin-bottom: var(--space-xxxl, 40px);
+
+  .warning-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    fill: var(--secondary, #a9371d);
+  }
+
+  .warning-content {
+    flex: 1;
+  }
+
+  .warning-title {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--secondary, #a9371d);
+    margin: 0 0 var(--space-sm, 8px) 0;
+  }
+
+  .warning-text {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface, #1a1b20);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-lg, 16px);
+  padding-top: var(--space-xl, 24px);
+  border-top: 1px solid var(--outline-variant, #c4c6d2);
+  border-top-color: rgba(196, 198, 210, 0.15);
+}
+
+// Deallocate Button (Secondary Color)
+.btn-deallocate {
+  background: linear-gradient(135deg, var(--secondary, #a9371d) 0%, #8a2e18 100%);
+  color: white;
+  border-radius: 8px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  min-width: 160px;
+  box-shadow: 
+    0px 10px 15px -3px rgba(169, 55, 29, 0.2),
+    0px 4px 6px -4px rgba(169, 55, 29, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    box-shadow: 
+      0px 15px 20px -3px rgba(169, 55, 29, 0.25),
+      0px 6px 8px -4px rgba(169, 55, 29, 0.25);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  ::ng-deep .mat-mdc-button-persistent-ripple {
+    display: none;
+  }
+}
+
+// Ghost Button
+.btn-ghost {
+  background: transparent;
+  color: var(--primary, #143b7d);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  transition: all 0.2s ease;
+
+  &::after {
+    content: "▲";
+    margin-left: 4px;
+    transition: transform 0.2s ease;
+    display: inline-block;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(20, 59, 125, 0.05);
+
+    &::after {
+      transform: translateX(4px);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  ::ng-deep .mat-mdc-button-persistent-ripple {
+    display: none;
+  }
+}
+
+// Button Spinner
+.button-spinner {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+
+  ::ng-deep circle {
+    stroke: white;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .deallocation-form-container {
+    padding: var(--space-xl, 24px);
+  }
+
+  .deallocation-card {
+    padding: var(--space-xl, 24px);
+  }
+
+  .triangle-accent {
+    width: 200px;
+    height: 200px;
+    right: 5%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm, 8px);
+  }
+}
+
+// Accessibility: High Contrast Mode
+@media (prefers-contrast: high) {
+  .warning-message {
+    border-width: 3px;
+  }
+
+  .btn-deallocate {
+    border: 2px solid var(--secondary, #a9371d);
+  }
+
+  .btn-ghost {
+    border: 2px solid var(--primary, #143b7d);
+  }
+}
+
+// Focus Indicators (Accessibility)
+button:focus-visible {
+  outline: 2px solid var(--primary, #143b7d);
+  outline-offset: 2px;
+}

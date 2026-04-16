@@ -182,6 +182,73 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Handle AssetAlreadyAssignedException - returns 409 Conflict.
+     */
+    @ExceptionHandler(AssetAlreadyAssignedException.class)
+    public ResponseEntity<ErrorResponse> handleAssetAlreadyAssigned(
+            AssetAlreadyAssignedException ex, HttpServletRequest request) {
+        
+        logger.warn("Asset already assigned: {}", ex.getAssetId());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("assetId", ex.getAssetId().toString());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ASSET_ALREADY_ASSIGNED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    /**
+     * Handle AssetNotAssignedException - returns 409 Conflict.
+     */
+    @ExceptionHandler(AssetNotAssignedException.class)
+    public ResponseEntity<ErrorResponse> handleAssetNotAssigned(
+            AssetNotAssignedException ex, HttpServletRequest request) {
+        
+        logger.warn("Asset not assigned: {}", ex.getAssetId());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("assetId", ex.getAssetId().toString());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ASSET_NOT_ASSIGNED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    /**
+     * Handle AssetNotAssignableException - returns 422 Unprocessable Entity.
+     */
+    @ExceptionHandler(AssetNotAssignableException.class)
+    public ResponseEntity<ErrorResponse> handleAssetNotAssignable(
+            AssetNotAssignableException ex, HttpServletRequest request) {
+        
+        logger.warn("Asset not assignable: {} with status {}", ex.getAssetId(), ex.getStatus());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("assetId", ex.getAssetId().toString());
+        details.put("status", ex.getStatus().toString());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ASSET_NOT_ASSIGNABLE")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+    }
+    
+    /**
      * Handle generic exceptions - returns 500 Internal Server Error.
      */
     @ExceptionHandler(Exception.class)

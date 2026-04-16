@@ -1,0 +1,164 @@
+<div class="assignment-history-container">
+  <!-- Geometric Triangle Accent - Editorial Geometry Design Element -->
+  <svg class="triangle-accent" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <polygon points="0,0 300,100 0,300" fill="var(--primary)" opacity="0.08" />
+  </svg>
+
+  <!-- Main Content Card -->
+  <mat-card class="history-card" role="region" aria-label="Assignment History">
+    <!-- Card Header with Editorial Typography -->
+    <div class="card-header">
+      <h2 class="headline-lg">Assignment History</h2>
+      <p class="body-md on-surface-variant">Complete chronological record of asset assignments and deallocations</p>
+    </div>
+
+    <!-- Loading State with Spinner -->
+    <div *ngIf="loading$ | async" class="loading-container" role="status" aria-live="polite">
+      <mat-spinner diameter="48" color="primary"></mat-spinner>
+      <p class="body-md loading-text">Loading assignment history...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="(error$ | async) && !(loading$ | async)" class="error-container" role="alert" aria-live="assertive">
+      <svg class="error-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="var(--secondary)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <h3 class="headline-md error-title">Unable to Load History</h3>
+      <p class="error-message body-md">{{ error$ | async }}</p>
+    </div>
+
+    <!-- Empty State with Illustration -->
+    <div *ngIf="!(loading$ | async) && !(error$ | async) && (history$ | async)?.length === 0" 
+         class="empty-container" 
+         role="status" 
+         aria-live="polite">
+      <svg class="empty-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="60" cy="60" r="50" fill="var(--surface-container-high)" />
+        <path fill="var(--outline-variant)" d="M40 45h40v5H40zm0 15h40v5H40zm0 15h25v5H40z" />
+        <rect x="35" y="35" width="50" height="50" fill="none" stroke="var(--outline)" stroke-width="2" rx="4" />
+      </svg>
+      <h3 class="headline-md empty-title">No Assignment History</h3>
+      <p class="body-md on-surface-variant empty-description">
+        This asset has not been assigned yet. Assignment history will appear here once the asset is allocated.
+      </p>
+    </div>
+
+    <!-- History Table - Material Design with Editorial Geometry Styling -->
+    <div *ngIf="!(loading$ | async) && !(error$ | async) && (history$ | async)?.length! > 0" 
+         class="table-container">
+      
+      <div class="table-wrapper">
+        <table mat-table 
+               [dataSource]="history$ | async" 
+               class="history-table"
+               role="table"
+               aria-label="Assignment history records">
+          
+          <!-- Assignment Type Column -->
+          <ng-container matColumnDef="assignmentType">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Type</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <mat-chip 
+                [class.chip-user]="assignment.assignmentType === 'USER'"
+                [class.chip-location]="assignment.assignmentType === 'LOCATION'"
+                class="type-chip"
+                role="status">
+                {{ getAssignmentTypeLabel(assignment.assignmentType) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Assigned To Column -->
+          <ng-container matColumnDef="assignedTo">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Assigned To</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <span class="assigned-to body-md">{{ assignment.assignedTo }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Assigned By Column -->
+          <ng-container matColumnDef="assignedBy">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Assigned By</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <span class="assigned-by body-md on-surface-variant">
+                {{ assignment.assignedByUsername || assignment.assignedBy }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Assigned At Column -->
+          <ng-container matColumnDef="assignedAt">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Assigned At</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <time class="date body-md" [attr.datetime]="assignment.assignedAt">
+                {{ formatDate(assignment.assignedAt) }}
+              </time>
+            </td>
+          </ng-container>
+
+          <!-- Unassigned At Column -->
+          <ng-container matColumnDef="unassignedAt">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Unassigned At</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <time *ngIf="assignment.unassignedAt" 
+                    class="date body-md" 
+                    [attr.datetime]="assignment.unassignedAt">
+                {{ formatDate(assignment.unassignedAt) }}
+              </time>
+              <span *ngIf="!assignment.unassignedAt" class="date body-md on-surface-variant">—</span>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="table-header" scope="col">
+              <span class="label-sm">Status</span>
+            </th>
+            <td mat-cell *matCellDef="let assignment" class="table-cell">
+              <mat-chip 
+                [class.chip-active]="isActive(assignment)"
+                [class.chip-historical]="!isActive(assignment)"
+                class="status-chip"
+                role="status"
+                [attr.aria-label]="getStatusLabel(assignment) + ' assignment'">
+                {{ getStatusLabel(assignment) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Table Header Row -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header-row"></tr>
+          
+          <!-- Table Data Rows -->
+          <tr mat-row 
+              *matRowDef="let row; columns: displayedColumns;" 
+              class="table-row"
+              [class.row-active]="isActive(row)"
+              role="row"></tr>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 20, 50, 100]"
+        [pageIndex]="pageIndex"
+        (page)="onPageChange($event)"
+        class="history-paginator"
+        [showFirstLastButtons]="true"
+        aria-label="Assignment history pagination"
+      ></mat-paginator>
+    </div>
+  </mat-card>
+</div>
