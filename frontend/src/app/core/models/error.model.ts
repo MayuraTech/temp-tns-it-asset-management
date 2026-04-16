@@ -17,3 +17,18 @@ export interface ValidationError {
   message: string;
   value?: any;
 }
+
+/**
+ * Authentication error types
+ */
+export type AuthErrorType = 'invalid_credentials' | 'account_locked' | 'network_error' | 'unknown';
+
+/**
+ * Authentication error model
+ */
+export interface AuthError {
+  type: AuthErrorType;
+  message: string;
+  timestamp: Date;
+}
+

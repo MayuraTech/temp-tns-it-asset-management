@@ -15,7 +15,8 @@ import { NavigationService } from '../../services/navigation.service';
 import { SearchBarComponent } from '../../../shared/components/search-bar/search-bar.component';
 import { UserControlsComponent, UserControlAction, UserInfo } from '../../../shared/components/user-controls/user-controls.component';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-top-navigation',
@@ -56,7 +57,11 @@ export class TopNavigationComponent {
    */
   notificationCount = 3;
   
-  constructor(private navigationService: NavigationService) {
+  constructor(
+    private navigationService: NavigationService,
+    private router: Router,
+    private authService: AuthService
+  ) {
     // Subscribe to current route for active state detection
     this.currentRoute$ = this.navigationService.currentRoute$;
     
@@ -69,6 +74,35 @@ export class TopNavigationComponent {
         this.navigationService.topNavigation
       );
     });
+    
+    // Load current user information
+    this.loadUserInfo();
+  }
+  
+  /**
+   * Load current user information from AuthService
+   */
+  private loadUserInfo(): void {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.userInfo = {
+          name: user.username || 'User',
+          email: user.email || 'user@example.com',
+          initials: this.getInitials(user.username || 'User')
+        };
+      }
+    });
+  }
+  
+  /**
+   * Get user initials from username
+   */
+  private getInitials(username: string): string {
+    const nameParts = username.split(' ');
+    if (nameParts.length >= 2) {
+      return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+    }
+    return username.substring(0, 2).toUpperCase();
   }
   
   /**
@@ -98,7 +132,6 @@ export class TopNavigationComponent {
    */
   onUserControlClick(action: UserControlAction): void {
     console.log(`User control clicked: ${action}`);
-    // TODO: Implement user control actions
     switch (action) {
       case 'notification':
         // Open notification panel
@@ -108,7 +141,21 @@ export class TopNavigationComponent {
         this.navigationService.navigateTo('/settings');
         break;
       case 'profile':
-        // Open user profile menu
+        // Navigate to user profile
+        this.navigationService.navigateTo('/users/profile');
+        break;
+      case 'logout':
+        // Logout and redirect to login page
+        this.authService.logout().subscribe({
+          complete: () => {
+            this.router.navigate(['/login']);
+          },
+          error: (error) => {
+            console.error('Logout error:', error);
+            // Navigate to login even if logout request fails
+            this.router.navigate(['/login']);
+          }
+        });
         break;
     }
   }

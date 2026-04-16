@@ -2,13 +2,12 @@ package com.company.assetmanagement.model;
 
 /**
  * Enumeration of ticket statuses in the system.
- * Defines the 7 standard statuses for asset allocation/de-allocation tickets.
+ * Defines the 5 standard statuses for asset allocation/de-allocation tickets.
  */
 public enum TicketStatus {
     PENDING("pending"),
     APPROVED("approved"),
     REJECTED("rejected"),
-    IN_PROGRESS("in_progress"),
     COMPLETED("completed"),
     CANCELLED("cancelled");
     
@@ -49,8 +48,6 @@ public enum TicketStatus {
             case PENDING:
                 return target == APPROVED || target == REJECTED || target == CANCELLED;
             case APPROVED:
-                return target == IN_PROGRESS || target == CANCELLED;
-            case IN_PROGRESS:
                 return target == COMPLETED || target == CANCELLED;
             case REJECTED:
             case COMPLETED:

@@ -1,0 +1,203 @@
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">My Profile</h1>
+    <p class="page-subtitle">Manage your account information and security settings</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error$ | async as error" class="alert alert-error">
+    <span class="alert-icon">⚠</span>
+    <span class="alert-message">{{ error }}</span>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage$ | async as message" class="alert alert-success">
+    <span class="alert-icon">✓</span>
+    <span class="alert-message">{{ message }}</span>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="profile$ | async as profile" class="profile-content">
+    
+    <!-- Profile Information Card -->
+    <div class="card profile-card">
+      <div class="card-header">
+        <h2 class="card-title">Profile Information</h2>
+        <button 
+          *ngIf="!isEditingProfile" 
+          class="btn-ghost"
+          (click)="startEditingProfile()"
+          type="button">
+          Edit Profile
+        </button>
+      </div>
+
+      <div class="card-body">
+        <!-- View Mode -->
+        <div *ngIf="!isEditingProfile" class="profile-view">
+          <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ profile.username }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ profile.email }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Roles</span>
+            <span class="info-value">{{ formatRoles(profile.roles) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Account Status</span>
+            <span class="info-value">
+              <span [class.status-active]="profile.isActive" [class.status-inactive]="!profile.isActive">
+                {{ profile.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Last Login</span>
+            <span class="info-value">{{ formatDate(profile.lastLoginAt) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Account Created</span>
+            <span class="info-value">{{ formatDate(profile.createdAt) }}</span>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <form *ngIf="isEditingProfile" [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              class="form-input"
+              [value]="profile.username"
+              disabled
+              readonly>
+            <p class="form-hint">Username cannot be changed</p>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-input"
+              formControlName="email"
+              placeholder="Enter your email address"
+              [class.input-error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+            <p *ngIf="getErrorMessage(profileForm, 'email')" class="form-error">
+              {{ getErrorMessage(profileForm, 'email') }}
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="loading$ | async">
+              {{ (loading$ | async) ? 'Saving...' : 'Save Changes' }}
+            </button>
+            <button type="button" class="btn-ghost" (click)="cancelEditingProfile()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Password Change Card -->
+    <div class="card password-card">
+      <div class="card-header">
+        <h2 class="card-title">Change Password</h2>
+        <button 
+          class="btn-ghost"
+          (click)="togglePasswordChange()"
+          type="button">
+          {{ isChangingPassword ? 'Cancel' : 'Change Password' }}
+        </button>
+      </div>
+
+      <div class="card-body" *ngIf="isChangingPassword">
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+          <div class="form-group">
+            <label for="currentPassword" class="form-label">Current Password *</label>
+            <input 
+              type="password" 
+              id="currentPassword" 
+              class="form-input"
+              formControlName="currentPassword"
+              placeholder="Enter your current password"
+              [class.input-error]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+            <p *ngIf="getErrorMessage(passwordForm, 'currentPassword')" class="form-error">
+              {{ getErrorMessage(passwordForm, 'currentPassword') }}
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword" class="form-label">New Password *</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              class="form-input"
+              formControlName="newPassword"
+              placeholder="Enter your new password"
+              [class.input-error]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+            <p *ngIf="getErrorMessage(passwordForm, 'newPassword')" class="form-error">
+              {{ getErrorMessage(passwordForm, 'newPassword') }}
+            </p>
+            <p class="form-hint">
+              Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character (&#64;$!%*?&amp;)
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm New Password *</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              class="form-input"
+              formControlName="confirmPassword"
+              placeholder="Confirm your new password"
+              [class.input-error]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+            <p *ngIf="getErrorMessage(passwordForm, 'confirmPassword')" class="form-error">
+              {{ getErrorMessage(passwordForm, 'confirmPassword') }}
+            </p>
+            <p *ngIf="getFormErrorMessage(passwordForm)" class="form-error">
+              {{ getFormErrorMessage(passwordForm) }}
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="loading$ | async">
+              {{ (loading$ | async) ? 'Changing Password...' : 'Change Password' }}
+            </button>
+          </div>
+        </form>
+
+        <div class="password-info">
+          <h3 class="info-title">Password Requirements</h3>
+          <ul class="requirements-list">
+            <li>At least 8 characters long</li>
+            <li>Contains at least one uppercase letter (A-Z)</li>
+            <li>Contains at least one lowercase letter (a-z)</li>
+            <li>Contains at least one digit (0-9)</li>
+            <li>Contains at least one special character (&#64;$!%*?&amp;)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

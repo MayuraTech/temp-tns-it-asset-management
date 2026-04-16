@@ -8,12 +8,17 @@
   - Grid Template: 256px sidebar | flexible content
   - Grid Rows: 64px top nav | flexible main content
   - Semantic HTML with ARIA landmarks for accessibility
+  
+  Conditionally renders dashboard layout only when user is authenticated.
+  For unauthenticated routes (login, password-reset), shows standalone content.
 -->
 
 <!-- Skip Navigation Link - Requirement 14.1, 14.2 -->
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
 <div class="app-shell" role="application" aria-label="AssetIntel Application">
+<!-- Dashboard Layout - Only shown when authenticated -->
+<div *ngIf="isAuthenticated$ | async" class="app-shell" role="application" aria-label="AssetIntel Application">
   
   <!-- Sidebar Navigation - Fixed Left Panel -->
   <aside class="app-shell__sidebar">
@@ -33,4 +38,9 @@
     </app-main-content>
   </main>
   
+</div>
+
+<!-- Standalone Layout - Shown when not authenticated (login, password-reset) -->
+<div *ngIf="!(isAuthenticated$ | async)" class="standalone-layout">
+  <router-outlet></router-outlet>
 </div>

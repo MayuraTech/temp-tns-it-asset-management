@@ -236,4 +236,107 @@ class JwtTokenProviderTest {
         assertThat(token).isNotNull();
         assertThat(provider.validateToken(token)).isTrue();
     }
+    
+    @Test
+    @DisplayName("Should generate token with userId and roles")
+    void shouldGenerateTokenWithUserIdAndRoles() {
+        // Given
+        String userId = "550e8400-e29b-41d4-a716-446655440000";
+        String username = "testuser";
+        String roles = "ROLE_ADMINISTRATOR,ROLE_ASSET_MANAGER";
+        
+        // When
+        String token = tokenProvider.generateToken(userId, username, roles);
+        
+        // Then
+        assertThat(token).isNotNull();
+        assertThat(token).isNotEmpty();
+        assertThat(tokenProvider.validateToken(token)).isTrue();
+    }
+    
+    @Test
+    @DisplayName("Should extract userId from token")
+    void shouldExtractUserIdFromToken() {
+        // Given
+        String expectedUserId = "550e8400-e29b-41d4-a716-446655440000";
+        String username = "testuser";
+        String roles = "ROLE_ADMINISTRATOR";
+        String token = tokenProvider.generateToken(expectedUserId, username, roles);
+        
+        // When
+        String actualUserId = tokenProvider.getUserIdFromToken(token);
+        
+        // Then
+        assertThat(actualUserId).isEqualTo(expectedUserId);
+    }
+    
+    @Test
+    @DisplayName("Should extract roles from token")
+    void shouldExtractRolesFromToken() {
+        // Given
+        String userId = "550e8400-e29b-41d4-a716-446655440000";
+        String username = "testuser";
+        String expectedRoles = "ROLE_ADMINISTRATOR,ROLE_ASSET_MANAGER";
+        String token = tokenProvider.generateToken(userId, username, expectedRoles);
+        
+        // When
+        String actualRoles = tokenProvider.getRolesFromToken(token);
+        
+        // Then
+        assertThat(actualRoles).isEqualTo(expectedRoles);
+    }
+    
+    @Test
+    @DisplayName("Should include userId in token claims")
+    void shouldIncludeUserIdInToken() {
+        // Given
+        String expectedUserId = "550e8400-e29b-41d4-a716-446655440000";
+        String username = "testuser";
+        String roles = "ROLE_ADMINISTRATOR";
+        String token = tokenProvider.generateToken(expectedUserId, username, roles);
+        
+        // When
+        SecretKey key = Keys.hmacShaKeyFor(TEST_SECRET.getBytes(StandardCharsets.UTF_8));
+        String userId = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("userId", String.class);
+        
+        // Then
+        assertThat(userId).isEqualTo(expectedUserId);
+    }
+    
+    @Test
+    @DisplayName("Should extract username from token with userId")
+    void shouldExtractUsernameFromTokenWithUserId() {
+        // Given
+        String userId = "550e8400-e29b-41d4-a716-446655440000";
+        String expectedUsername = "testuser";
+        String roles = "ROLE_ADMINISTRATOR";
+        String token = tokenProvider.generateToken(userId, expectedUsername, roles);
+        
+        // When
+        String actualUsername = tokenProvider.getUsernameFromToken(token);
+        
+        // Then
+        assertThat(actualUsername).isEqualTo(expectedUsername);
+    }
+    
+    @Test
+    @DisplayName("Should validate token generated with userId")
+    void shouldValidateTokenGeneratedWithUserId() {
+        // Given
+        String userId = "550e8400-e29b-41d4-a716-446655440000";
+        String username = "testuser";
+        String roles = "ROLE_ADMINISTRATOR";
+        String token = tokenProvider.generateToken(userId, username, roles);
+        
+        // When
+        boolean isValid = tokenProvider.validateToken(token);
+        
+        // Then
+        assertThat(isValid).isTrue();
+    }
 }

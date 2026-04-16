@@ -25,10 +25,9 @@ import { MainContentComponent } from './main-content/main-content.component';
     CommonModule,
     RouterModule,
     FormsModule,
-    // Standalone components must be imported, not declared
-    SidebarComponent,
-    TopNavigationComponent,
-    MainContentComponent
+    SidebarComponent,  // Import standalone component
+    TopNavigationComponent,  // Import standalone component
+    MainContentComponent  // Import standalone component
   ],
   exports: [
     AppShellComponent,

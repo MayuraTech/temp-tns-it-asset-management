@@ -210,3 +210,21 @@
     scroll-behavior: auto;
   }
 }
+
+// Standalone Layout - For unauthenticated pages (login, password-reset)
+.standalone-layout {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--color-surface-base);
+  
+  // Center content for login/auth pages
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Ensure router outlet content fills available space
+  ::ng-deep router-outlet + * {
+    width: 100%;
+    min-height: 100vh;
+  }
+}

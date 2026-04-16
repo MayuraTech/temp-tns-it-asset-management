@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { roleGuard } from './role.guard';
 import { AuthService } from '../services/auth.service';
 import { Role, User } from '../models/auth.model';
@@ -9,6 +9,7 @@ describe('RoleGuard', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let router: jasmine.SpyObj<Router>;
   let mockRoute: ActivatedRouteSnapshot;
+  let mockState: RouterStateSnapshot;
 
   const mockUser: User = {
     id: '123',
@@ -39,6 +40,8 @@ describe('RoleGuard', () => {
     mockRoute = {
       data: {}
     } as ActivatedRouteSnapshot;
+    
+    mockState = {} as RouterStateSnapshot;
   });
 
   const mockState = {} as RouterStateSnapshot;

@@ -12,7 +12,15 @@
       ],
       "disabled": false,
       "autoApprove": [
-        "get_project"
+        "get_project",
+        "list_projects",
+        "list_screens",
+        "get_screen"
+      ]
+    }, "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
       ]
     }
   }
