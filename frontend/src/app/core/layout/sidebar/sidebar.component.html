@@ -7,7 +7,7 @@
   Requirements: 2.1, 2.2, 2.6, 2.7, 16.2, 21.6, 24.2
 -->
 
-<aside class="sidebar" role="navigation" aria-label="Primary navigation">
+<nav class="sidebar" aria-label="Primary navigation">
   
   <!-- Brand Header with Geometric Triangle Background -->
   <div class="sidebar__brand-header">
@@ -31,14 +31,14 @@
         </div>
       </div>
       <div class="brand-text">
-        <h1 class="brand-name">AssetIntel</h1>
+        <p class="brand-name">AssetIntel</p>
         <p class="brand-subtitle">Corporate IT - Global Infrastructure</p>
       </div>
     </div>
   </div>
   
   <!-- Primary Navigation Menu -->
-  <nav class="sidebar__primary-nav" aria-label="Main navigation">
+  <div class="sidebar__primary-nav">
     <ul class="nav-list" role="list">
       <li 
         *ngFor="let item of primaryNavItems" 
@@ -51,17 +51,12 @@
           class="nav-link"
           [attr.aria-current]="isActiveRoute(item.route) ? 'page' : null"
           (click)="onNavigationClick(item)">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <!-- Icon placeholder - will be replaced with actual icons -->
-              <rect width="20" height="20" rx="2" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </span>
+          <app-icon [name]="item.icon" [size]="20" aria-hidden="true"></app-icon>
           <span class="nav-text">{{ item.label }}</span>
         </a>
       </li>
     </ul>
-  </nav>
+  </div>
   
   <!-- Primary Action Button -->
   <div class="sidebar__action-button">
@@ -74,7 +69,7 @@
   </div>
   
   <!-- Secondary Navigation -->
-  <nav class="sidebar__secondary-nav" aria-label="Secondary navigation">
+  <nav class="sidebar__secondary-nav" aria-label="Utility navigation">
     <ul class="nav-list secondary" role="list">
       <li 
         *ngFor="let item of secondaryNavItems" 
@@ -87,16 +82,11 @@
           class="nav-link"
           [attr.aria-current]="isActiveRoute(item.route) ? 'page' : null"
           (click)="onNavigationClick(item)">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <!-- Icon placeholder - will be replaced with actual icons -->
-              <rect width="20" height="20" rx="2" fill="currentColor" opacity="0.3"/>
-            </svg>
-          </span>
+          <app-icon [name]="item.icon" [size]="20" aria-hidden="true"></app-icon>
           <span class="nav-text">{{ item.label }}</span>
         </a>
       </li>
     </ul>
   </nav>
   
-</aside>
+</nav>

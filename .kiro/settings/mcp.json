@@ -7,10 +7,8 @@
         "https://stitch.googleapis.com/mcp",
         "--no-auth",
         "--header",
-        "X-Goog-Api-Key: ",
-        "-y",
-        "@_davideast/stitch-mcp@latest",
-        "proxy"
+        "X-Goog-Api-Key:AQ.Ab8RN6KyKFwCEAWcUJahVzBVaMCaiIy7SjaZBwW_5SFCfTAM3g",
+        "-y", "@_davideast/stitch-mcp@latest", "proxy"
       ],
       "disabled": false,
       "autoApprove": [

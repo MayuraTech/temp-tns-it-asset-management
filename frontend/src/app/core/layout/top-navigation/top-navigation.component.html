@@ -4,17 +4,18 @@
   Implements brand name, search bar, secondary navigation, and user controls
   with glassmorphism effects and Editorial Geometry styling.
   
-  Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
+  Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 15.3, 16.3, 22.1, 22.2, 22.3, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
 -->
 
-<div class="top-nav" role="banner">
+<!-- Requirement 15.3: nav element with aria-label="Secondary navigation" -->
+<nav class="top-nav" aria-label="Secondary navigation">
   
-  <!-- Brand Name Section -->
+  <!-- Brand Name Section - Requirement 4.1 -->
   <div class="top-nav__brand">
-    <h1 class="brand-name">AssetIntel</h1>
+    <span class="brand-name">AssetIntel</span>
   </div>
   
-  <!-- Search Bar Section -->
+  <!-- Search Bar Section - Requirement 4.2 -->
   <div class="top-nav__search">
     <app-search-bar
       placeholder="Search infrastructure..."
@@ -24,28 +25,26 @@
     </app-search-bar>
   </div>
   
-  <!-- Secondary Navigation Links -->
-  <nav class="top-nav__secondary-nav" aria-label="Secondary navigation">
-    <ul class="nav-list" role="list">
-      <li 
-        *ngFor="let item of topNavItems$ | async" 
-        class="nav-item" 
-        role="listitem">
-        <a 
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{exact: false}"
-          class="nav-link"
-          [class.active]="item.active"
-          [attr.aria-current]="item.active ? 'page' : null"
-          (click)="onSecondaryNavClick(item)">
-          {{ item.label }}
-        </a>
-      </li>
-    </ul>
-  </nav>
+  <!-- Secondary Navigation Links - Requirements 4.3, 6.1-6.7 -->
+  <ul class="top-nav__secondary-nav nav-list" role="list">
+    <li 
+      *ngFor="let item of topNavItems$ | async" 
+      class="nav-item" 
+      role="listitem">
+      <a 
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: false}"
+        class="nav-link"
+        [class.active]="item.active"
+        [attr.aria-current]="item.active ? 'page' : null"
+        (click)="onSecondaryNavClick(item)">
+        {{ item.label }}
+      </a>
+    </li>
+  </ul>
   
-  <!-- User Controls Section -->
+  <!-- User Controls Section - Requirement 4.4 -->
   <div class="top-nav__user-controls">
     <app-user-controls
       [userInfo]="userInfo"
@@ -54,4 +53,4 @@
     </app-user-controls>
   </div>
   
-</div>
+</nav>

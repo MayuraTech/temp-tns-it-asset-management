@@ -1,0 +1,314 @@
+<!-- Asset Inventory Screen - Editorial Geometry Design -->
+<div class="asset-inventory-container">
+  
+  <!-- Geometric Triangle Accent - Background -->
+  <div class="geometric-accent geometric-accent--top-right"></div>
+  
+  <!-- Hero Header Section -->
+  <header class="hero-header">
+    <div class="hero-header__content">
+      <div class="hero-header__text">
+        <h1 class="hero-header__title">Asset Inventory</h1>
+        <p class="hero-header__subtitle">Manage and track your IT infrastructure assets</p>
+      </div>
+      
+      <div class="hero-header__actions">
+        <button 
+          class="btn btn--secondary" 
+          (click)="onExport('CSV')"
+          aria-label="Export assets to CSV">
+          <mat-icon>download</mat-icon>
+          <span>Export</span>
+        </button>
+        <button 
+          class="btn btn--primary" 
+          (click)="onAddNewAsset()"
+          aria-label="Add new asset">
+          <mat-icon>add</mat-icon>
+          <span>Add New Asset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Dashboard Stats Widget -->
+  <section class="dashboard-stats-section" aria-label="Asset statistics">
+    <app-dashboard-stats></app-dashboard-stats>
+  </section>
+  
+  <!-- Advanced Filter Bar -->
+  <section class="filter-bar" aria-label="Asset filters">
+    <div class="filter-bar__search">
+      <mat-icon class="filter-bar__search-icon">search</mat-icon>
+      <input 
+        type="text" 
+        class="filter-bar__search-input"
+        placeholder="Search assets by name, serial number, or location..."
+        [value]="searchText"
+        (input)="onSearchChange($any($event.target).value)"
+        aria-label="Search assets">
+    </div>
+    
+    <div class="filter-bar__filters">
+      <div class="filter-bar__filter">
+        <label for="asset-type-filter" class="filter-bar__label">Asset Type</label>
+        <mat-select 
+          id="asset-type-filter"
+          multiple
+          [(value)]="selectedAssetTypes"
+          (selectionChange)="onAssetTypeFilterChange($event.value)"
+          placeholder="All Types"
+          class="filter-bar__select">
+          <mat-option *ngFor="let type of assetTypes" [value]="type">
+            {{ getAssetTypeLabel(type) }}
+          </mat-option>
+        </mat-select>
+      </div>
+      
+      <div class="filter-bar__filter">
+        <label for="status-filter" class="filter-bar__label">Status</label>
+        <mat-select 
+          id="status-filter"
+          multiple
+          [(value)]="selectedStatuses"
+          (selectionChange)="onStatusFilterChange($event.value)"
+          placeholder="All Statuses"
+          class="filter-bar__select">
+          <mat-option *ngFor="let status of lifecycleStatuses" [value]="status">
+            {{ getStatusLabel(status) }}
+          </mat-option>
+        </mat-select>
+      </div>
+      
+      <div class="filter-bar__filter">
+        <label for="location-filter" class="filter-bar__label">Location</label>
+        <mat-select 
+          id="location-filter"
+          [(value)]="selectedLocation"
+          (selectionChange)="onLocationFilterChange($event.value)"
+          placeholder="All Locations"
+          class="filter-bar__select">
+          <mat-option value="">All Locations</mat-option>
+          <mat-option *ngFor="let location of locations" [value]="location">
+            {{ location }}
+          </mat-option>
+        </mat-select>
+      </div>
+      
+      <button 
+        class="btn btn--ghost filter-bar__reset"
+        (click)="resetFilters()"
+        aria-label="Reset all filters">
+        <mat-icon>refresh</mat-icon>
+        <span>Reset</span>
+      </button>
+    </div>
+  </section>
+  
+  <!-- Error Message Display -->
+  <div class="error-message" *ngIf="error$ | async as error" role="alert">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading$ | async">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p class="loading-text">Loading assets...</p>
+  </div>
+  
+  <!-- Asset Table -->
+  <section class="asset-table-container" *ngIf="!(loading$ | async)">
+    <div class="asset-table-wrapper">
+      <table class="asset-table" role="table" aria-label="Asset inventory table">
+        <thead>
+          <tr>
+            <th (click)="onSort('name')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Name</span>
+                <mat-icon *ngIf="sortField === 'name'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th (click)="onSort('assetType')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Type</span>
+                <mat-icon *ngIf="sortField === 'assetType'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th (click)="onSort('serialNumber')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Serial Number</span>
+                <mat-icon *ngIf="sortField === 'serialNumber'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th (click)="onSort('status')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Status</span>
+                <mat-icon *ngIf="sortField === 'status'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th (click)="onSort('acquisitionDate')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Acquisition Date</span>
+                <mat-icon *ngIf="sortField === 'acquisitionDate'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th (click)="onSort('location')" class="sortable" role="columnheader">
+              <div class="th-content">
+                <span>Location</span>
+                <mat-icon *ngIf="sortField === 'location'">
+                  {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                </mat-icon>
+              </div>
+            </th>
+            <th role="columnheader">Assigned User</th>
+            <th role="columnheader" class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let asset of assets$ | async" class="asset-row">
+            <td class="asset-name-cell">
+              <div class="asset-name-content">
+                <mat-icon class="asset-icon">{{ getAssetTypeIcon(asset.assetType) }}</mat-icon>
+                <span class="asset-name">{{ asset.name }}</span>
+              </div>
+            </td>
+            <td>{{ getAssetTypeLabel(asset.assetType) }}</td>
+            <td class="serial-number">{{ asset.serialNumber }}</td>
+            <td>
+              <span class="status-badge status-badge--{{ asset.status.toLowerCase() }}">
+                {{ getStatusLabel(asset.status) }}
+              </span>
+            </td>
+            <td>{{ asset.acquisitionDate | date:'mediumDate' }}</td>
+            <td>{{ asset.location || '—' }}</td>
+            <td>{{ asset.assignedUser || '—' }}</td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button 
+                  class="btn-icon" 
+                  (click)="onViewAsset(asset)"
+                  matTooltip="View details"
+                  aria-label="View asset details">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button 
+                  class="btn-icon" 
+                  (click)="onEditAsset(asset)"
+                  matTooltip="Edit asset"
+                  aria-label="Edit asset">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button 
+                  class="btn-icon btn-icon--danger" 
+                  (click)="onDeleteAsset(asset)"
+                  matTooltip="Delete asset"
+                  aria-label="Delete asset">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Empty State -->
+          <tr *ngIf="(assets$ | async)?.length === 0" class="empty-row">
+            <td colspan="8" class="empty-cell">
+              <div class="empty-state">
+                <mat-icon class="empty-state__icon">inventory_2</mat-icon>
+                <h3 class="empty-state__title">No assets found</h3>
+                <p class="empty-state__message">
+                  {{ searchText || selectedAssetTypes.length || selectedStatuses.length || selectedLocation
+                    ? 'Try adjusting your filters or search criteria'
+                    : 'Get started by adding your first asset' }}
+                </p>
+                <button 
+                  *ngIf="!searchText && !selectedAssetTypes.length && !selectedStatuses.length && !selectedLocation"
+                  class="btn btn--primary" 
+                  (click)="onAddNewAsset()">
+                  <mat-icon>add</mat-icon>
+                  <span>Add First Asset</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Pagination Controls -->
+    <div class="pagination" *ngIf="totalElements > 0" role="navigation" aria-label="Pagination">
+      <div class="pagination__info">
+        <span>
+          Showing {{ currentPage * pageSize + 1 }} to 
+          {{ Math.min((currentPage + 1) * pageSize, totalElements) }} of 
+          {{ totalElements }} assets
+        </span>
+      </div>
+      
+      <div class="pagination__controls">
+        <button 
+          class="btn-icon pagination__button"
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(0)"
+          aria-label="First page">
+          <mat-icon>first_page</mat-icon>
+        </button>
+        
+        <button 
+          class="btn-icon pagination__button"
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(currentPage - 1)"
+          aria-label="Previous page">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <span class="pagination__page-info">
+          Page {{ currentPage + 1 }} of {{ totalPages }}
+        </span>
+        
+        <button 
+          class="btn-icon pagination__button"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(currentPage + 1)"
+          aria-label="Next page">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        
+        <button 
+          class="btn-icon pagination__button"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(totalPages - 1)"
+          aria-label="Last page">
+          <mat-icon>last_page</mat-icon>
+        </button>
+      </div>
+      
+      <div class="pagination__size">
+        <label for="page-size-select">Items per page:</label>
+        <mat-select 
+          id="page-size-select"
+          [(value)]="pageSize"
+          (selectionChange)="onPageSizeChange($event.value)"
+          class="pagination__size-select">
+          <mat-option [value]="10">10</mat-option>
+          <mat-option [value]="20">20</mat-option>
+          <mat-option [value]="50">50</mat-option>
+          <mat-option [value]="100">100</mat-option>
+        </mat-select>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Geometric Triangle Accent - Bottom -->
+  <div class="geometric-accent geometric-accent--bottom-left"></div>
+</div>

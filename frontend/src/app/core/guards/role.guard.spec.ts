@@ -3,7 +3,7 @@ import { Router, RouterStateSnapshot } from '@angular/router';
 import { roleGuard } from './role.guard';
 import { AuthService } from '../services/auth.service';
 import { Role, User } from '../models/auth.model';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('RoleGuard', () => {
   let authService: jasmine.SpyObj<AuthService>;
@@ -43,6 +43,8 @@ describe('RoleGuard', () => {
     
     mockState = {} as RouterStateSnapshot;
   });
+
+  const mockState = {} as RouterStateSnapshot;
 
   it('should redirect to login when user is not authenticated', () => {
     Object.defineProperty(authService, 'currentUserValue', { value: null });

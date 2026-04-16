@@ -133,7 +133,7 @@
     width: 32px; // Requirement 7.3
     height: 32px;
     border-radius: var(--border-radius-lg); // 12px - Requirement 7.3
-    border: 1px solid var(--color-neutral-slate-100); // Requirement 7.4
+    border: 1px solid #e2e8f0; // Requirement 7.4 - exact color #e2e8f0
     background-color: var(--color-surface-container-lowest);
     display: flex;
     align-items: center;

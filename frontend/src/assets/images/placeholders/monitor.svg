@@ -1,0 +1,23 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="300" fill="#FAF9FF"/>
+  
+  <!-- Geometric accent -->
+  <path d="M0 300 L150 300 L0 150 Z" fill="#143B7D" opacity="0.05"/>
+  
+  <!-- Monitor icon -->
+  <g transform="translate(75, 80)">
+    <!-- Screen -->
+    <rect x="0" y="0" width="150" height="100" rx="4" fill="#EEEDF4" stroke="#143B7D" stroke-width="2"/>
+    <rect x="5" y="5" width="140" height="90" fill="#143B7D" opacity="0.1"/>
+    
+    <!-- Stand -->
+    <rect x="60" y="100" width="30" height="20" fill="#EEEDF4" stroke="#143B7D" stroke-width="2"/>
+    <rect x="40" y="120" width="70" height="5" rx="2" fill="#143B7D"/>
+  </g>
+  
+  <!-- Label -->
+  <text x="150" y="240" font-family="Manrope, sans-serif" font-size="14" fill="#434750" text-anchor="middle">
+    Monitor
+  </text>
+</svg>

@@ -67,7 +67,7 @@
     &:hover {
       background-color: rgba(241, 245, 249, 0.7);
       
-      & + .search-icon {
+      & ~ .search-icon {
         color: var(--color-primary-blue-800);
       }
     }
