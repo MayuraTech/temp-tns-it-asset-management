@@ -4,9 +4,16 @@
  * Renders geometric triangle accents that break the grid and act as
  * visual anchors following Editorial Geometry design principles.
  * 
- * Requirements: 24.1, 24.2, 24.4, 24.5, 24.7
- * Sub-task 5.1: Geometric triangle accent system with configurable size,
- * color, positioning, and 80px breathing room enforcement.
+ * Features:
+ * - Configurable size (small, medium, large, xlarge)
+ * - Configurable position (top-left, top-right, bottom-left, bottom-right, center)
+ * - Configurable color and opacity
+ * - 80px breathing room around accents (40px on mobile)
+ * - Responsive scaling across viewport sizes
+ * - Maintains aspect ratio
+ * - Optional blur effect for background elements
+ * 
+ * Requirements: 1.4, 7.4, 9.5, 24.1, 24.2, 24.4, 24.5, 24.7
  */
 
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
@@ -60,25 +67,25 @@ export type TrianglePosition = 'top-left' | 'top-right' | 'bottom-left' | 'botto
       display: block;
     }
     
-    /* Position Classes - Requirement 24.4 */
+    /* Position Classes with 80px breathing room - Requirements 24.4, 9.5 */
     .position-top-left {
-      top: 0;
-      left: 0;
+      top: 80px;
+      left: 80px;
     }
     
     .position-top-right {
-      top: 0;
-      right: 0;
+      top: 80px;
+      right: 80px;
     }
     
     .position-bottom-left {
-      bottom: 0;
-      left: 0;
+      bottom: 80px;
+      left: 80px;
     }
     
     .position-bottom-right {
-      bottom: 0;
-      right: 0;
+      bottom: 80px;
+      right: 80px;
     }
     
     .position-center {
@@ -93,7 +100,7 @@ export type TrianglePosition = 'top-left' | 'top-right' | 'bottom-left' | 'botto
       opacity: 0.8;
     }
     
-    /* Responsive Scaling - Requirement 24.7 */
+    /* Responsive Scaling - Requirement 24.7, 7.4 */
     .responsive {
       @media (max-width: 1024px) {
         transform: scale(0.8);
@@ -111,6 +118,39 @@ export type TrianglePosition = 'top-left' | 'top-right' | 'bottom-left' | 'botto
       
       @media (max-width: 768px) {
         transform: translate(-50%, -50%) scale(0.6);
+      }
+    }
+    
+    /* Responsive breathing room adjustments */
+    @media (max-width: 768px) {
+      .position-top-left,
+      .position-top-right,
+      .position-bottom-left,
+      .position-bottom-right {
+        top: 40px;
+        right: 40px;
+        bottom: 40px;
+        left: 40px;
+      }
+      
+      .position-top-left {
+        top: 40px;
+        left: 40px;
+      }
+      
+      .position-top-right {
+        top: 40px;
+        right: 40px;
+      }
+      
+      .position-bottom-left {
+        bottom: 40px;
+        left: 40px;
+      }
+      
+      .position-bottom-right {
+        bottom: 40px;
+        right: 40px;
       }
     }
     

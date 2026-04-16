@@ -2,13 +2,14 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
 
 /**
  * HTTP interceptor for global error handling
+ * 
+ * Handles HTTP errors and provides user-friendly error messages.
+ * Authentication errors (401) are handled by the JWT interceptor.
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
   const router = inject(Router);
 
   return next(req).pipe(
@@ -22,16 +23,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         // Server-side error
         switch (error.status) {
           case 401:
-            // Unauthorized - token expired or invalid
-            if (!req.url.includes('/auth/login')) {
-              // Try to refresh token
-              authService.refreshToken().subscribe({
-                error: () => {
-                  // Refresh failed, redirect to login
-                  router.navigate(['/login']);
-                }
-              });
-            }
+            // Unauthorized - handled by JWT interceptor
+            // This case should rarely be reached as JWT interceptor handles token refresh
             errorMessage = 'Authentication failed. Please log in again.';
             break;
 

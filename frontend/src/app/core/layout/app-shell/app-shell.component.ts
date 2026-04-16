@@ -12,6 +12,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/
 import { Router, NavigationEnd } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-shell',
@@ -37,7 +38,8 @@ export class AppShellComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   constructor(
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     // Initialize current route observable
     this.currentRoute$ = this.router.events.pipe(
@@ -46,8 +48,8 @@ export class AppShellComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     );
     
-    // TODO: Initialize authentication state when auth service is available
-    this.isAuthenticated$ = new Observable(observer => observer.next(true));
+    // Initialize authentication state from AuthService
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
   
   ngOnInit(): void {

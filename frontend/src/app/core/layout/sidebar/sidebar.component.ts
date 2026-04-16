@@ -14,13 +14,14 @@ import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { GeometricTriangleComponent } from '../../../shared/components/geometric-triangle/geometric-triangle.component';
 import { PrimaryActionButtonComponent } from '../../../shared/components/primary-action-button/primary-action-button.component';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { NavigationItem } from '../../../shared/constants/navigation.config';
 import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, GeometricTriangleComponent, PrimaryActionButtonComponent],
+  imports: [CommonModule, RouterModule, GeometricTriangleComponent, PrimaryActionButtonComponent, IconComponent],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

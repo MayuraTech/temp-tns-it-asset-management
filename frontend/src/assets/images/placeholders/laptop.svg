@@ -1,0 +1,25 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="300" fill="#FAF9FF"/>
+  
+  <!-- Geometric accent -->
+  <path d="M300 0 L150 0 L300 150 Z" fill="#143B7D" opacity="0.05"/>
+  
+  <!-- Laptop icon -->
+  <g transform="translate(75, 100)">
+    <!-- Screen -->
+    <rect x="10" y="0" width="130" height="80" rx="4" fill="#EEEDF4" stroke="#143B7D" stroke-width="2"/>
+    <rect x="15" y="5" width="120" height="70" fill="#143B7D" opacity="0.1"/>
+    
+    <!-- Base -->
+    <path d="M0 80 L5 90 L145 90 L150 80 Z" fill="#EEEDF4" stroke="#143B7D" stroke-width="2"/>
+    
+    <!-- Keyboard indicator -->
+    <rect x="20" y="82" width="110" height="6" rx="1" fill="#143B7D" opacity="0.2"/>
+  </g>
+  
+  <!-- Label -->
+  <text x="150" y="240" font-family="Manrope, sans-serif" font-size="14" fill="#434750" text-anchor="middle">
+    Laptop
+  </text>
+</svg>

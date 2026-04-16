@@ -1,0 +1,19 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="300" fill="#FAF9FF"/>
+  
+  <!-- Geometric accent triangle -->
+  <path d="M0 0 L150 0 L0 150 Z" fill="#143B7D" opacity="0.05"/>
+  
+  <!-- Icon container -->
+  <circle cx="150" cy="150" r="60" fill="#EEEDF4"/>
+  
+  <!-- Asset icon -->
+  <path d="M150 110 L150 190 M110 150 L190 150" stroke="#143B7D" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="150" cy="150" r="40" stroke="#143B7D" stroke-width="3" fill="none"/>
+  
+  <!-- Label -->
+  <text x="150" y="240" font-family="Manrope, sans-serif" font-size="14" fill="#434750" text-anchor="middle">
+    No Image Available
+  </text>
+</svg>

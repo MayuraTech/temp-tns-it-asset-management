@@ -1,0 +1,32 @@
+<!-- 
+  Error Message Component Template
+  Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
+-->
+<div *ngIf="error" class="error-message" role="alert" aria-live="assertive">
+  <div class="error-content">
+    <span class="error-text">{{ displayMessage }}</span>
+    <button 
+      type="button" 
+      class="dismiss-button" 
+      (click)="onDismiss()"
+      (keydown.enter)="onDismiss()"
+      (keydown.space)="onDismiss(); $event.preventDefault()"
+      aria-label="Dismiss error message"
+      title="Dismiss">
+      <svg 
+        width="16" 
+        height="16" 
+        viewBox="0 0 16 16" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true">
+        <path 
+          d="M12 4L4 12M4 4L12 12" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>

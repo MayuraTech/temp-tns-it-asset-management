@@ -1,0 +1,173 @@
+<div class="ticket-detail-container" *ngIf="ticket$ | async as ticket">
+  <!-- Header -->
+  <header class="page-header">
+    <button class="btn-back" (click)="goBack()">← Back to Tickets</button>
+    <h1>Ticket Details</h1>
+    <p class="ticket-number">{{ ticket.ticketNumber }}</p>
+  </header>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-state">
+    {{ error }}
+  </div>
+
+  <!-- Ticket Information -->
+  <div class="ticket-info-grid">
+    <!-- Main Information Card -->
+    <div class="info-card main-info">
+      <h2>Request Information</h2>
+      
+      <div class="info-row">
+        <span class="label">Type:</span>
+        <span class="value">{{ ticket.type }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">Status:</span>
+        <span class="value">
+          <span class="status-badge" [ngClass]="'badge-' + ticket.status.toLowerCase()">
+            {{ ticket.status }}
+          </span>
+        </span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">Priority:</span>
+        <span class="value">{{ ticket.priority }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">Asset:</span>
+        <span class="value">{{ ticket.assetName }} ({{ ticket.assetSerialNumber }})</span>
+      </div>
+      
+      <div class="info-row" *ngIf="ticket.requestReason">
+        <span class="label">Request Reason:</span>
+        <span class="value">{{ ticket.requestReason }}</span>
+      </div>
+      
+      <div class="info-row" *ngIf="ticket.deallocationReason">
+        <span class="label">Deallocation Reason:</span>
+        <span class="value">{{ ticket.deallocationReason }}</span>
+      </div>
+    </div>
+
+    <!-- Requester Information -->
+    <div class="info-card">
+      <h2>Requester</h2>
+      <div class="info-row">
+        <span class="label">Name:</span>
+        <span class="value">{{ ticket.requesterName }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Email:</span>
+        <span class="value">{{ ticket.requesterEmail }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Requested:</span>
+        <span class="value">{{ ticket.createdAt | date:'medium' }}</span>
+      </div>
+    </div>
+
+    <!-- Approver Information -->
+    <div class="info-card" *ngIf="ticket.approverId">
+      <h2>Approval Information</h2>
+      <div class="info-row">
+        <span class="label">Approver:</span>
+        <span class="value">{{ ticket.approverName }}</span>
+      </div>
+      <div class="info-row" *ngIf="ticket.approvedAt">
+        <span class="label">Approved At:</span>
+        <span class="value">{{ ticket.approvedAt | date:'medium' }}</span>
+      </div>
+      <div class="info-row" *ngIf="ticket.approvalComments">
+        <span class="label">Comments:</span>
+        <span class="value">{{ ticket.approvalComments }}</span>
+      </div>
+      <div class="info-row" *ngIf="ticket.rejectionReason">
+        <span class="label">Rejection Reason:</span>
+        <span class="value">{{ ticket.rejectionReason }}</span>
+      </div>
+    </div>
+
+    <!-- Assignment Information (for allocation) -->
+    <div class="info-card" *ngIf="ticket.assignToUser">
+      <h2>Assignment Details</h2>
+      <div class="info-row">
+        <span class="label">Assign To:</span>
+        <span class="value">{{ ticket.assignToUser }}</span>
+      </div>
+      <div class="info-row" *ngIf="ticket.assignToUserEmail">
+        <span class="label">Email:</span>
+        <span class="value">{{ ticket.assignToUserEmail }}</span>
+      </div>
+      <div class="info-row" *ngIf="ticket.assignToLocation">
+        <span class="label">Location:</span>
+        <span class="value">{{ ticket.assignToLocation }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button 
+      class="btn-action btn-approve" 
+      *ngIf="canApprove(ticket)"
+      [disabled]="actionInProgress$ | async"
+      (click)="approveTicket()">
+      Approve
+    </button>
+    
+    <button 
+      class="btn-action btn-reject" 
+      *ngIf="canReject(ticket)"
+      [disabled]="actionInProgress$ | async"
+      (click)="rejectTicket()">
+      Reject
+    </button>
+    
+    <button 
+      class="btn-action btn-complete" 
+      *ngIf="canComplete(ticket)"
+      [disabled]="actionInProgress$ | async"
+      (click)="completeTicket()">
+      Complete
+    </button>
+    
+    <button 
+      class="btn-action btn-cancel" 
+      *ngIf="canCancel(ticket)"
+      [disabled]="actionInProgress$ | async"
+      (click)="cancelTicket()">
+      Cancel
+    </button>
+  </div>
+
+  <!-- Status History Timeline -->
+  <div class="status-history">
+    <h2>Status History</h2>
+    <div class="timeline">
+      <div class="timeline-item" *ngFor="let history of statusHistory$ | async">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-status">
+            <span *ngIf="history.fromStatus">{{ history.fromStatus }} →</span>
+            <strong>{{ history.toStatus }}</strong>
+          </div>
+          <div class="timeline-meta">
+            <span>{{ history.changedByName }}</span>
+            <span>{{ history.changedAt | date:'medium' }}</span>
+          </div>
+          <div class="timeline-comments" *ngIf="history.comments">
+            {{ history.comments }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading$ | async" class="loading-state">
+  Loading ticket details...
+</div>

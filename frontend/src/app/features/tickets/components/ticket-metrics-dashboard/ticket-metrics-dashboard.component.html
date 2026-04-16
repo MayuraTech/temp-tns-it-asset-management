@@ -1,0 +1,129 @@
+<div class="metrics-dashboard">
+  <!-- Header -->
+  <header class="page-header">
+    <h1>Ticket Metrics Dashboard</h1>
+    <p class="subtitle">Analytics and insights for ticket management</p>
+  </header>
+
+  <!-- Date Range Filter -->
+  <div class="date-filter">
+    <form [formGroup]="dateRangeForm" class="date-form">
+      <div class="form-field">
+        <label for="fromDate">From Date:</label>
+        <input 
+          id="fromDate"
+          type="date" 
+          formControlName="fromDate"
+          (change)="onDateRangeChange()">
+      </div>
+      <div class="form-field">
+        <label for="toDate">To Date:</label>
+        <input 
+          id="toDate"
+          type="date" 
+          formControlName="toDate"
+          (change)="onDateRangeChange()">
+      </div>
+    </form>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-state">
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-state">
+    Loading metrics...
+  </div>
+
+  <!-- Metrics Content -->
+  <div *ngIf="!(loading$ | async) && (metrics$ | async) as metrics" class="metrics-content">
+    
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="metric-card">
+        <div class="card-value">{{ metrics.totalTickets }}</div>
+        <div class="card-label">Total Tickets</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="card-value">{{ metrics.averageApprovalTimeHours | number:'1.1-1' }}h</div>
+        <div class="card-label">Avg Approval Time</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="card-value">{{ metrics.averageCompletionTimeHours | number:'1.1-1' }}h</div>
+        <div class="card-label">Avg Completion Time</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="card-value">{{ metrics.approvalRate | number:'1.0-0' }}%</div>
+        <div class="card-label">Approval Rate</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="card-value">{{ metrics.rejectionRate | number:'1.0-0' }}%</div>
+        <div class="card-label">Rejection Rate</div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      
+      <!-- Tickets by Status -->
+      <div class="chart-card">
+        <h2>Tickets by Status</h2>
+        <div class="chart-content">
+          <div *ngFor="let item of getStatusEntries(metrics)" class="chart-bar">
+            <div class="bar-label">{{ item.key }}</div>
+            <div class="bar-container">
+              <div 
+                class="bar-fill" 
+                [style.width.%]="getPercentage(item.value, metrics.totalTickets)"
+                [class]="'status-' + item.key.toLowerCase()">
+              </div>
+              <span class="bar-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets by Type -->
+      <div class="chart-card">
+        <h2>Tickets by Type</h2>
+        <div class="chart-content">
+          <div *ngFor="let item of getTypeEntries(metrics)" class="chart-bar">
+            <div class="bar-label">{{ item.key }}</div>
+            <div class="bar-container">
+              <div 
+                class="bar-fill" 
+                [style.width.%]="getPercentage(item.value, metrics.totalTickets)">
+              </div>
+              <span class="bar-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets by Priority -->
+      <div class="chart-card">
+        <h2>Tickets by Priority</h2>
+        <div class="chart-content">
+          <div *ngFor="let item of getPriorityEntries(metrics)" class="chart-bar">
+            <div class="bar-label">{{ item.key }}</div>
+            <div class="bar-container">
+              <div 
+                class="bar-fill" 
+                [style.width.%]="getPercentage(item.value, metrics.totalTickets)"
+                [class]="'priority-' + item.key.toLowerCase()">
+              </div>
+              <span class="bar-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,15 +1,20 @@
 package com.company.assetmanagement.exception;
 
 import com.company.assetmanagement.dto.ErrorResponse;
+import com.company.assetmanagement.service.AuthenticationEventService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,88 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    
+    @Autowired
+    private AuthenticationEventService authenticationEventService;
+    
+    /**
+     * Handle AuthenticationFailedException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailed(
+            AuthenticationFailedException ex, HttpServletRequest request) {
+        
+        // Log authentication failure (without sensitive data)
+        String ipAddress = authenticationEventService.getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
+        authenticationEventService.logLoginFailure(ex.getUsername(), ex.getErrorType(), ipAddress, userAgent);
+        
+        logger.warn("Authentication failed for user: {}, type: {}, IP: {}", 
+            ex.getUsername(), ex.getErrorType(), ipAddress);
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("errorType", ex.getErrorType());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_FAILED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle AccountLockedException - returns 423 Locked.
+     */
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountLocked(
+            AccountLockedException ex, HttpServletRequest request) {
+        
+        logger.warn("Account locked: {}", ex.getMessage());
+        
+        Map<String, Object> details = new HashMap<>();
+        if (ex.getLockUntil() != null) {
+            details.put("lockUntil", ex.getLockUntil().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            details.put("reason", "Multiple failed login attempts");
+            details.put("lockDurationMinutes", 30);
+        }
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ACCOUNT_LOCKED")
+            .message(ex.getMessage())
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.LOCKED).body(errorResponse);
+    }
+    
+    /**
+     * Handle Spring Security AuthenticationException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
+            AuthenticationException ex, HttpServletRequest request) {
+        
+        // Log authentication error
+        String ipAddress = authenticationEventService.getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
+        
+        String errorType = ex instanceof BadCredentialsException ? "INVALID_CREDENTIALS" : "AUTHENTICATION_ERROR";
+        authenticationEventService.logLoginFailure("unknown", errorType, ipAddress, userAgent);
+        
+        logger.warn("Authentication exception: {}, IP: {}", ex.getMessage(), ipAddress);
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_ERROR")
+            .message("Authentication failed. Please check your credentials.")
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
     
     /**
      * Handle ValidationException - returns 400 Bad Request with comprehensive error details.
@@ -182,20 +269,138 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Handle AssetAlreadyAssignedException - returns 409 Conflict.
+     * Handle TicketNotFoundException - returns 404 Not Found.
      */
-    @ExceptionHandler(AssetAlreadyAssignedException.class)
-    public ResponseEntity<ErrorResponse> handleAssetAlreadyAssigned(
-            AssetAlreadyAssignedException ex, HttpServletRequest request) {
+    @ExceptionHandler(TicketNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTicketNotFound(
+            TicketNotFoundException ex, HttpServletRequest request) {
         
-        logger.warn("Asset already assigned: {}", ex.getAssetId());
+        logger.warn("Ticket not found: {}", ex.getTicketId());
         
         Map<String, String> details = new HashMap<>();
-        details.put("assetId", ex.getAssetId().toString());
+        details.put("ticketId", ex.getTicketId());
         
         ErrorResponse errorResponse = ErrorResponse.builder()
-            .type("ASSET_ALREADY_ASSIGNED")
+            .type("TICKET_NOT_FOUND")
             .message(ex.getMessage())
+     * Handle BadCredentialsException - returns 401 Unauthorized.
+     */
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            org.springframework.security.authentication.BadCredentialsException ex, HttpServletRequest request) {
+        
+        logger.warn("Authentication failed: {}", ex.getMessage());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("AUTHENTICATION_FAILED")
+            .message("Invalid username or password")
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle AccountDisabledException - returns 401 Unauthorized.
+     * Provides information about the disabled account status.
+     */
+    @ExceptionHandler(AccountDisabledException.class)
+    public ResponseEntity<ErrorResponse> handleAccountDisabled(
+            AccountDisabledException ex, HttpServletRequest request) {
+        
+        logger.warn("Account disabled: {}", ex.getMessage());
+        
+        Map<String, Object> details = new HashMap<>();
+        if (ex.getUserId() != null) {
+            details.put("userId", ex.getUserId());
+        }
+        details.put("reason", "Account has been administratively disabled");
+        details.put("action", "Contact your system administrator to reactivate your account");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ACCOUNT_DISABLED")
+            .message("Account has been disabled by an administrator. Please contact support for assistance.")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    
+    /**
+     * Handle DuplicateUsernameException - returns 409 Conflict.
+     * Provides information about the duplicate username constraint violation.
+     */
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateUsername(
+            DuplicateUsernameException ex, HttpServletRequest request) {
+        
+        logger.warn("Duplicate username: {}", ex.getUsername());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("username", ex.getUsername());
+        details.put("field", "username");
+        details.put("constraint", "unique");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("DUPLICATE_USERNAME")
+            .message("Username already exists. Please choose a different username.")
+            .details(details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+    
+    /**
+     * Handle AllocationFailedException - returns 500 Internal Server Error.
+     */
+    @ExceptionHandler(AllocationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAllocationFailed(
+            AllocationFailedException ex, HttpServletRequest request) {
+        
+        logger.error("Allocation operation failed: {}", ex.getMessage(), ex);
+        
+        Map<String, String> details = new HashMap<>();
+        if (ex.getTicketId() != null) {
+            details.put("ticketId", ex.getTicketId());
+        }
+        if (ex.getAssetId() != null) {
+            details.put("assetId", ex.getAssetId());
+        }
+        if (ex.getOperationType() != null) {
+            details.put("operationType", ex.getOperationType());
+        }
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ALLOCATION_FAILED")
+            .message(ex.getMessage())
+            .details(details.isEmpty() ? null : details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    /**
+     * Handle DuplicateEmailException - returns 409 Conflict.
+     * Provides information about the duplicate email constraint violation.
+     */
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(
+            DuplicateEmailException ex, HttpServletRequest request) {
+        
+        logger.warn("Duplicate email: {}", ex.getEmail());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("email", ex.getEmail());
+        details.put("field", "email");
+        details.put("constraint", "unique");
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("DUPLICATE_EMAIL")
+            .message("Email address already exists. Please use a different email address.")
             .details(details)
             .requestId(getRequestId(request))
             .build();
@@ -204,48 +409,27 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Handle AssetNotAssignedException - returns 409 Conflict.
+     * Handle UserNotFoundException - returns 404 Not Found.
+     * Provides information about the user that could not be found.
      */
-    @ExceptionHandler(AssetNotAssignedException.class)
-    public ResponseEntity<ErrorResponse> handleAssetNotAssigned(
-            AssetNotAssignedException ex, HttpServletRequest request) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(
+            UserNotFoundException ex, HttpServletRequest request) {
         
-        logger.warn("Asset not assigned: {}", ex.getAssetId());
+        logger.warn("User not found: {}", ex.getUserId());
         
         Map<String, String> details = new HashMap<>();
-        details.put("assetId", ex.getAssetId().toString());
+        details.put("userId", ex.getUserId());
+        details.put("resourceType", "User");
         
         ErrorResponse errorResponse = ErrorResponse.builder()
-            .type("ASSET_NOT_ASSIGNED")
-            .message(ex.getMessage())
+            .type("USER_NOT_FOUND")
+            .message("User not found with the specified ID")
             .details(details)
             .requestId(getRequestId(request))
             .build();
         
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-    }
-    
-    /**
-     * Handle AssetNotAssignableException - returns 422 Unprocessable Entity.
-     */
-    @ExceptionHandler(AssetNotAssignableException.class)
-    public ResponseEntity<ErrorResponse> handleAssetNotAssignable(
-            AssetNotAssignableException ex, HttpServletRequest request) {
-        
-        logger.warn("Asset not assignable: {} with status {}", ex.getAssetId(), ex.getStatus());
-        
-        Map<String, String> details = new HashMap<>();
-        details.put("assetId", ex.getAssetId().toString());
-        details.put("status", ex.getStatus().toString());
-        
-        ErrorResponse errorResponse = ErrorResponse.builder()
-            .type("ASSET_NOT_ASSIGNABLE")
-            .message(ex.getMessage())
-            .details(details)
-            .requestId(getRequestId(request))
-            .build();
-        
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
     
     /**

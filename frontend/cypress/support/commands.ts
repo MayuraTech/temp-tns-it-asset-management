@@ -8,11 +8,12 @@
  * Login command - authenticates a user and stores the JWT token
  * @param username - The username to login with
  * @param password - The password to login with
+ * Login command - authenticates a user and stores the token
  */
 Cypress.Commands.add('login', (username: string, password: string) => {
   cy.request({
     method: 'POST',
-    url: '/api/v1/auth/login',
+    url: 'http://localhost:8080/api/v1/auth/login',
     body: {
       username,
       password
@@ -21,13 +22,9 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     expect(response.status).to.eq(200);
     expect(response.body).to.have.property('accessToken');
     
-    // Store the token in localStorage
+    // Store tokens in localStorage
     window.localStorage.setItem('accessToken', response.body.accessToken);
-    
-    // Set authorization header for subsequent requests
-    cy.intercept('**', (req) => {
-      req.headers['Authorization'] = `Bearer ${response.body.accessToken}`;
-    });
+    window.localStorage.setItem('refreshToken', response.body.refreshToken);
   });
 });
 
@@ -36,5 +33,5 @@ Cypress.Commands.add('login', (username: string, password: string) => {
  */
 Cypress.Commands.add('logout', () => {
   window.localStorage.removeItem('accessToken');
-  cy.visit('/login');
+  window.localStorage.removeItem('refreshToken');
 });

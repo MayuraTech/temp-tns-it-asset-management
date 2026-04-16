@@ -23,17 +23,22 @@
   min-height: 100vh;
   width: 100vw;
   
+  // Minimum viewport width support - Requirement 13.1
+  min-width: 1024px;
+  
   // Editorial Geometry base styling
   background-color: var(--color-surface-base);
   font-family: var(--font-family-body);
   
-  // Prevent layout shift during load
+  // Prevent horizontal scrolling at supported widths - Requirement 13.5
   overflow-x: hidden;
   
-  // CSS Grid fallback for older browsers
+  // CSS Grid fallback for older browsers - Requirement 20.5
+  // Uses Flexbox row layout so sidebar acts as a fixed-width left column
   @supports not (display: grid) {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     
     .app-shell__sidebar {
       position: fixed;
@@ -45,13 +50,22 @@
     }
     
     .app-shell__top-nav {
-      margin-left: var(--layout-sidebar-width);
+      position: fixed;
+      top: 0;
+      left: var(--layout-sidebar-width);
+      right: 0;
       height: var(--layout-top-nav-height);
+      margin-left: var(--layout-sidebar-width);
+      z-index: 900;
+      width: calc(100vw - var(--layout-sidebar-width));
     }
     
     .app-shell__main-content {
       margin-left: var(--layout-sidebar-width);
+      margin-top: var(--layout-top-nav-height);
       flex: 1;
+      min-height: calc(100vh - var(--layout-top-nav-height));
+      width: calc(100vw - var(--layout-sidebar-width));
     }
   }
 }
@@ -59,6 +73,9 @@
 // Sidebar Area - Fixed Left Navigation
 .app-shell__sidebar {
   grid-area: sidebar;
+  
+  // Span both grid rows so sidebar covers full height - Requirement 13.2
+  grid-row: 1 / -1;
   
   // Fixed positioning within grid
   position: relative;
@@ -133,41 +150,44 @@
 // Responsive Behavior - Minimum 1024px viewport support
 @media (max-width: 1024px) {
   .app-shell {
-    // Maintain layout structure at minimum width
+    // Maintain layout structure at minimum width - Requirement 13.2
     grid-template-columns: var(--layout-sidebar-width) 1fr;
     
-    // Ensure no horizontal scrolling
+    // Ensure no horizontal scrolling - Requirement 13.5
     overflow-x: hidden;
   }
   
   .app-shell__main-content {
-    // Adjust padding for smaller screens while maintaining Editorial Geometry
-    padding: var(--spacing-xl);
+    // Maintain 32px padding at all supported widths - Requirement 13.6
+    padding: var(--spacing-xxl);
     
     .main-content-container {
-      min-height: calc(100vh - var(--layout-top-nav-height) - (var(--spacing-xl) * 2));
+      min-height: calc(100vh - var(--layout-top-nav-height) - (var(--spacing-xxl) * 2));
     }
   }
 }
 
-// Focus Management for Accessibility
-.app-shell {
-  // Skip link for keyboard navigation
-  &::before {
-    content: "Skip to main content";
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: var(--color-primary-blue-800);
-    color: var(--color-white);
-    padding: 8px;
-    text-decoration: none;
-    border-radius: var(--border-radius-sm);
-    z-index: 1000;
-    
-    &:focus {
-      top: 6px;
-    }
+// Skip Navigation Link - Requirements 14.1, 14.2
+// Visually hidden until focused, then slides into view for keyboard users
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 6px;
+  background: var(--color-primary-blue-800);
+  color: var(--color-white);
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  z-index: 9999;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  transition: top 0.2s ease;
+  
+  &:focus {
+    top: 6px;
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
   }
 }
 
@@ -188,5 +208,23 @@
 @media (prefers-reduced-motion: reduce) {
   .app-shell__main-content {
     scroll-behavior: auto;
+  }
+}
+
+// Standalone Layout - For unauthenticated pages (login, password-reset)
+.standalone-layout {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--color-surface-base);
+  
+  // Center content for login/auth pages
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Ensure router outlet content fills available space
+  ::ng-deep router-outlet + * {
+    width: 100%;
+    min-height: 100vh;
   }
 }

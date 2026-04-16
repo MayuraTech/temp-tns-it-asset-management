@@ -6,9 +6,12 @@
   
   Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 16.4, 23.1, 23.2, 23.3, 24.3
   Sub-task 5.1: Geometric triangle accents with 80px breathing room
+  
+  Note: The outer <main> landmark is provided by app-shell.component.html.
+  This component uses a <div> to avoid nested <main> elements (invalid HTML).
 -->
 
-<div class="main-content" role="main">
+<div class="main-content">
   
   <!-- Geometric Triangle Accents Background - Requirement 24.3 -->
   <div class="geometric-accents" aria-hidden="true">

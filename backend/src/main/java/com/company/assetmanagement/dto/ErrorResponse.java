@@ -1,6 +1,7 @@
 package com.company.assetmanagement.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -9,12 +10,22 @@ import java.util.Map;
  * Provides consistent error information across the application.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Standard error response structure for all API errors")
 public class ErrorResponse {
     
+    @Schema(description = "Error type identifier (e.g., VALIDATION_ERROR, DUPLICATE_SERIAL_NUMBER, INSUFFICIENT_PERMISSIONS)", example = "VALIDATION_ERROR", required = true)
     private String type;
+    
+    @Schema(description = "Human-readable error message", example = "Validation failed", required = true)
     private String message;
+    
+    @Schema(description = "Additional error details (e.g., validation errors, field-specific messages)", example = "[{\"field\": \"serialNumber\", \"message\": \"Serial number is required\"}]")
     private Object details;
+    
+    @Schema(description = "Timestamp when the error occurred (ISO 8601 format)", example = "2024-01-15T10:30:00", required = true)
     private LocalDateTime timestamp;
+    
+    @Schema(description = "Unique request identifier for tracking and debugging", example = "req-123456")
     private String requestId;
     
     public ErrorResponse() {
