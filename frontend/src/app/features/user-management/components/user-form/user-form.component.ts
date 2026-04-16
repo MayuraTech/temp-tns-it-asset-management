@@ -187,7 +187,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
             duration: 3000,
             panelClass: ['error-snackbar']
           });
-          this.router.navigate(['/user-management']);
+          this.router.navigate(['/users']);
         }
       });
   }
@@ -396,7 +396,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
             duration: 3000,
             panelClass: ['success-snackbar']
           });
-          this.router.navigate(['/user-management', user.id]);
+          this.router.navigate(['/users', user.id]);
         },
         error: (error) => {
           console.error('Error creating user:', error);
@@ -447,7 +447,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
             duration: 3000,
             panelClass: ['success-snackbar']
           });
-          this.router.navigate(['/user-management', user.id]);
+          this.router.navigate(['/users', user.id]);
         },
         error: (error) => {
           console.error('Error updating user:', error);
@@ -513,7 +513,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       }
     }
     
-    this.router.navigate(['/user-management']);
+    this.router.navigate(['/users']);
   }
   
   /**

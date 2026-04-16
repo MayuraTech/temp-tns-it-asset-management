@@ -565,11 +565,11 @@ public class UserServiceImpl implements UserService {
      * @throws ValidationException if validation fails
      */
     private void validateUserRequest(UserRequest request) {
-        List<com.company.assetmanagement.dto.ValidationError> errors = new ArrayList<>();
+        List<ValidationException.ValidationError> errors = new ArrayList<>();
         
         // Validate roles are not empty
         if (request.getRoles() == null || request.getRoles().isEmpty()) {
-            errors.add(new com.company.assetmanagement.dto.ValidationError(
+            errors.add(new ValidationException.ValidationError(
                 "roles", "At least one role is required"));
         }
         

@@ -21,11 +21,6 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
-  },
-  {
-    path: 'unauthorized',
-    loadComponent: () => import('./features/auth/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
     loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent),
     canActivate: [loginGuard]
   },

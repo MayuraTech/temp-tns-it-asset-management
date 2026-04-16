@@ -141,7 +141,7 @@ export class AuthService {
         tap(response => {
           // Store session token using StorageService (Requirements 3.3, 11.2)
           this.storeTokens(response, rememberMe);
-          this.startTokenExpirationTimer(response.expiresIn);
+          this.startTokenExpirationTimer(response.expires_in);
           this.loadCurrentUser();
           this.isAuthenticatedSubject.next(true);
         }),
@@ -221,12 +221,12 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'));
     }
 
-    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refreshToken })
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refresh_token: refreshToken })
       .pipe(
         tap(response => {
           const isPersistent = this.storageService.isPersistent('access_token');
           this.storeTokens(response, isPersistent);
-          this.startTokenExpirationTimer(response.expiresIn);
+          this.startTokenExpirationTimer(response.expires_in);
         }),
         catchError(error => {
           this.clearSession();
@@ -271,9 +271,9 @@ export class AuthService {
    * @param persistent Whether to persist session (Remember Me)
    */
   private storeTokens(response: LoginResponse, persistent: boolean = false): void {
-    this.storageService.setItem('access_token', response.accessToken, persistent);
-    this.storageService.setItem('refresh_token', response.refreshToken, persistent);
-    this.storageService.setItem('token_type', response.tokenType, persistent);
+    this.storageService.setItem('access_token', response.access_token, persistent);
+    this.storageService.setItem('refresh_token', response.refresh_token, persistent);
+    this.storageService.setItem('token_type', response.token_type, persistent);
   }
 
   /**

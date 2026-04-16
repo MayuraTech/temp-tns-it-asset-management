@@ -67,15 +67,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccountLocked(
             AccountLockedException ex, HttpServletRequest request) {
         
-        // Log account lockout attempt
-        String ipAddress = authenticationEventService.getClientIpAddress(request);
-        String userAgent = request.getHeader("User-Agent");
-        authenticationEventService.logLoginFailure(ex.getUsername(), "ACCOUNT_LOCKED", ipAddress, userAgent);
+        logger.warn("Account locked: {}", ex.getMessage());
         
-        logger.warn("Account locked login attempt for user: {}, IP: {}", ex.getUsername(), ipAddress);
-        
-        Map<String, String> details = new HashMap<>();
-        details.put("lockUntil", ex.getLockUntil().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        Map<String, Object> details = new HashMap<>();
+        if (ex.getLockUntil() != null) {
+            details.put("lockUntil", ex.getLockUntil().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            details.put("reason", "Multiple failed login attempts");
+            details.put("lockDurationMinutes", 30);
+        }
         
         ErrorResponse errorResponse = ErrorResponse.builder()
             .type("ACCOUNT_LOCKED")
@@ -281,34 +280,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
             .type("AUTHENTICATION_FAILED")
             .message("Invalid username or password")
-            .requestId(getRequestId(request))
-            .build();
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
-    
-    /**
-     * Handle AccountLockedException - returns 401 Unauthorized.
-     * Provides detailed information about the account lock including expiration time.
-     */
-    @ExceptionHandler(AccountLockedException.class)
-    public ResponseEntity<ErrorResponse> handleAccountLocked(
-            AccountLockedException ex, HttpServletRequest request) {
-        
-        logger.warn("Account locked: {}", ex.getMessage());
-        
-        Map<String, Object> details = new HashMap<>();
-        if (ex.getLockUntil() != null) {
-            details.put("lockUntil", ex.getLockUntil().toString());
-            details.put("reason", "Multiple failed login attempts");
-            details.put("lockDurationMinutes", 30);
-        }
-        
-        ErrorResponse errorResponse = ErrorResponse.builder()
-            .type("ACCOUNT_LOCKED")
-            .message("Account is temporarily locked due to multiple failed login attempts. Please try again after " + 
-                    (ex.getLockUntil() != null ? ex.getLockUntil().toString() : "the lock period expires"))
-            .details(details)
             .requestId(getRequestId(request))
             .build();
         

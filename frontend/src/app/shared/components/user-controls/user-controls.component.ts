@@ -10,8 +10,12 @@
 
 import { Component, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
-export type UserControlAction = 'notification' | 'settings' | 'profile';
+export type UserControlAction = 'notification' | 'settings' | 'profile' | 'logout';
 
 export interface UserInfo {
   name: string;
@@ -23,7 +27,7 @@ export interface UserInfo {
 @Component({
   selector: 'app-user-controls',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatMenuModule, MatIconModule, MatButtonModule, MatDividerModule],
   templateUrl: './user-controls.component.html',
   styleUrls: ['./user-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -72,6 +76,13 @@ export class UserControlsComponent {
    */
   onProfileClick(): void {
     this.controlClick.emit('profile');
+  }
+  
+  /**
+   * Handle logout click
+   */
+  onLogoutClick(): void {
+    this.controlClick.emit('logout');
   }
   
   /**

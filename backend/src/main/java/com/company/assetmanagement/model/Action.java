@@ -41,12 +41,5 @@ public enum Action {
     APPROVE_TICKET,
     REJECT_TICKET,
     COMPLETE_TICKET,
-    VIEW_TICKET,
-    
-    // Authentication actions
-    LOGIN_SUCCESS,
-    LOGIN_FAILURE,
-    LOGOUT,
-    TOKEN_REFRESH,
-    PASSWORD_CHANGE
+    VIEW_TICKET
 }

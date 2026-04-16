@@ -1,7 +1,7 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpEvent, HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, switchMap, throwError, BehaviorSubject, filter, take } from 'rxjs';
+import { catchError, switchMap, throwError, BehaviorSubject, filter, take, Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 /**
@@ -43,9 +43,9 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Handle the request and catch authentication errors
   return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
+    catchError((error: unknown) => {
       // Handle 401 Unauthorized errors (token expired or invalid)
-      if (error.status === 401 && !isAuthEndpoint) {
+      if (error instanceof HttpErrorResponse && error.status === 401 && !isAuthEndpoint) {
         return handle401Error(req, next, authService, router);
       }
 
@@ -58,7 +58,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 /**
  * Add Authorization header to the request
  */
-function addAuthorizationHeader(req: any, token: string): any {
+function addAuthorizationHeader(req: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
   return req.clone({
     setHeaders: {
       Authorization: `Bearer ${token}`
@@ -76,7 +76,12 @@ function addAuthorizationHeader(req: any, token: string): any {
  * 3. Retry the original request with the new token
  * 4. If refresh fails, clear session and redirect to login
  */
-function handle401Error(req: any, next: any, authService: AuthService, router: Router): any {
+function handle401Error(
+  req: HttpRequest<unknown>, 
+  next: HttpHandlerFn, 
+  authService: AuthService, 
+  router: Router
+): Observable<HttpEvent<unknown>> {
   if (!isRefreshing) {
     // Start token refresh process
     isRefreshing = true;
@@ -98,10 +103,10 @@ function handle401Error(req: any, next: any, authService: AuthService, router: R
       switchMap((response) => {
         // Token refresh successful
         isRefreshing = false;
-        refreshTokenSubject.next(response.accessToken);
+        refreshTokenSubject.next(response.access_token);
 
         // Retry the original request with new token
-        return next(addAuthorizationHeader(req, response.accessToken));
+        return next(addAuthorizationHeader(req, response.access_token));
       }),
       catchError((error) => {
         // Token refresh failed - clear session and redirect to login
@@ -124,7 +129,7 @@ function handle401Error(req: any, next: any, authService: AuthService, router: R
       take(1), // Take only the first emission
       switchMap(token => {
         // Retry the original request with the new token
-        return next(addAuthorizationHeader(req, token));
+        return next(addAuthorizationHeader(req, token!));
       })
     );
   }

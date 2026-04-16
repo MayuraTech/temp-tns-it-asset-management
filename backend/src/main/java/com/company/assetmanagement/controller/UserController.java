@@ -2,6 +2,7 @@ package com.company.assetmanagement.controller;
 
 import com.company.assetmanagement.dto.*;
 import com.company.assetmanagement.model.Role;
+import com.company.assetmanagement.security.JwtTokenProvider;
 import com.company.assetmanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +22,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
@@ -72,14 +74,17 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
     
     /**
      * Constructor with dependency injection.
      *
      * @param userService service for user management operations
+     * @param jwtTokenProvider JWT token provider for extracting user ID from tokens
      */
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
     
     /**
@@ -203,7 +208,7 @@ public class UserController {
             description = "Users retrieved successfully",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = Page.class)
+                schema = @Schema(implementation = PageResponse.class)
             )
         ),
         @ApiResponse(
@@ -215,7 +220,7 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<Page<UserDTO>> getAllUsers(
+    public ResponseEntity<PageResponse<UserDTO>> getAllUsers(
             @Parameter(description = "Optional role filter (ADMINISTRATOR, ASSET_MANAGER, VIEWER)")
             @RequestParam(required = false) Role role,
             @Parameter(description = "Pagination parameters (page, size, sort)")
@@ -234,7 +239,76 @@ public class UserController {
             logger.info("Retrieved {} total users", users.getTotalElements());
         }
         
-        return ResponseEntity.ok(users);
+        // Convert Spring Page to PageResponse
+        PageResponse<UserDTO> response = PageResponse.<UserDTO>builder()
+            .content(users.getContent())
+            .page(
+                users.getSize(),
+                users.getNumber(),
+                users.getTotalElements(),
+                users.getTotalPages()
+            )
+            .build();
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Retrieves the currently authenticated user's information.
+     * 
+     * This endpoint returns the user information for the currently authenticated user
+     * based on the JWT token. This is a convenience endpoint that doesn't require
+     * knowing the user's ID.
+     * 
+     * @return user DTO for the currently authenticated user
+     */
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ASSET_MANAGER', 'VIEWER')")
+    @Operation(
+        summary = "Get current user",
+        description = "Retrieves information for the currently authenticated user. " +
+                     "Accessible by all authenticated users."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Current user retrieved successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = UserDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - missing or invalid JWT token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        String userId = extractUserIdFromAuthentication();
+        
+        logger.info("Get current user request received for user ID: {}", userId);
+        
+        return userService.getUser(userId)
+            .map(user -> {
+                logger.info("Current user found with ID: {}", userId);
+                return ResponseEntity.ok(user);
+            })
+            .orElseGet(() -> {
+                logger.warn("Current user not found with ID: {}", userId);
+                return ResponseEntity.notFound().build();
+            });
     }
     
     /**
@@ -795,27 +869,41 @@ public class UserController {
     /**
      * Extracts user ID from the current authentication context.
      * 
-     * The JWT token provider stores the user ID in the authentication name.
-     * This method retrieves it from the security context.
+     * The JWT token contains a userId claim. This method retrieves the token
+     * from the request and extracts the userId claim.
      *
      * @return the user ID as a string
      */
     private String extractUserIdFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Get the JWT token from the request to extract userId claim
+        HttpServletRequest request = 
+            ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String jwt = getJwtFromRequest(request);
         
-        if (authentication == null || !authentication.isAuthenticated()) {
-            logger.error("No authenticated user found in security context");
-            throw new IllegalStateException("No authenticated user found");
+        if (jwt != null) {
+            // Extract userId from JWT token claims
+            String userId = jwtTokenProvider.getUserIdFromToken(jwt);
+            if (userId != null) {
+                logger.debug("Extracted user ID from JWT token: {}", userId);
+                return userId;
+            }
         }
         
-        Object principal = authentication.getPrincipal();
-        
-        if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
-            // If using UserDetails, the username is the user ID
-            return ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
-        } else {
-            // Otherwise, use the name directly
-            return authentication.getName();
+        logger.error("Could not extract user ID from JWT token");
+        throw new IllegalStateException("Could not extract user ID from authentication");
+    }
+    
+    /**
+     * Extract JWT token from HTTP request.
+     *
+     * @param request the HTTP request
+     * @return JWT token or null if not found
+     */
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (org.springframework.util.StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         }
+        return null;
     }
 }

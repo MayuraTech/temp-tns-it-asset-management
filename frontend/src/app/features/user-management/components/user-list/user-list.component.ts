@@ -9,6 +9,7 @@ import { MaterialModule } from '../../../../shared/material.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 // Services and models
 import { UserService } from '../../services/user.service';
@@ -207,14 +208,14 @@ export class UserListComponent implements OnInit, OnDestroy {
    * Navigate to create user page
    */
   onCreateUser(): void {
-    this.router.navigate(['/user-management/create']);
+    this.router.navigate(['/users/create']);
   }
   
   /**
    * Navigate to user detail page
    */
   onViewUser(user: UserDTO): void {
-    this.router.navigate(['/user-management', user.id]);
+    this.router.navigate(['/users', user.id]);
   }
   
   /**
@@ -222,14 +223,15 @@ export class UserListComponent implements OnInit, OnDestroy {
    */
   onEditUser(user: UserDTO, event: Event): void {
     event.stopPropagation();
-    this.router.navigate(['/user-management', user.id, 'edit']);
+    this.router.navigate(['/users', user.id, 'edit']);
   }
   
   /**
    * Toggle user account status
    */
-  onToggleStatus(user: UserDTO, event: Event): void {
-    event.stopPropagation();
+  onToggleStatus(user: UserDTO, event: MatSlideToggleChange): void {
+    // Remove focus after toggle
+    (event.source as any)._elementRef.nativeElement.blur();
     
     const action = user.isActive ? 'disable' : 'enable';
     const actionText = user.isActive ? 'disabled' : 'enabled';

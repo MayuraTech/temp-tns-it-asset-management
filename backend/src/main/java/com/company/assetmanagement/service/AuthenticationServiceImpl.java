@@ -145,7 +145,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             
             // 5. Generate tokens
             String roles = user.getRoles().stream()
-                    .map(userRole -> userRole.getRole().name())
+                    .map(userRole -> "ROLE_" + userRole.getRole().name())
                     .collect(Collectors.joining(","));
             
             String accessToken = jwtTokenProvider.generateToken(
