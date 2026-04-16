@@ -1,0 +1,289 @@
+.ticket-create-container {
+  padding: 32px;
+  background: var(--surface, #faf9ff);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 30px;
+    color: var(--on-surface, #1a1b20);
+    margin: 0 0 8px 0;
+  }
+
+  .subtitle {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 14px;
+    color: var(--on-surface-variant, #434750);
+    margin: 0;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  border-bottom: 2px solid var(--outline-variant, #c4c6d2);
+
+  .tab {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    color: var(--on-surface-variant, #434750);
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: var(--primary, #143b7d);
+    }
+
+    &.active {
+      color: var(--primary, #143b7d);
+      border-bottom-color: var(--primary, #143b7d);
+    }
+  }
+}
+
+.error-message {
+  background: #ffebee;
+  color: #d32f2f;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 14px;
+}
+
+.ticket-form {
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 32px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-main {
+    background: var(--surface-container-lowest, #ffffff);
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+  }
+
+  .form-field {
+    margin-bottom: 24px;
+
+    label {
+      display: block;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--on-surface-variant, #434750);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-bottom: 2px solid var(--outline-variant, #c4c6d2);
+      background: transparent;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      color: var(--on-surface, #1a1b20);
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-bottom-color: var(--primary, #143b7d);
+        box-shadow: 0 4px 8px rgba(20, 59, 125, 0.1);
+      }
+
+      &::placeholder {
+        color: var(--on-surface-variant, #434750);
+        opacity: 0.7;
+      }
+
+      &.invalid {
+        border-bottom-color: #d32f2f;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .error-text {
+      display: block;
+      color: #d32f2f;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  .priority-buttons {
+    display: flex;
+    gap: 12px;
+
+    .priority-btn {
+      flex: 1;
+      padding: 12px 24px;
+      border: 2px solid var(--outline-variant, #c4c6d2);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--on-surface, #1a1b20);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: var(--primary, #143b7d);
+        background: var(--surface-container-low, #f4f3f9);
+      }
+
+      &.active {
+        border-color: var(--primary, #143b7d);
+        background: var(--primary, #143b7d);
+        color: white;
+      }
+    }
+  }
+
+  .policy-reminder {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--surface-container-low, #f4f3f9);
+    border-radius: 8px;
+    margin-bottom: 24px;
+
+    .info-icon {
+      font-size: 20px;
+    }
+
+    p {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      color: var(--on-surface-variant, #434750);
+      margin: 0;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+
+    button {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: var(--on-surface-variant, #434750);
+      border: 2px solid var(--outline-variant, #c4c6d2);
+
+      &:hover:not(:disabled) {
+        background: var(--surface-container-low, #f4f3f9);
+      }
+    }
+
+    .btn-submit {
+      background: var(--primary, #143b7d);
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: var(--primary-container, #315396);
+      }
+    }
+  }
+}
+
+.form-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .sidebar-panel {
+    background: var(--surface-container-lowest, #ffffff);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+
+    h3 {
+      font-family: var(--font-heading, 'Manrope', sans-serif);
+      font-size: 16px;
+      color: var(--on-surface, #1a1b20);
+      margin: 0 0 12px 0;
+    }
+
+    .sidebar-text {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      color: var(--on-surface-variant, #434750);
+      margin: 0;
+    }
+
+    .btn-chat {
+      width: 100%;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: var(--secondary, #a9371d);
+      color: white;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #8a2e18;
+      }
+    }
+
+    .link-download {
+      display: inline-block;
+      color: var(--primary, #143b7d);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

@@ -269,6 +269,20 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Handle TicketNotFoundException - returns 404 Not Found.
+     */
+    @ExceptionHandler(TicketNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTicketNotFound(
+            TicketNotFoundException ex, HttpServletRequest request) {
+        
+        logger.warn("Ticket not found: {}", ex.getTicketId());
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("ticketId", ex.getTicketId());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("TICKET_NOT_FOUND")
+            .message(ex.getMessage())
      * Handle BadCredentialsException - returns 401 Unauthorized.
      */
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
@@ -335,6 +349,37 @@ public class GlobalExceptionHandler {
             .requestId(getRequestId(request))
             .build();
         
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+    
+    /**
+     * Handle AllocationFailedException - returns 500 Internal Server Error.
+     */
+    @ExceptionHandler(AllocationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAllocationFailed(
+            AllocationFailedException ex, HttpServletRequest request) {
+        
+        logger.error("Allocation operation failed: {}", ex.getMessage(), ex);
+        
+        Map<String, String> details = new HashMap<>();
+        if (ex.getTicketId() != null) {
+            details.put("ticketId", ex.getTicketId());
+        }
+        if (ex.getAssetId() != null) {
+            details.put("assetId", ex.getAssetId());
+        }
+        if (ex.getOperationType() != null) {
+            details.put("operationType", ex.getOperationType());
+        }
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .type("ALLOCATION_FAILED")
+            .message(ex.getMessage())
+            .details(details.isEmpty() ? null : details)
+            .requestId(getRequestId(request))
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
     

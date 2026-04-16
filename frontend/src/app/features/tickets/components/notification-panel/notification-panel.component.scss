@@ -1,0 +1,134 @@
+.notification-panel {
+  background: var(--surface-container-lowest, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
+  max-width: 400px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--outline-variant, #c4c6d2);
+
+  h3 {
+    font-family: var(--font-heading, 'Manrope', sans-serif);
+    font-size: 18px;
+    color: var(--on-surface, #1a1b20);
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .unread-badge {
+      background: var(--primary, #143b7d);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: var(--primary, #143b7d);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px;
+
+      &:hover {
+        background: var(--surface-container-low, #f4f3f9);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+.notifications-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notification-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--surface-container-low, #f4f3f9);
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--surface-container-low, #f4f3f9);
+  }
+
+  &.unread {
+    background: rgba(20, 59, 125, 0.05);
+  }
+
+  .notification-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary, #143b7d);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .notification-content {
+    flex: 1;
+    min-width: 0;
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .ticket-number {
+        font-family: var(--font-body, 'Inter', sans-serif);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary, #143b7d);
+      }
+
+      .notification-time {
+        font-family: var(--font-body, 'Inter', sans-serif);
+        font-size: 12px;
+        color: var(--on-surface-variant, #434750);
+      }
+    }
+
+    .notification-message {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 14px;
+      color: var(--on-surface, #1a1b20);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .notification-asset {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 12px;
+      color: var(--on-surface-variant, #434750);
+    }
+  }
+}
+
+.empty-state,
+.loading-state {
+  text-align: center;
+  padding: 48px 20px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 14px;
+  color: var(--on-surface-variant, #434750);
+}

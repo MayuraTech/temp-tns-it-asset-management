@@ -56,7 +56,7 @@ This document summarizes the application properties configuration completed for 
 
 **Key Features:**
 - Test database server connection
-- Database: ITAssetManagement_Test
+- Database: IT_Asset
 - HikariCP pool: max 15 connections, min 3 idle
 - INFO-level logging
 - CORS: test.example.com (configurable)
