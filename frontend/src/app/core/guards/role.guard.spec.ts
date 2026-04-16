@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { roleGuard } from './role.guard';
 import { AuthService } from '../services/auth.service';
 import { Role, User } from '../models/auth.model';
@@ -9,6 +9,7 @@ describe('RoleGuard', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let router: jasmine.SpyObj<Router>;
   let mockRoute: ActivatedRouteSnapshot;
+  let mockState: RouterStateSnapshot;
 
   const mockUser: User = {
     id: '123',
@@ -39,13 +40,15 @@ describe('RoleGuard', () => {
     mockRoute = {
       data: {}
     } as ActivatedRouteSnapshot;
+    
+    mockState = {} as RouterStateSnapshot;
   });
 
   it('should redirect to login when user is not authenticated', () => {
     Object.defineProperty(authService, 'currentUserValue', { value: null });
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(false);
@@ -57,7 +60,7 @@ describe('RoleGuard', () => {
     mockRoute.data = { roles: [] };
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(true);
@@ -69,7 +72,7 @@ describe('RoleGuard', () => {
     mockRoute.data = { roles: [Role.ASSET_MANAGER] };
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(true);
@@ -81,7 +84,7 @@ describe('RoleGuard', () => {
     mockRoute.data = { roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER] };
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(true);
@@ -93,7 +96,7 @@ describe('RoleGuard', () => {
     mockRoute.data = { roles: [Role.ADMINISTRATOR] };
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(false);
@@ -106,7 +109,7 @@ describe('RoleGuard', () => {
     mockRoute.data = { roles: [Role.ADMINISTRATOR, Role.ASSET_MANAGER] };
 
     const result = TestBed.runInInjectionContext(() => 
-      roleGuard(mockRoute)
+      roleGuard(mockRoute, mockState)
     );
 
     expect(result).toBe(false);

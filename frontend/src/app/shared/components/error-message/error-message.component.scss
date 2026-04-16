@@ -1,0 +1,104 @@
+/**
+ * Error Message Component Styles
+ * Implements Editorial Geometry design system
+ * Requirements: 4.4, 4.5
+ */
+
+.error-message {
+  // Requirement 4.4 - Error color background at 10% opacity
+  background: rgba(186, 26, 26, 0.1); // error color (#ba1a1a) at 10% opacity
+  border-radius: 8px; // md roundness per Editorial Geometry
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  
+  // Editorial shadow with error tint
+  box-shadow: 0 2px 8px rgba(186, 26, 26, 0.15);
+  
+  // Smooth entrance animation
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.error-text {
+  flex: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ba1a1a; // error color
+  font-weight: 500;
+}
+
+.dismiss-button {
+  // Requirement 4.5 - Dismiss button (X icon)
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ba1a1a; // error color
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  
+  // Ensure minimum touch target size
+  min-width: 24px;
+  min-height: 24px;
+  
+  &:hover {
+    background: rgba(186, 26, 26, 0.1);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // Focus indicator for accessibility
+  &:focus {
+    outline: 2px solid #ba1a1a;
+    outline-offset: 2px;
+  }
+  
+  // Remove focus outline for mouse users
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Entrance animation
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .error-message {
+    padding: 12px 16px;
+  }
+  
+  .error-text {
+    font-size: 13px;
+  }
+}

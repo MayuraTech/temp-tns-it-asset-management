@@ -117,7 +117,7 @@
     type="button"
     aria-label="Open user menu"
     [attr.aria-describedby]="'user-name'"
-    (click)="onProfileClick()">
+    [matMenuTriggerFor]="userMenu">
     
     <div class="user-avatar">
       <!-- Avatar Image (if available) -->
@@ -153,5 +153,27 @@
         opacity="0.1"/>
     </svg>
   </button>
+  
+  <!-- User Menu Dropdown -->
+  <mat-menu #userMenu="matMenu" class="user-menu">
+    <div class="user-menu-header">
+      <div class="user-menu-name">{{ userInfo.name }}</div>
+      <div class="user-menu-email">{{ userInfo.email }}</div>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="onProfileClick()">
+      <mat-icon>person</mat-icon>
+      <span>Profile</span>
+    </button>
+    <button mat-menu-item (click)="onSettingsClick()">
+      <mat-icon>settings</mat-icon>
+      <span>Settings</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="onLogoutClick()" class="logout-item">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
   
 </div>

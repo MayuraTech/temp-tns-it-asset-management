@@ -18,7 +18,7 @@
   <div class="top-nav__search">
     <app-search-bar
       placeholder="Search infrastructure..."
-      [value]="searchQuery$ | async"
+      [value]="(searchQuery$ | async) || ''"
       (searchChange)="onSearchInput($event)"
       (searchSubmit)="onSearchSubmit($event)">
     </app-search-bar>
