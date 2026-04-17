@@ -1,70 +1,155 @@
-<div class="user-detail">
-  <div class="user-detail__toolbar">
-    <button mat-stroked-button type="button" (click)="goBack()" aria-label="Back to users list">
-      <mat-icon>arrow_back</mat-icon>
-      Users
-    </button>
-    @if (user() && canEdit()) {
-      <button mat-flat-button color="primary" type="button" (click)="editUser()" aria-label="Edit user">
-        <mat-icon>edit</mat-icon>
-        Edit
-      </button>
-    }
+<div class="user-detail-page">
+  <!-- Page Header with Actions -->
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="page-header">
+          <button mat-stroked-button type="button" (click)="goBack()" aria-label="Back to users list" class="back-button">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Back to Users</span>
+          </button>
+          @if (user() && canEdit()) {
+            <button mat-raised-button color="primary" type="button" (click)="editUser()" aria-label="Edit user" class="edit-button">
+              <mat-icon>edit</mat-icon>
+              <span>Edit User</span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
   </div>
 
-  @if (loading()) {
-    <div class="user-detail__loading" role="status">
-      <mat-spinner diameter="40"></mat-spinner>
-      <span>Loading user…</span>
-    </div>
-  } @else if (error()) {
-    <mat-card class="user-detail__card user-detail__card--error">
-      <mat-card-content>
-        <p class="error-message">{{ error() }}</p>
-        <button mat-stroked-button type="button" (click)="goBack()">Back to list</button>
-      </mat-card-content>
-    </mat-card>
-  } @else {
-    @if (user(); as u) {
-      <mat-card class="user-detail__card">
-        <mat-card-header>
-          <mat-card-title>{{ u.username }}</mat-card-title>
-          <mat-card-subtitle>{{ u.email }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <dl class="detail-grid">
-            <dt>Status</dt>
-            <dd>
+  <!-- Content Area -->
+  <div class="container-fluid">
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="row">
+        <div class="col-12">
+          <div class="loading-container" role="status">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p class="loading-text">Loading user details...</p>
+          </div>
+        </div>
+      </div>
+    } @else if (error()) {
+      <!-- Error State -->
+      <div class="row">
+        <div class="col-12">
+          <div class="error-card">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <h3 class="error-title">Error Loading User</h3>
+            <p class="error-message">{{ error() }}</p>
+            <button mat-raised-button type="button" (click)="goBack()" class="error-button">
+              <mat-icon>arrow_back</mat-icon>
+              <span>Back to List</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- User Details -->
+      @if (user(); as u) {
+        <div class="row g-4">
+        <!-- User Profile Card -->
+        <div class="col-12 col-lg-4">
+          <div class="profile-card">
+            <div class="profile-avatar">
+              <mat-icon class="avatar-icon">account_circle</mat-icon>
+            </div>
+            <h2 class="profile-username">{{ u.username }}</h2>
+            <p class="profile-email">{{ u.email }}</p>
+            
+            <!-- Status Badge -->
+            <div class="profile-status">
               @if (u.isActive) {
-                <span class="status status--active">Active</span>
+                <span class="status-badge status-active">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>Active</span>
+                </span>
               } @else {
-                <span class="status status--inactive">Inactive</span>
+                <span class="status-badge status-inactive">
+                  <mat-icon>cancel</mat-icon>
+                  <span>Inactive</span>
+                </span>
               }
               @if (u.accountLocked) {
-                <span class="status status--locked">Locked</span>
+                <span class="status-badge status-locked">
+                  <mat-icon>lock</mat-icon>
+                  <span>Locked</span>
+                </span>
               }
-            </dd>
+            </div>
+          </div>
+        </div>
 
-            <dt>Roles</dt>
-            <dd>
-              <mat-chip-set aria-label="Assigned roles">
-                @for (role of u.roles; track role) {
-                  <mat-chip [class]="getRoleBadgeClass(role)">{{ getRoleDisplayName(role) }}</mat-chip>
-                }
-              </mat-chip-set>
-            </dd>
+        <!-- User Information Card -->
+        <div class="col-12 col-lg-8">
+          <div class="info-card">
+            <h3 class="info-card-title">User Information</h3>
+            
+            <div class="info-section">
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>badge</mat-icon>
+                  <span>Username</span>
+                </div>
+                <div class="info-value">{{ u.username }}</div>
+              </div>
 
-            <dt>Last login</dt>
-            <dd>{{ u.lastLoginAt ? (u.lastLoginAt | date: 'medium') : 'Never' }}</dd>
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>email</mat-icon>
+                  <span>Email Address</span>
+                </div>
+                <div class="info-value">{{ u.email }}</div>
+              </div>
 
-            <dt>Created</dt>
-            <dd>{{ u.createdAt | date: 'medium' }}</dd>
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>security</mat-icon>
+                  <span>Assigned Roles</span>
+                </div>
+                <div class="info-value">
+                  <div class="roles-container">
+                    @for (role of u.roles; track role) {
+                      <span class="role-chip" [class]="getRoleBadgeClass(role)">
+                        {{ getRoleDisplayName(role) }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
 
-            <dt>Updated</dt>
-            <dd>{{ u.updatedAt | date: 'medium' }}</dd>
-          </dl>
-        </mat-card-content>
-      </mat-card>
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>login</mat-icon>
+                  <span>Last Login</span>
+                </div>
+                <div class="info-value">
+                  {{ u.lastLoginAt ? (u.lastLoginAt | date: 'medium') : 'Never logged in' }}
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>event</mat-icon>
+                  <span>Account Created</span>
+                </div>
+                <div class="info-value">{{ u.createdAt | date: 'medium' }}</div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-label">
+                  <mat-icon>update</mat-icon>
+                  <span>Last Updated</span>
+                </div>
+                <div class="info-value">{{ u.updatedAt | date: 'medium' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
     }
-  }
+  </div>
 </div>

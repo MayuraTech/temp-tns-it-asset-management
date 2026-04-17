@@ -1,208 +1,247 @@
 <div class="page-container">
   <!-- Page Header -->
-  <div class="page-header">
-    <div class="header-content">
-      <h1 class="page-title">{{ pageTitle() }}</h1>
-      <p class="page-subtitle">
-        {{ isEditMode() ? 'Update user account information and role assignments' : 'Create a new user account with appropriate roles and permissions' }}
-      </p>
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <h1 class="page-title">{{ pageTitle() }}</h1>
+        <p class="page-subtitle">
+          {{ isEditMode() ? 'Update user account information and role assignments' : 'Create a new user account with appropriate roles and permissions' }}
+        </p>
+      </div>
     </div>
   </div>
 
   <!-- Form Container -->
-  <div class="form-container">
-    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-card">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
       
       <!-- User Information Section -->
       <div class="form-section">
-        <h2 class="section-title">User Information</h2>
-        <p class="section-subtitle">Basic account details and credentials</p>
+        <div class="row mb-4">
+          <div class="col-12">
+            <h2 class="section-title">User Information</h2>
+            <p class="section-subtitle">Basic account details and credentials</p>
+          </div>
+        </div>
         
-        <div class="form-grid">
+        <div class="row g-4">
           <!-- Username Field -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Username</mat-label>
-            <input 
-              matInput 
-              formControlName="username" 
-              placeholder="Enter username"
-              autocomplete="username"
-              [attr.data-cy]="'username-input'"
-            >
-            <mat-icon matPrefix>person</mat-icon>
-            <mat-hint>3-100 characters, alphanumeric and underscores only</mat-hint>
-            <mat-error *ngIf="hasError('username')">
-              {{ getErrorMessage('username') }}
-            </mat-error>
-          </mat-form-field>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Username</mat-label>
+              <input 
+                matInput 
+                formControlName="username" 
+                placeholder="Enter username"
+                autocomplete="username"
+                [attr.data-cy]="'username-input'"
+              >
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-hint>3-100 characters, alphanumeric and underscores only</mat-hint>
+              <mat-error *ngIf="hasError('username')">
+                {{ getErrorMessage('username') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
 
           <!-- Email Field -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Email Address</mat-label>
-            <input 
-              matInput 
-              type="email"
-              formControlName="email" 
-              placeholder="user@example.com"
-              autocomplete="email"
-              [attr.data-cy]="'email-input'"
-            >
-            <mat-icon matPrefix>email</mat-icon>
-            <mat-hint>Primary work email address</mat-hint>
-            <mat-error *ngIf="hasError('email')">
-              {{ getErrorMessage('email') }}
-            </mat-error>
-          </mat-form-field>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Email Address</mat-label>
+              <input 
+                matInput 
+                type="email"
+                formControlName="email" 
+                placeholder="user@example.com"
+                autocomplete="email"
+                [attr.data-cy]="'email-input'"
+              >
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-hint>Primary work email address</mat-hint>
+              <mat-error *ngIf="hasError('email')">
+                {{ getErrorMessage('email') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
       </div>
 
       <!-- Password Section (only show for new users or if changing password) -->
       <div class="form-section" *ngIf="!isEditMode()">
-        <h2 class="section-title">Security Credentials</h2>
-        <p class="section-subtitle">Set a strong password for the account</p>
+        <div class="row mb-4">
+          <div class="col-12">
+            <h2 class="section-title">Security Credentials</h2>
+            <p class="section-subtitle">Set a strong password for the account</p>
+          </div>
+        </div>
         
-        <div class="form-grid">
+        <div class="row g-4">
           <!-- Password Field -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Password</mat-label>
-            <input 
-              matInput 
-              [type]="hidePassword ? 'password' : 'text'"
-              formControlName="password" 
-              placeholder="Enter password"
-              autocomplete="new-password"
-              [attr.data-cy]="'password-input'"
-            >
-            <mat-icon matPrefix>lock</mat-icon>
-            <button 
-              mat-icon-button 
-              matSuffix 
-              type="button"
-              (click)="hidePassword = !hidePassword"
-              [attr.aria-label]="'Hide password'"
-              [attr.aria-pressed]="hidePassword"
-            >
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            <mat-hint>Minimum 8 characters with uppercase, lowercase, number, and special character</mat-hint>
-            <mat-error *ngIf="hasError('password')">
-              {{ getErrorMessage('password') }}
-            </mat-error>
-          </mat-form-field>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Password</mat-label>
+              <input 
+                matInput 
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password" 
+                placeholder="Enter password"
+                autocomplete="new-password"
+                [attr.data-cy]="'password-input'"
+              >
+              <mat-icon matPrefix>lock</mat-icon>
+              <button 
+                mat-icon-button 
+                matSuffix 
+                type="button"
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword"
+              >
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-hint>Minimum 8 characters with uppercase, lowercase, number, and special character</mat-hint>
+              <mat-error *ngIf="hasError('password')">
+                {{ getErrorMessage('password') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
 
           <!-- Confirm Password Field -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Confirm Password</mat-label>
-            <input 
-              matInput 
-              [type]="hideConfirmPassword ? 'password' : 'text'"
-              formControlName="confirmPassword" 
-              placeholder="Re-enter password"
-              autocomplete="new-password"
-              [attr.data-cy]="'confirm-password-input'"
-            >
-            <mat-icon matPrefix>lock</mat-icon>
-            <button 
-              mat-icon-button 
-              matSuffix 
-              type="button"
-              (click)="hideConfirmPassword = !hideConfirmPassword"
-              [attr.aria-label]="'Hide password'"
-              [attr.aria-pressed]="hideConfirmPassword"
-            >
-              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            <mat-error *ngIf="hasError('confirmPassword')">
-              {{ getErrorMessage('confirmPassword') }}
-            </mat-error>
-          </mat-form-field>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Confirm Password</mat-label>
+              <input 
+                matInput 
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword" 
+                placeholder="Re-enter password"
+                autocomplete="new-password"
+                [attr.data-cy]="'confirm-password-input'"
+              >
+              <mat-icon matPrefix>lock</mat-icon>
+              <button 
+                mat-icon-button 
+                matSuffix 
+                type="button"
+                (click)="hideConfirmPassword = !hideConfirmPassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hideConfirmPassword"
+              >
+                <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="hasError('confirmPassword')">
+                {{ getErrorMessage('confirmPassword') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
 
         <!-- Password Strength Indicator -->
-        <div class="password-strength-container" *ngIf="userForm.get('password')?.value">
-          <div class="password-strength-label">Password Strength:</div>
-          <div class="password-strength-bar">
-            <div 
-              class="password-strength-fill" 
-              [ngClass]="getPasswordStrengthClass()"
-            ></div>
-          </div>
-          <div 
-            class="password-strength-text"
-            [ngClass]="getPasswordStrengthClass()"
-          >
-            {{ passwordStrengthText() }}
+        <div class="row" *ngIf="userForm.get('password')?.value">
+          <div class="col-12">
+            <div class="password-strength-container">
+              <div class="password-strength-label">Password Strength:</div>
+              <div class="password-strength-bar">
+                <div 
+                  class="password-strength-fill" 
+                  [ngClass]="getPasswordStrengthClass()"
+                ></div>
+              </div>
+              <div 
+                class="password-strength-text"
+                [ngClass]="getPasswordStrengthClass()"
+              >
+                {{ passwordStrengthText() }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Role Assignment Section -->
       <div class="form-section">
-        <h2 class="section-title">Role Assignment</h2>
-        <p class="section-subtitle">Select one or more roles for this user</p>
+        <div class="row mb-4">
+          <div class="col-12">
+            <h2 class="section-title">Role Assignment</h2>
+            <p class="section-subtitle">Select one or more roles for this user</p>
+          </div>
+        </div>
         
-        <div class="roles-container">
+        <div class="row g-4">
           <div 
             *ngFor="let role of availableRoles" 
-            class="role-card"
-            [class.role-selected]="isRoleSelected(role.value)"
-            (click)="toggleRole(role.value)"
-            [attr.data-cy]="'role-' + role.value"
+            class="col-12 col-md-6 col-lg-4"
           >
-            <div class="role-card-header">
-              <mat-checkbox 
-                [checked]="isRoleSelected(role.value)"
-                (click)="$event.stopPropagation()"
-                (change)="toggleRole(role.value)"
-                color="primary"
-              ></mat-checkbox>
-              <div class="role-info">
-                <h3 class="role-title">{{ role.label }}</h3>
-                <p class="role-description">{{ role.description }}</p>
+            <div 
+              class="role-card"
+              [class.role-selected]="isRoleSelected(role.value)"
+              (click)="toggleRole(role.value)"
+              [attr.data-cy]="'role-' + role.value"
+            >
+              <div class="role-card-header">
+                <mat-checkbox 
+                  [checked]="isRoleSelected(role.value)"
+                  (click)="$event.stopPropagation()"
+                  (change)="toggleRole(role.value)"
+                  color="primary"
+                ></mat-checkbox>
+                <div class="role-info">
+                  <h3 class="role-title">{{ role.label }}</h3>
+                  <p class="role-description">{{ role.description }}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
         
-        <mat-error *ngIf="hasError('roles')" class="roles-error">
-          {{ getErrorMessage('roles') }}
-        </mat-error>
+        <div class="row" *ngIf="hasError('roles')">
+          <div class="col-12">
+            <mat-error class="roles-error">
+              {{ getErrorMessage('roles') }}
+            </mat-error>
+          </div>
+        </div>
       </div>
 
       <!-- Form Actions -->
       <div class="form-actions">
-        <button 
-          mat-raised-button 
-          color="primary" 
-          type="submit"
-          [disabled]="loading() || userForm.invalid"
-          [attr.data-cy]="'submit-btn'"
-          class="btn-primary"
-        >
-          <mat-icon *ngIf="!loading()">{{ isEditMode() ? 'save' : 'person_add' }}</mat-icon>
-          <mat-spinner *ngIf="loading()" diameter="20"></mat-spinner>
-          <span>{{ submitButtonText() }}</span>
-        </button>
-        
-        <button 
-          mat-stroked-button 
-          type="button"
-          (click)="onCancel()"
-          [disabled]="loading()"
-          [attr.data-cy]="'cancel-btn'"
-          class="btn-secondary"
-        >
-          <mat-icon>close</mat-icon>
-          <span>Cancel</span>
-        </button>
+        <div class="row">
+          <div class="col-12">
+            <div class="d-flex gap-3 flex-wrap">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit"
+                [disabled]="loading() || userForm.invalid"
+                [attr.data-cy]="'submit-btn'"
+                class="btn-primary"
+              >
+                <mat-icon *ngIf="!loading()">{{ isEditMode() ? 'save' : 'person_add' }}</mat-icon>
+                <mat-spinner *ngIf="loading()" diameter="20"></mat-spinner>
+                <span>{{ submitButtonText() }}</span>
+              </button>
+              
+              <button 
+                mat-stroked-button 
+                type="button"
+                (click)="onCancel()"
+                [disabled]="loading()"
+                [attr.data-cy]="'cancel-btn'"
+                class="btn-secondary"
+              >
+                <mat-icon>close</mat-icon>
+                <span>Cancel</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
-
-    <!-- Geometric Accent -->
-    <div class="geometric-accent">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="0,0 200,100 0,200" class="triangle-accent" />
-      </svg>
+        </div>
+      </div>
     </div>
   </div>
 </div>
