@@ -9,7 +9,7 @@ RUN npm ci
 
 # Copy source and build for production
 COPY . .
-RUN npm run build:prod -- --base-href=/qa/ui/
+RUN npm run build:prod -- --base-href=/qa/ui/ --deploy-url=/qa/ui/
 
 # Stage 2: Serve with nginx
 FROM nginx:1.25-alpine
