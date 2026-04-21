@@ -16,12 +16,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
   deploy-qa:
     name: Deploy API to QA
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -55,27 +55,20 @@ jobs:
         run: |
           set -euo pipefail
           TASK_FAMILY="it-assets-qa-api"
+          
           aws ecs describe-task-definition \
             --task-definition "$TASK_FAMILY" \
             --region "$AWS_REGION" \
             --query taskDefinition \
             --output json | jq --arg IMAGE "$ECR_URI:$IMAGE_TAG" \
-            'del(
-              .taskDefinitionArn,
-              .revision,
-              .status,
-              .requiresAttributes,
-              .compatibilities,
-              .registeredAt,
-              .registeredBy,
-              .deregisteredAt,
-              .enableFaultInjection
-            ) | .containerDefinitions[0].image = $IMAGE' > task-def.json
+            'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy,.deregisteredAt,.enableFaultInjection) | .containerDefinitions[0].image = $IMAGE' > task-def.json
+          
           NEW_REVISION=$(aws ecs register-task-definition \
             --region "$AWS_REGION" \
             --cli-input-json "file://$(pwd)/task-def.json" \
             --query 'taskDefinition.revision' \
             --output text)
+          
           echo "revision=$NEW_REVISION" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to ECS
