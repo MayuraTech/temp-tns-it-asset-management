@@ -9,7 +9,7 @@ RUN npm ci
 
 # Copy source and build for production
 COPY . .
-RUN npm run build:prod
+RUN npm run build:prod -- --base-href=/qa/ui/
 
 # Stage 2: Serve with nginx
 FROM nginx:1.25-alpine
@@ -18,7 +18,7 @@ WORKDIR /usr/share/nginx/html
 # Remove default nginx content
 RUN rm -rf ./*
 
-# Copy Angular build output (Angular 17 outputs directly to dist/project-name)
+# Copy Angular build output (adjust project name if needed)
 COPY --from=build /app/dist/it-asset-management-frontend ./
 
 # Copy nginx template (envsubst replaces ${API_URL} at startup)
