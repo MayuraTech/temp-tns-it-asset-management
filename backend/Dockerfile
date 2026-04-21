@@ -9,7 +9,7 @@ RUN mvn dependency:go-offline -B
 
 # Copy source and build
 COPY src ./src
-RUN mvn clean package -DskipTests -Dspring-boot.build-image.skip=true
+RUN mvn clean package -DskipTests -Dmaven.test.skip=true -Dspring-boot.build-image.skip=true
 
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre-alpine
@@ -30,9 +30,9 @@ RUN chown appuser:appgroup app.jar
 
 USER appuser
 
-# Actuator health check
+# Actuator health check - Updated for context path
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+  CMD curl -f http://localhost:8080/qa/api/actuator/health || exit 1
 
 EXPOSE 8080
 
