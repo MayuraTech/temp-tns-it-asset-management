@@ -10,7 +10,7 @@ export const environment: Environment = {
   production: false,
   
   // API Configuration
-  apiUrl: 'http://localhost:8080/api/v1',
+  apiUrl: 'http://it-assets-alb-2071352516.us-west-2.elb.amazonaws.com/qa/api',
   apiTimeout: 30000, // 30 seconds
   
   // Authentication Configuration
