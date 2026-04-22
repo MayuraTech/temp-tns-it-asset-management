@@ -64,7 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints (paths are relative to context path /qa/api)
                         .requestMatchers(
-                                "/v1/auth/**",
+                                "/api/v1/auth/**",
                                 "/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
