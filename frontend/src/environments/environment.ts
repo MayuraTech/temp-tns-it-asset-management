@@ -1,16 +1,16 @@
 /**
- * Development Environment Configuration
+ * Production Environment Configuration
  * 
- * This file contains configuration for the development environment.
- * It connects to the local backend server running on port 8080.
+ * This file contains configuration for the production environment.
+ * It uses relative URLs to connect to the backend API on the same domain.
  */
 import { Environment } from '../app/core/models/environment.model';
 
 export const environment: Environment = {
-  production: false,
+  production: true,
   
   // API Configuration
-  apiUrl: 'http://it-assets-alb-2071352516.us-west-2.elb.amazonaws.com/qa/api',
+  apiUrl: 'https://it-assets-alb-2071352516.us-west-2.elb.amazonaws.com/qa/api',
   apiTimeout: 30000, // 30 seconds
   
   // Authentication Configuration
@@ -29,9 +29,9 @@ export const environment: Environment = {
   
   // Feature Flags
   features: {
-    enableDebugMode: true,
-    enableConsoleLogging: true,
-    enablePerformanceMonitoring: false,
+    enableDebugMode: false,
+    enableConsoleLogging: false,
+    enablePerformanceMonitoring: true,
     enableMockData: false
   },
   
@@ -74,7 +74,7 @@ export const environment: Environment = {
   
   // Error Handling Configuration
   errorHandling: {
-    showDetailedErrors: true,
+    showDetailedErrors: false,
     retryAttempts: 3,
     retryDelay: 1000 // 1 second
   }
