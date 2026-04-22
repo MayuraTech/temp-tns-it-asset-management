@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Allow OPTIONS requests for CORS preflight
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        // Public endpoints (paths are relative to context path /qa/api)
+                        // Public endpoints
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/api-docs/**",
@@ -113,8 +113,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Parse allowed origins from configuration
-        List<String> origins = Arrays.asList(allowedOrigins.split(","));
+        // Parse allowed origins from configuration and trim whitespace
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .toList();
         configuration.setAllowedOrigins(origins);
         
         // Allowed HTTP methods
@@ -122,14 +124,8 @@ public class SecurityConfig {
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
         ));
         
-        // Allowed headers
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "Accept",
-                "X-Request-ID",
-                "X-Requested-With"
-        ));
+        // Allowed headers - use wildcard to allow all headers
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         
         // Exposed headers
         configuration.setExposedHeaders(Arrays.asList(
