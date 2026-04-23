@@ -23,7 +23,8 @@ import java.util.List;
 
 /**
  * Security Configuration for Spring Security with JWT authentication.
- * Configures security filter chain, CORS, security headers, and password encoding.
+ * Configures security filter chain, CORS, security headers, and password
+ * encoding.
  * 
  * Based on working reference implementation from TMS project.
  */
@@ -31,16 +32,16 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    
+
     @Value("${cors.allowed-origins:http://localhost:4200}")
     private String allowedOrigins;
-    
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
-    
+
     /**
      * Configure security filter chain with JWT authentication.
      *
@@ -53,34 +54,34 @@ public class SecurityConfig {
         http
                 // Disable CSRF for stateless JWT authentication
                 .csrf(AbstractHttpConfigurer::disable)
-                
+
                 // Configure CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                
+
                 // Configure session management (stateless)
-                .sessionManagement(session -> 
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 // Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        // Allow OPTIONS requests for CORS preflight
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
-                                "/actuator/**"
-                        ).permitAll()
+                                "/actuator/**")
+                        .permitAll()
                         // All other endpoints require authentication
-                        .anyRequest().authenticated()
-                );
-        
+                        .anyRequest().authenticated());
+
         // Add JWT authentication filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
-    
+
     /**
      * Password encoder using BCrypt with strength 10.
      *
@@ -90,7 +91,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-    
+
     /**
      * Authentication manager bean.
      *
@@ -102,7 +103,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-    
+
     /**
      * Configure CORS settings.
      * Registers CORS configuration for all paths.
@@ -117,32 +118,39 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Parse allowed origins from configuration (comma-separated) and trim whitespace
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+
+        // Parse allowed origins and trim whitespace
+        List<String> origins = new java.util.ArrayList<>(Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
-                .toList();
-        
+                .toList());
+
+        // Add wildcard patterns for ALB domains to ensure connectivity
+        origins.add("http://*.elb.amazonaws.com");
+        origins.add("https://*.elb.amazonaws.com");
+
+        // IMPORTANT: When allowCredentials is true, must use setAllowedOriginPatterns
+        // setAllowedOrigins will be rejected by Spring Security if it contains
+        // wildcards
         configuration.setAllowedOriginPatterns(origins);
-        
+
         // Allowed HTTP methods
         configuration.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
-        ));
-        
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
         // Allowed headers - use wildcard to allow all headers
         configuration.setAllowedHeaders(List.of("*"));
-        
+
         // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-        
+
         // Max age for preflight requests (1 hour)
         configuration.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Register for all paths - Spring Security sees paths relative to servlet context
+        // Register for all paths - Spring Security sees paths relative to servlet
+        // context
         source.registerCorsConfiguration("/**", configuration);
-        
+
         return source;
     }
 }
