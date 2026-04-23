@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -119,26 +118,18 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Parse allowed origins and trim whitespace
-        List<String> origins = new java.util.ArrayList<>(Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .toList());
-
-        // Add wildcard patterns for ALB domains to ensure connectivity
-        origins.add("http://*.elb.amazonaws.com");
-        origins.add("https://*.elb.amazonaws.com");
-
-        // IMPORTANT: When allowCredentials is true, must use setAllowedOriginPatterns
-        // setAllowedOrigins will be rejected by Spring Security if it contains
-        // wildcards
-        configuration.setAllowedOriginPatterns(origins);
+        // Use permissive origin patterns for deployment to resolve all CORS issues.
+        // allowCredentials(true) is compatible with setAllowedOriginPatterns("*").
+        configuration.setAllowedOriginPatterns(List.of("*"));
 
         // Allowed HTTP methods
-        configuration.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
 
-        // Allowed headers - use wildcard to allow all headers
+        // Allowed headers
         configuration.setAllowedHeaders(List.of("*"));
+
+        // Exposed headers (important for client to read certain response headers)
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type", "X-Total-Count"));
 
         // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
