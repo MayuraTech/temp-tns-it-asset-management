@@ -10,7 +10,7 @@ export const environment: Environment = {
   production: true,
   
   // API Configuration
-  apiUrl: '/qa/api/v1',
+  apiUrl: '/qa/api/api/v1',
   apiTimeout: 30000, // 30 seconds
   
   // Authentication Configuration
