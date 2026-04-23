@@ -15,11 +15,11 @@ export const httpsInterceptor: HttpInterceptorFn = (req, next) => {
   // Only enforce HTTPS in production
   if (environment.production) {
     const url = req.url;
-    
-    // Check if URL is absolute and uses HTTP (not HTTPS)
-    if (url.startsWith('http://')) {
+
+    // Temporarily allow http during QA deployment with HTTP ALB
+    if (url.startsWith('http://') && !url.includes('elb.amazonaws.com')) {
       console.error('HTTPS Enforcement: Rejected HTTP request in production', url);
-      
+
       return throwError(() => new HttpErrorResponse({
         error: {
           type: 'HTTPS_REQUIRED',
@@ -30,7 +30,7 @@ export const httpsInterceptor: HttpInterceptorFn = (req, next) => {
         url: url
       }));
     }
-    
+
     // Check if URL is relative (should be fine as it will use the page's protocol)
     // or if it's already HTTPS
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -41,7 +41,7 @@ export const httpsInterceptor: HttpInterceptorFn = (req, next) => {
       }
     }
   }
-  
+
   // Allow the request to proceed
   return next(req);
 };
