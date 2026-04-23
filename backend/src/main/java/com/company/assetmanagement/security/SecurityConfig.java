@@ -122,7 +122,8 @@ public class SecurityConfig {
         List<String> origins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
                 .toList();
-        configuration.setAllowedOrigins(origins);
+        
+        configuration.setAllowedOriginPatterns(origins);
         
         // Allowed HTTP methods
         configuration.setAllowedMethods(List.of(
