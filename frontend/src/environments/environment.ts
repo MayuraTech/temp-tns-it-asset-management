@@ -10,7 +10,7 @@ export const environment: Environment = {
   production: true,
   
   // API Configuration
-  apiUrl: 'https://it-assets-alb-2071352516.us-west-2.elb.amazonaws.com/qa/api/v1/',
+  apiUrl: 'http://it-assets-alb-2071352516.us-west-2.elb.amazonaws.com/qa/api/v1/',
   apiTimeout: 30000, // 30 seconds
   
   // Authentication Configuration
