@@ -118,8 +118,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Parse allowed origins from configuration (comma-separated)
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        // Parse allowed origins from configuration (comma-separated) and trim whitespace
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .toList();
+        configuration.setAllowedOrigins(origins);
         
         // Allowed HTTP methods
         configuration.setAllowedMethods(List.of(
