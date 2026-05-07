@@ -1,404 +1,448 @@
 /**
  * User Form Component Styles
- * 
- * Implements Editorial Geometry design system with:
- * - Intentional asymmetry with geometric accents
- * - Premium editorial feel with sophisticated typography
- * - Depth through layering and surface hierarchy
- * - No-line rule with tonal boundaries
+ * Professional, clean design with Bootstrap integration
  */
 
+// Page Container
 .page-container {
-  padding: var(--space-xxl);
-  background: var(--surface);
+  padding: 32px 20px;
+  background: #f8f9fa;
   min-height: 100vh;
-  position: relative;
 }
 
 // Page Header
-.page-header {
-  margin-bottom: var(--space-xxxl);
-  
-  .header-content {
-    max-width: 800px;
-  }
-  
-  .page-title {
-    font-family: var(--font-heading);
-    font-size: var(--headline-lg);
-    font-weight: 800;
-    color: var(--secondary);
-    margin-bottom: var(--space-md);
-    letter-spacing: -0.75px;
-  }
-  
-  .page-subtitle {
-    font-family: var(--font-body);
-    font-size: var(--body-lg);
-    color: var(--on-surface-variant);
-    line-height: 1.6;
-    margin: 0;
-  }
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1b20;
+  margin-bottom: 8px;
+  line-height: 1.3;
 }
 
-// Form Container
-.form-container {
-  max-width: 900px;
-  background: var(--surface-container-lowest);
-  border-radius: 8px;
-  padding: var(--space-xxxl);
-  box-shadow: 0 20px 40px rgba(20, 59, 125, 0.06);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  z-index: 0;
+.page-subtitle {
+  font-size: 15px;
+  color: #6c757d;
+  line-height: 1.6;
+  margin: 0;
 }
 
-.user-form {
-  position: relative;
-  z-index: 1;
+// Form Card
+.form-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-// Form Sections
+// Form Sections - More spacing
 .form-section {
-  margin-bottom: var(--space-xxxl);
-  clear: both;
+  margin-bottom: 48px; // Increased from 40px
+  padding-bottom: 40px; // Increased from 32px
+  border-bottom: 1px solid #e9ecef;
 
   &:last-of-type {
-    margin-bottom: var(--space-xxl);
-  }
-  
-  .section-title {
-    font-family: var(--font-heading);
-    font-size: var(--headline-md);
-    font-weight: 700;
-    color: var(--on-surface);
-    margin-bottom: var(--space-sm);
-  }
-  
-  .section-subtitle {
-    font-family: var(--font-body);
-    font-size: var(--body-md);
-    color: var(--on-surface-variant);
-    margin-bottom: var(--space-xl);
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
 
-// Form Grid
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-xl);
-  margin-bottom: var(--space-xl);
-  align-items: start;
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 8px; // More space after title
+  line-height: 1.4;
 }
 
-// Form Fields — extra bottom space so hints/subscripts do not overlap next section
-.form-field {
-  width: 100%;
-  margin-bottom: var(--space-md);
-  display: block;
+.section-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 24px; // Increased from 0 - more space before fields
+  line-height: 1.5;
+}
 
-  ::ng-deep {
-    .mat-mdc-form-field-focus-overlay {
-      background-color: transparent;
+// Material Form Fields - Fix overlapping with extra spacing
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    display: block;
+    margin-bottom: 32px !important; // Extra space between fields
+    
+    // Fix form field wrapper
+    .mat-mdc-text-field-wrapper {
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
     
-    .mat-mdc-text-field-wrapper {
-      background: var(--surface);
+    // Fix infix height and padding
+    .mat-mdc-form-field-infix {
+      min-height: 60px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    // Fix label positioning
+    .mat-mdc-floating-label {
+      top: 30px;
+      font-size: 16px;
+    }
+    
+    // Floated label
+    &.mat-focused .mat-mdc-floating-label,
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      top: 18px;
+      font-size: 12px;
+    }
+    
+    // Fix subscript wrapper to prevent overlap - MORE SPACE
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 8px;
+      padding: 0 16px;
+      min-height: 24px;
+      position: relative;
+      overflow: visible;
+    }
+    
+    // Error and hint styling
+    .mat-mdc-form-field-error,
+    .mat-mdc-form-field-hint {
+      font-size: 12px;
+      line-height: 1.5;
+      display: block;
+      margin-top: 4px;
     }
     
     .mat-mdc-form-field-error {
-      font-size: var(--body-md);
-      color: var(--error);
+      color: #dc3545;
+      font-weight: 500;
     }
     
     .mat-mdc-form-field-hint {
-      font-size: 12px;
-      color: var(--on-surface-variant);
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      margin-top: 4px;
+      color: #6c757d;
     }
     
     // Icon styling
     .mat-icon {
-      color: var(--on-surface-variant);
+      color: #6c757d;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
     
-    // Focus state
-    .mat-mdc-form-field.mat-focused {
-      .mat-icon {
-        color: var(--primary);
+    // Focused state
+    &.mat-focused .mat-icon {
+      color: #0d6efd;
+    }
+    
+    // Outline styling
+    .mdc-notched-outline {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #ced4da;
+        border-width: 1px;
+      }
+    }
+    
+    &.mat-focused .mdc-notched-outline {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #0d6efd;
+        border-width: 2px;
+      }
+    }
+    
+    &.mat-form-field-invalid .mdc-notched-outline {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #dc3545;
+        border-width: 2px;
       }
     }
   }
+  
+  // Fix bottom align
+  .mat-mdc-form-field-bottom-align::before {
+    display: none;
+  }
+  
+  // Ensure no overlap between fields
+  .mat-mdc-form-field-subscript-wrapper {
+    position: relative !important;
+    overflow: visible !important;
+  }
 }
 
-// Password Strength Indicator
+// Password Strength Indicator - More spacing
 .password-strength-container {
-  margin-top: var(--space-xl);
-  clear: both;
-  padding: var(--space-lg);
-  background: var(--surface-container-low);
+  margin-top: 32px; // Increased from 20px
+  padding: 20px; // Increased from 16px
+  background: #f8f9fa;
   border-radius: 8px;
-  
-  .password-strength-label {
-    font-family: var(--font-body);
-    font-size: var(--body-md);
-    font-weight: 600;
-    color: var(--on-surface);
-    margin-bottom: var(--space-sm);
-  }
-  
-  .password-strength-bar {
-    height: 8px;
-    background: var(--surface-container-high);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: var(--space-sm);
-    
-    .password-strength-fill {
-      height: 100%;
-      transition: all 0.3s ease;
-      border-radius: 4px;
-      
-      &.password-strength-weak {
-        width: 33%;
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-      }
-      
-      &.password-strength-medium {
-        width: 66%;
-        background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-      }
-      
-      &.password-strength-strong {
-        width: 100%;
-        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-      }
-    }
-  }
-  
-  .password-strength-text {
-    font-family: var(--font-body);
-    font-size: var(--body-md);
-    font-weight: 600;
-    
-    &.password-strength-weak {
-      color: #ef4444;
-    }
-    
-    &.password-strength-medium {
-      color: #f59e0b;
-    }
-    
-    &.password-strength-strong {
-      color: #10b981;
-    }
-  }
+  border: 1px solid #e9ecef;
 }
 
-// Roles Container
-.roles-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
+.password-strength-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 12px; // Increased from 10px
 }
 
-// Role Card
-.role-card {
-  background: var(--surface);
-  border: 2px solid var(--outline-variant);
-  border-radius: 8px;
-  padding: var(--space-lg);
-  cursor: pointer;
+.password-strength-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px; // Increased from 8px
+}
+
+.password-strength-fill {
+  height: 100%;
   transition: all 0.3s ease;
-  position: relative;
+  border-radius: 4px;
+  
+  &.password-strength-weak {
+    width: 33%;
+    background: #dc3545;
+  }
+  
+  &.password-strength-medium {
+    width: 66%;
+    background: #ffc107;
+  }
+  
+  &.password-strength-strong {
+    width: 100%;
+    background: #28a745;
+  }
+}
+
+.password-strength-text {
+  font-size: 13px;
+  font-weight: 600;
+  
+  &.password-strength-weak {
+    color: #dc3545;
+  }
+  
+  &.password-strength-medium {
+    color: #ffc107;
+  }
+  
+  &.password-strength-strong {
+    color: #28a745;
+  }
+}
+
+// Role Cards - More spacing
+.role-card {
+  background: #ffffff;
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  padding: 24px; // Increased from 20px
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 100%;
+  min-height: 140px; // Increased from 120px
+  margin-bottom: 8px; // Extra bottom margin
   
   &:hover {
-    border-color: var(--primary);
-    box-shadow: 0 10px 20px rgba(20, 59, 125, 0.1);
+    border-color: #0d6efd;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
     transform: translateY(-2px);
   }
   
   &.role-selected {
-    border-color: var(--primary);
-    background: var(--surface-container-low);
-    box-shadow: 0 10px 20px rgba(20, 59, 125, 0.15);
-  }
-  
-  .role-card-header {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-md);
-    margin-bottom: 0;
-  }
-  
-  .role-info {
-    flex: 1;
-  }
-  
-  .role-title {
-    font-family: var(--font-heading);
-    font-size: var(--body-lg);
-    font-weight: 700;
-    color: var(--on-surface);
-    margin: 0 0 var(--space-xs) 0;
-  }
-  
-  .role-description {
-    font-family: var(--font-body);
-    font-size: var(--body-md);
-    color: var(--on-surface-variant);
-    margin: 0;
-    line-height: 1.5;
+    border-color: #0d6efd;
+    background: #e7f1ff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
   }
 }
 
-// Roles Error
-.roles-error {
-  font-family: var(--font-body);
-  font-size: var(--body-md);
-  color: var(--error);
-  margin-top: var(--space-md);
-  display: block;
-}
-
-// Form Actions
-.form-actions {
+.role-card-header {
   display: flex;
-  gap: var(--space-lg);
-  padding-top: var(--space-xl);
-  border-top: 1px solid var(--outline-variant);
+  align-items: flex-start;
+  gap: 16px; // Increased from 12px
+}
+
+.role-info {
+  flex: 1;
+}
+
+.role-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 8px 0; // Increased from 6px
+  line-height: 1.3;
+}
+
+.role-description {
+  font-size: 13px;
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.6; // Increased from 1.5
+}
+
+// Roles Error - More spacing
+.roles-error {
+  font-size: 14px;
+  color: #dc3545;
+  margin-top: 20px; // Increased from 12px
+  display: block;
+  padding: 16px 20px; // Increased padding
+  background: #f8d7da;
+  border-radius: 6px;
+  border-left: 4px solid #dc3545;
+  line-height: 1.6;
+}
+
+// Form Actions - More spacing
+.form-actions {
+  padding-top: 40px; // Increased from 32px
+  margin-top: 40px; // Increased from 32px
+  border-top: 2px solid #e9ecef;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 12px 28px !important;
+  min-height: 48px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   
-  .btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
-    color: var(--on-primary);
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    padding: 12px 24px;
-    box-shadow: 
-      0px 10px 15px -3px rgba(20, 59, 125, 0.2),
-      0px 4px 6px -4px rgba(20, 59, 125, 0.2);
-    
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    
-    &:hover:not(:disabled) {
-      box-shadow: 
-        0px 15px 20px -3px rgba(20, 59, 125, 0.3),
-        0px 6px 8px -4px rgba(20, 59, 125, 0.3);
-    }
-    
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-    
-    mat-spinner {
-      margin-right: 4px;
-    }
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.4) !important;
+    transform: translateY(-2px);
   }
   
-  .btn-secondary {
-    background: transparent;
-    color: var(--on-surface-variant);
-    border: 2px solid var(--outline-variant);
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    padding: 12px 24px;
-    
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    
-    &:hover:not(:disabled) {
-      border-color: var(--outline);
-      background: var(--surface-container-low);
-    }
-    
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #ffffff !important;
+  }
+  
+  span {
+    color: #ffffff !important;
   }
 }
 
-// Geometric Accent — keep behind form content to avoid blend/ghosting with fields
-.geometric-accent {
-  position: absolute;
-  bottom: -50px;
-  right: -50px;
-  width: 300px;
-  height: 300px;
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: -1;
+.btn-secondary {
+  background: #ffffff !important;
+  color: #6c757d !important;
+  border: 2px solid #dee2e6 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 12px 28px !important;
+  min-height: 48px !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   
-  svg {
-    width: 100%;
-    height: 100%;
+  &:hover:not(:disabled) {
+    border-color: #adb5bd !important;
+    background: #f8f9fa !important;
+    transform: translateY(-2px);
   }
   
-  .triangle-accent {
-    fill: var(--primary);
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #6c757d !important;
+  }
+  
+  span {
+    color: #6c757d !important;
+  }
+}
+
+// Bootstrap utilities
+.w-100 {
+  width: 100% !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.gap-3 {
+  gap: 1rem !important;
+}
+
+.flex-wrap {
+  flex-wrap: wrap !important;
 }
 
 // Responsive Design
-@media (max-width: 768px) {
+@media (max-width: 991px) {
+  .form-card {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 767px) {
   .page-container {
-    padding: var(--space-lg);
+    padding: 24px 12px;
   }
   
-  .form-container {
-    padding: var(--space-xl);
+  .form-card {
+    padding: 24px 16px;
+    border-radius: 8px;
   }
   
-  .form-grid {
-    grid-template-columns: 1fr;
+  .page-title {
+    font-size: 24px;
   }
   
-  .roles-container {
-    grid-template-columns: 1fr;
+  .page-subtitle {
+    font-size: 14px;
   }
   
-  .form-actions {
-    flex-direction: column;
-    
-    button {
-      width: 100%;
-      justify-content: center;
-    }
+  .section-title {
+    font-size: 18px;
   }
   
-  .geometric-accent {
-    width: 200px;
-    height: 200px;
-    bottom: -30px;
-    right: -30px;
+  .form-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+  }
+  
+  .role-card {
+    min-height: auto;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center !important;
   }
 }
 
@@ -416,7 +460,8 @@
     border-width: 3px;
   }
   
-  .form-actions button {
-    border-width: 3px;
+  .btn-primary,
+  .btn-secondary {
+    border-width: 3px !important;
   }
 }
